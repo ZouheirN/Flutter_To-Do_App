@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/screens/otp_screen.dart';
 import 'package:todo_app/widgets/buttons.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -41,8 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       key: _formKey,
                       child: Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 20),
+                          padding: const EdgeInsets.all(20),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -134,9 +134,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               const SizedBox(height: 20,),
                               PrimaryButton(text: 'Login', onPressed: () {
                                 if (_formKey.currentState!.validate()) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content: Text('Processing Data')));
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) => const OTPScreen()),
+                                  );
                                 }
                               }),
                             ],

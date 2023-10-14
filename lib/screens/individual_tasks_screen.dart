@@ -8,12 +8,12 @@ class IndividualTasksScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+      padding: const EdgeInsets.only(top: 40, left: 20, right: 20),
       child: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            const SizedBox(height: 20),
+            // const SizedBox(height: 20),
             const Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [

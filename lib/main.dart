@@ -11,7 +11,7 @@ Future<void> main() async {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     systemNavigationBarColor: Colors.white,
     systemNavigationBarDividerColor: Colors.white,
-    systemNavigationBarContrastEnforced: false,
+    // systemNavigationBarContrastEnforced: false,
   ));
 
   var userInfoBox = await Hive.openBox('userInfo');

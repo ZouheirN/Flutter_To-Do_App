@@ -24,8 +24,6 @@ class _OTPScreenState extends State<OTPScreen> {
   void _requestOTP() {
     // TODO logic for requesting OTP
 
-    print('OTP Sent for ${widget.email}');
-
     setState(() {
       _isCountDownFinished = false;
     });

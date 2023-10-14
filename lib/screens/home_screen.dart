@@ -64,6 +64,9 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: (_selectedIndex == 0 || _selectedIndex == 1) ? FloatingActionButton(
         onPressed: () {},
         tooltip: 'Add Todo',
+        hoverColor: const Color(0xFF096B67),
+        focusColor: const Color(0xFF24A09B),
+        splashColor: const Color(0xFF064E4B),
         child: const Icon(Icons.add),
       ) : null,
     );

@@ -10,6 +10,7 @@ class TaskCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Card(
+        elevation: 1.5,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
         ),
@@ -26,10 +27,18 @@ class TaskCard extends StatelessWidget {
                   topRight: Radius.circular(8),
                 ),
               ),
+              width: double.infinity,
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                child: Text('Task Name', style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),),
+              ),
             ),
             const ListTile(
-              title: Text('Task Name'),
-              subtitle: Text('Task Details'),
+              title: Text('Task Details'),
+              // subtitle: Text('Task Details'),
             ),
             const Divider(thickness: 0.1, indent: 20, endIndent: 20),
             const Padding(

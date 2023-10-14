@@ -17,8 +17,7 @@ class userInfoCRUD {
   }
 
   void deleteuserInfo() {
-    _userInfoBox.deleteAll(['username']);
-    _userInfoBox.deleteAll(['email']);
+    _userInfoBox.deleteAll(['username','email']);
   }
 }
 

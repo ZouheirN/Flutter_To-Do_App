@@ -13,30 +13,48 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _obscureText = true;
+  bool _isLoading = false;
   final _formKey = GlobalKey<FormState>();
-  final _usernameController = TextEditingController();
+  final _usernameOrEmailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  void _login() {
+  Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
-      final username = _usernameController.text.trim();
-      final password = _passwordController.text;
+      if (_isLoading) return;
+
+      setState(() {
+        _isLoading = true;
+      });
+
+      final usernameOrEmail = _usernameOrEmailController.text.trim();
+      // final password = _passwordController.text;
 
       //TODO check if credentials are correct
 
+      final bool isEmail = RegExp(
+              r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+          .hasMatch(usernameOrEmail);
+
+      if (isEmail) {
+        //TODO get username from DB
+        userInfoCRUD().writeUserInfo('', usernameOrEmail);
+      } else {
+        //TODO get email from DB
+        userInfoCRUD().writeUserInfo(usernameOrEmail, '');
+      }
+
       //TODO Check if user enabled 2FA
 
-      //Save user info to box
-      // TODO save email too (get from DB)
+      setState(() {
+        _isLoading = false;
+      });
 
-      final email = 'name@example.com';
-
-      userInfoCRUD().writeUserInfo(username, email);
-
-      Navigator.popUntil(context, (route) => route.isFirst);
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-      );
+      if (context.mounted) {
+        Navigator.popUntil(context, (route) => route.isFirst);
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+      }
     }
   }
 
@@ -79,19 +97,19 @@ class _LoginScreenState extends State<LoginScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
-                              'Username',
+                              'Username or Email',
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(height: 10),
                             TextFormField(
-                              controller: _usernameController,
+                              controller: _usernameOrEmailController,
                               decoration: const InputDecoration(
                                 contentPadding: EdgeInsets.symmetric(
                                     vertical: 20, horizontal: 20),
                                 filled: true,
                                 fillColor: Color(0xFFF4F5F7),
-                                hintText: 'Enter your username',
+                                hintText: 'Enter your username or email',
                                 border: OutlineInputBorder(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(10)),
@@ -184,6 +202,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             PrimaryButton(
                               text: 'Login',
                               onPressed: _login,
+                              isLoading: _isLoading,
                             ),
                           ],
                         ),

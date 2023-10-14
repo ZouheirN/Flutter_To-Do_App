@@ -15,21 +15,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _confirmPassController = TextEditingController();
   final _emailController = TextEditingController();
   final _usernameController = TextEditingController();
+  bool _isLoading = false;
 
-  void _register() {
+  Future<void> _register() async {
     if (_formKey.currentState!.validate()) {
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //     const SnackBar(
-      //         content: Text('Processing Data')));
+      if (_isLoading) return;
 
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => OTPScreen(
-            username: _usernameController.text.trim(),
-            email: _emailController.text.trim(),
+      setState(() {
+        _isLoading = true;
+      });
+
+      //TODO check if username and email are unique
+
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      if (context.mounted) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => OTPScreen(
+              username: _usernameController.text.trim(),
+              email: _emailController.text.trim(),
+            ),
           ),
-        ),
-      );
+        );
+      }
     }
   }
 
@@ -242,6 +254,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             PrimaryButton(
                               text: 'Register',
                               onPressed: _register,
+                              isLoading: _isLoading,
                             ),
                           ],
                         ),

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/screens/welcome_screen.dart';
+import 'package:todo_app/services/user_info_crud.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   void _logout(BuildContext context) {
+    userInfoCRUD().deleteuserInfo();
+
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (context) => const WelcomeScreen(),
@@ -27,9 +30,9 @@ class SettingsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            const Text(
-              'Name',
-              style: TextStyle(
+            Text(
+              userInfoCRUD().getUsername(),
+              style: const TextStyle(
                 fontSize: 26,
                 fontWeight: FontWeight.bold,
               ),

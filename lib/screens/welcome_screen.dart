@@ -52,7 +52,7 @@ class WelcomeScreen extends StatelessWidget {
             PrimaryButton(text: 'Register', onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (context) => const OTPScreen()),
+                    builder: (context) => const RegisterScreen()),
               );
             }),
             const SizedBox(height: 200),

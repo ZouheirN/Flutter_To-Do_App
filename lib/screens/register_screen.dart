@@ -11,8 +11,10 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _pass = TextEditingController();
-  final TextEditingController _confirmPass = TextEditingController();
+  final _passController = TextEditingController();
+  final _confirmPassController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _usernameController = TextEditingController();
 
   void _register() {
     if (_formKey.currentState!.validate()) {
@@ -20,12 +22,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
       //     const SnackBar(
       //         content: Text('Processing Data')));
 
-      //TODO send OTP
-
       Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const OTPScreen()),
+        MaterialPageRoute(
+          builder: (context) => OTPScreen(
+            username: _usernameController.text.trim(),
+            email: _emailController.text.trim(),
+          ),
+        ),
       );
-
     }
   }
 
@@ -70,6 +74,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             const SizedBox(height: 10),
                             TextFormField(
+                              controller: _usernameController,
                               decoration: const InputDecoration(
                                 contentPadding: EdgeInsets.symmetric(
                                     vertical: 20, horizontal: 20),
@@ -111,6 +116,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             const SizedBox(height: 10),
                             TextFormField(
+                              controller: _emailController,
                               decoration: const InputDecoration(
                                 contentPadding: EdgeInsets.symmetric(
                                     vertical: 20, horizontal: 20),
@@ -152,7 +158,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             const SizedBox(height: 10),
                             TextFormField(
-                              controller: _pass,
+                              controller: _passController,
                               obscureText: true,
                               decoration: const InputDecoration(
                                 contentPadding: EdgeInsets.symmetric(
@@ -180,7 +186,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   return 'Password must be at least 8 characters';
                                 }
 
-                                if (value != _confirmPass.text) {
+                                if (value != _confirmPassController.text) {
                                   return 'Password does not match';
                                 }
 
@@ -195,7 +201,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             const SizedBox(height: 10),
                             TextFormField(
-                              controller: _confirmPass,
+                              controller: _confirmPassController,
                               obscureText: true,
                               decoration: const InputDecoration(
                                 contentPadding: EdgeInsets.symmetric(
@@ -219,7 +225,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   return 'Please enter your password';
                                 }
 
-                                if (value != _pass.text) {
+                                if (value != _passController.text) {
                                   return 'Password does not match';
                                 }
 

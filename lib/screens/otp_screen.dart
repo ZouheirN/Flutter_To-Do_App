@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
+import 'package:todo_app/services/user_info_crud.dart';
 
 import 'home_screen.dart';
 
 class OTPScreen extends StatefulWidget {
-  const OTPScreen({super.key});
+  final String username;
+  final String email;
+
+  const OTPScreen({super.key, required this.username, required this.email});
 
   @override
   State<OTPScreen> createState() => _OTPScreenState();
@@ -15,11 +19,12 @@ class OTPScreen extends StatefulWidget {
 
 class _OTPScreenState extends State<OTPScreen> {
   String _status = '';
-
   bool _isCountDownFinished = false;
 
   void _requestOTP() {
     // TODO logic for requesting OTP
+
+    print('OTP Sent for ${widget.email}');
 
     setState(() {
       _isCountDownFinished = false;
@@ -35,6 +40,9 @@ class _OTPScreenState extends State<OTPScreen> {
 
     //Delay for 2 sec
     Future.delayed(const Duration(seconds: 2), () {
+      //Save data to userInfo
+      userInfoCRUD().writeUserInfo(widget.username, widget.email);
+
       Navigator.popUntil(context, (route) => route.isFirst);
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const HomeScreen()),
@@ -43,6 +51,12 @@ class _OTPScreenState extends State<OTPScreen> {
       //   _status = 'Wrong OTP. Try again';
       // });
     });
+  }
+
+  @override
+  void initState() {
+    _requestOTP();
+    super.initState();
   }
 
   @override

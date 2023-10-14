@@ -1,20 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todo_app/screens/home_screen.dart';
 import 'package:todo_app/screens/welcome_screen.dart';
 
-void main() {
+Future<void> main() async {
+  await Hive.initFlutter();
+
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     systemNavigationBarColor: Colors.white,
     systemNavigationBarDividerColor: Colors.white,
     systemNavigationBarContrastEnforced: false,
   ));
 
-  runApp(const MyApp());
+  var userInfoBox = await Hive.openBox('userInfo');
+
+  // print(userInfoBox.containsKey('username'));
+  // print(userInfoBox.get('username'));
+
+  runApp(MyApp(isLoggedIn: userInfoBox.containsKey('username')));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isLoggedIn;
+
+  const MyApp({
+    super.key,
+    required this.isLoggedIn,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +43,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const WelcomeScreen(),
+      home: isLoggedIn ? const HomeScreen() : const WelcomeScreen(),
     );
   }
 }
-

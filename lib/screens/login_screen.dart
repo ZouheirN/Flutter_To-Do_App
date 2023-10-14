@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/services/user_info_crud.dart';
 import 'package:todo_app/widgets/buttons.dart';
 
 import 'home_screen.dart';
@@ -13,17 +14,28 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   bool _obscureText = true;
   final _formKey = GlobalKey<FormState>();
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   void _login() {
     if (_formKey.currentState!.validate()) {
+      final username = _usernameController.text.trim();
+      final password = _passwordController.text;
+
       //TODO check if credentials are correct
 
       //TODO Check if user enabled 2FA
 
+      //Save user info to box
+      // TODO save email too (get from DB)
+
+      final email = 'name@example.com';
+
+      userInfoCRUD().writeUserInfo(username, email);
+
       Navigator.popUntil(context, (route) => route.isFirst);
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-            builder: (context) => const HomeScreen()),
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
     }
   }
@@ -73,6 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             const SizedBox(height: 10),
                             TextFormField(
+                              controller: _usernameController,
                               decoration: const InputDecoration(
                                 contentPadding: EdgeInsets.symmetric(
                                     vertical: 20, horizontal: 20),
@@ -114,6 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             const SizedBox(height: 10),
                             TextFormField(
+                              controller: _passwordController,
                               obscureText: _obscureText,
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.symmetric(

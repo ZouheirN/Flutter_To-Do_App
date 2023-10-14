@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:todo_app/screens/home_screen.dart';
 import 'package:todo_app/screens/welcome_screen.dart';
 
 void main() {
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    systemNavigationBarColor: Colors.white,
+    systemNavigationBarDividerColor: Colors.white,
+  ));
+
   runApp(const MyApp());
 }
 
@@ -13,7 +19,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        // colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF11594B)),
         colorScheme: const ColorScheme.light(
           primary: Color(0xFF24A09B),
           // secondary: Color(0xFF24A09B),

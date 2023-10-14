@@ -1,36 +1,70 @@
 import 'package:flutter/material.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:todo_app/screens/group_tasks_screen.dart';
+import 'package:todo_app/screens/individual_tasks_screen.dart';
+import 'package:todo_app/screens/otp_screen.dart';
+import 'package:todo_app/screens/welcome_screen.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _HomeScreenState extends State<HomeScreen> {
+
+  int _selectedIndex = 0;
+
+  static const List<Widget> _widgetOptions = <Widget>[
+    IndividualTasksScreen(),
+    GroupTasksScreen(),
+    WelcomeScreen(),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        // title: Text(widget.title),
-        centerTitle: true,
-      ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-          ],
+      bottomNavigationBar: Container(
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          child: GNav(
+            backgroundColor: Colors.white,
+            color: Colors.grey,
+            activeColor: Theme.of(context).primaryColor,
+            tabBackgroundColor: Colors.grey.shade200,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            gap: 8,
+            selectedIndex: _selectedIndex,
+            onTabChange: (index) {
+              setState(() {
+                _selectedIndex = index;
+              });
+            },
+            tabs: const [
+              GButton(
+                icon: Icons.person,
+                text: 'Individual Tasks',
+              ),
+              GButton(
+                icon: Icons.group,
+                text: 'Group Tasks',
+              ),
+              GButton(
+                icon: Icons.settings,
+                text: 'Settings',
+              ),
+            ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      body: _widgetOptions.elementAt(_selectedIndex),
+      floatingActionButton: (_selectedIndex == 0 || _selectedIndex == 1) ? FloatingActionButton(
         onPressed: () {},
-        tooltip: 'Increment',
+        tooltip: 'Add Todo',
         child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ) : null,
     );
   }
 }

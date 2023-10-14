@@ -18,6 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
         appBar: AppBar(
           title: const Text('Login'),
+          centerTitle: true,
         ),
         body: SafeArea(
           child: CustomScrollView(
@@ -130,16 +131,38 @@ class _LoginScreenState extends State<LoginScreen> {
                                   return null;
                                 },
                               ),
+                              const SizedBox(height: 10),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  TextButton(
+                                    child: Text(
+                                      'Forgot Password?',
+                                      style: TextStyle(
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      //TODO Forgot Password
+                                    },
+                                  ),
+                                ],
+                              ),
                               const Spacer(),
-                              const SizedBox(height: 20,),
-                              PrimaryButton(text: 'Login', onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                        builder: (context) => const OTPScreen()),
-                                  );
-                                }
-                              }),
+                              const SizedBox(height: 20),
+                              PrimaryButton(
+                                  text: 'Login',
+                                  onPressed: () {
+                                    //TODO Check if user enabled 2FA
+
+                                    if (_formKey.currentState!.validate()) {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const OTPScreen()),
+                                      );
+                                    }
+                                  }),
                             ],
                           ),
                         ),

@@ -16,7 +16,10 @@ class _OTPScreenState extends State<OTPScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('One-Time Password')),
+      appBar: AppBar(
+        title: const Text('One-Time Password'),
+        centerTitle: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/screens/otp_screen.dart';
 import 'package:todo_app/widgets/buttons.dart';
 
 import 'home_screen.dart';
@@ -16,20 +15,17 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
 
   void _login() {
-    //TODO Check if user enabled 2FA
+    if (_formKey.currentState!.validate()) {
+      //TODO check if credentials are correct
 
-    Navigator.of(context).push(
-      MaterialPageRoute(
-          builder: (context) => const HomeScreen()),
-    );
+      //TODO Check if user enabled 2FA
 
-    // if (_formKey.currentState!.validate()) {
-    //   Navigator.of(context).push(
-    //     MaterialPageRoute(
-    //         builder: (context) =>
-    //         const OTPScreen()),
-    //   );
-    // }
+      Navigator.popUntil(context, (route) => route.isFirst);
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+            builder: (context) => const HomeScreen()),
+      );
+    }
   }
 
   void _forgetPassword() {

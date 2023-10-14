@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/screens/welcome_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
+
+  void _logout(BuildContext context) {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => const WelcomeScreen(),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +53,7 @@ class SettingsScreen extends StatelessWidget {
               trailing: const Icon(Icons.arrow_forward_ios),
               title: const Text('Log Out'),
               textColor: Colors.grey[800],
+              onTap: () => _logout(context),
             ),
           ],
         ),

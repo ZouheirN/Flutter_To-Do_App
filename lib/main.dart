@@ -7,6 +7,7 @@ void main() {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     systemNavigationBarColor: Colors.white,
     systemNavigationBarDividerColor: Colors.white,
+    systemNavigationBarContrastEnforced: false,
   ));
 
   runApp(const MyApp());

@@ -1,7 +1,10 @@
+import 'package:count_down_time/count_down_time.dart';
 import 'package:flutter/material.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
+
+import 'home_screen.dart';
 
 class OTPScreen extends StatefulWidget {
   const OTPScreen({super.key});
@@ -12,6 +15,35 @@ class OTPScreen extends StatefulWidget {
 
 class _OTPScreenState extends State<OTPScreen> {
   String _status = '';
+
+  bool _isCountDownFinished = false;
+
+  void _requestOTP() {
+    // TODO logic for requesting OTP
+
+    setState(() {
+      _isCountDownFinished = false;
+    });
+  }
+
+  void _checkOTP(pin) {
+    setState(() {
+      _status = 'Checking OTP...';
+    });
+
+    //TODO logic for checking OTP
+
+    //Delay for 2 sec
+    Future.delayed(const Duration(seconds: 2), () {
+      Navigator.popUntil(context, (route) => route.isFirst);
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
+      // setState(() {
+      //   _status = 'Wrong OTP. Try again';
+      // });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,11 +63,11 @@ class _OTPScreenState extends State<OTPScreen> {
                 style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 20),
-              const Text(
-                'You email starts with: ',
-                style: TextStyle(fontSize: 16),
-              ),
+              // const SizedBox(height: 20),
+              // const Text(
+              //   'You email starts with: ',
+              //   style: TextStyle(fontSize: 16),
+              // ),
               const SizedBox(height: 100),
               OTPTextField(
                 length: 5,
@@ -59,20 +91,7 @@ class _OTPScreenState extends State<OTPScreen> {
                     });
                   }
                 },
-                onCompleted: (pin) {
-                  setState(() {
-                    _status = 'Checking OTP...';
-                  });
-
-                  //TODO logic for checking OTP
-
-                  //Delay for 2 sec
-                  Future.delayed(const Duration(seconds: 2), () {
-                    setState(() {
-                      _status = 'Wrong OTP. Try again';
-                    });
-                  });
-                },
+                onCompleted: _checkOTP,
               ),
               const SizedBox(height: 50),
               Text(
@@ -85,6 +104,41 @@ class _OTPScreenState extends State<OTPScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+              const SizedBox(height: 100),
+              if (_isCountDownFinished == false)
+                const Text(
+                  'Didn\'t receive the OTP? You can request another one in',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 18,
+                    // fontWeight: FontWeight.bold,
+                  ),
+                )
+              else
+                TextButton(
+                  onPressed: _requestOTP,
+                  child: Text(
+                    'Request a new OTP',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).primaryColor),
+                  ),
+                ),
+              if (_isCountDownFinished == false)
+                CountDownTime.minutes(
+                  onTimeOut: () {
+                    setState(() {
+                      _isCountDownFinished = true;
+                    });
+                  },
+                  timeStartInMinutes: 1,
+                  textStyle: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                )
             ],
           ),
         ),

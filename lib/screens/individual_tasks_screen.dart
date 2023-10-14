@@ -27,12 +27,21 @@ class IndividualTasksScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 20),
-            TaskCard(color: Theme.of(context).primaryColor,),
-            TaskCard(color: Theme.of(context).primaryColor,),
-            TaskCard(color: Theme.of(context).primaryColor,),
-            TaskCard(color: Theme.of(context).primaryColor,),
-            TaskCard(color: Theme.of(context).primaryColor,),
-
+            TaskCard(
+              color: Theme.of(context).primaryColor,
+            ),
+            TaskCard(
+              color: Theme.of(context).primaryColor,
+            ),
+            TaskCard(
+              color: Theme.of(context).primaryColor,
+            ),
+            TaskCard(
+              color: Theme.of(context).primaryColor,
+            ),
+            TaskCard(
+              color: Theme.of(context).primaryColor,
+            ),
           ],
         ),
       ),

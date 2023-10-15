@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/services/user_info_crud.dart';
 import 'package:todo_app/widgets/buttons.dart';
+import 'package:todo_app/widgets/textfields.dart';
 
 class AccountSettingsScreen extends StatefulWidget {
   const AccountSettingsScreen({super.key});
@@ -29,30 +30,14 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
         child: ListView(
           children: [
             const Text(
-              'Full Name',
+              'Username',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 10),
-            const TextField(
-              decoration: InputDecoration(
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                filled: true,
-                fillColor: Color(0xFFF4F5F7),
-                hintText: 'Full Name',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                  borderSide: BorderSide(color: Color(0xFFDEE3EB), width: 2),
-                ),
-              ),
-              enabled: false,
-            ),
+            PrimaryTextField(hintText: UserInfoCRUD().getUsername(), enabled: false),
             const SizedBox(height: 20),
             const Text(
               'Email',
@@ -62,23 +47,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               ),
             ),
             const SizedBox(height: 10),
-            const TextField(
-              decoration: InputDecoration(
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                filled: true,
-                fillColor: Color(0xFFF4F5F7),
-                hintText: 'name@example.com',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                  borderSide: BorderSide(color: Color(0xFFDEE3EB), width: 2),
-                ),
-              ),
-              enabled: false,
-            ),
+            PrimaryTextField(hintText: UserInfoCRUD().getEmail(), enabled: false),
             const SizedBox(height: 20),
             const Text(
               'Password',

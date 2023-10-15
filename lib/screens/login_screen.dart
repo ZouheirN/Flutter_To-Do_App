@@ -53,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
 
       //TODO Check if user enabled 2FA
-      bool? is2FAEnabled;
+      bool? is2FAEnabled = false;
 
       setState(() {
         _isLoading = false;

@@ -3,6 +3,7 @@ import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:todo_app/widgets/buttons.dart';
+import 'package:todo_app/widgets/textfields.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -72,22 +73,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10),
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                  filled: true,
-                  fillColor: Color(0xFFF4F5F7),
-                  hintText: 'Enter your email',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    borderSide: BorderSide(color: Color(0xFFDEE3EB), width: 2),
-                  ),
-                ),
+              PrimaryTextField(
+                textController: _emailController,
+                hintText: 'Enter your email',
               ),
               const SizedBox(height: 20),
               if (!_OTPSent)

@@ -3,9 +3,11 @@ import 'package:hive/hive.dart';
 class UserInfoCRUD {
   final _userInfoBox = Hive.box('userInfo');
 
-  void writeUserInfo(String username, String email) {
+  void setUserInfo(String username, String email) {
     _userInfoBox.put('username', username);
     _userInfoBox.put('email', email);
+
+    //todo add userid, 2fa setting, picture,
   }
 
   String getUsername() {

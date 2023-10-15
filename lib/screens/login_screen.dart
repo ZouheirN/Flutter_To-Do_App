@@ -64,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       } else {
         //Save data to userInfo
-        UserInfoCRUD().writeUserInfo(usernameOrEmail, '');
+        UserInfoCRUD().setUserInfo(usernameOrEmail, '');
         if (context.mounted) {
           Navigator.popUntil(context, (route) => route.isFirst);
           Navigator.of(context).pushReplacement(

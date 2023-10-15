@@ -12,7 +12,6 @@ Future<void> main() async {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     systemNavigationBarColor: Colors.white,
     systemNavigationBarDividerColor: Colors.white,
-    // systemNavigationBarContrastEnforced: false,
   ));
 
   var userInfoBox = await Hive.openBox('userInfo');
@@ -24,14 +23,14 @@ Future<void> main() async {
   runApp(
     MyApp(
       isOnboardFinished: onboard.containsKey('finished'),
-      isLoggedIn: userInfoBox.containsKey('username') ?? false,
+      isLoggedIn: userInfoBox.containsKey('username'),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  final bool isLoggedIn;
   final bool isOnboardFinished;
+  final bool isLoggedIn;
 
   const MyApp({
     super.key,

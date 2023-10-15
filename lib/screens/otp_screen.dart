@@ -39,18 +39,21 @@ class _OTPScreenState extends State<OTPScreen> {
     //TODO if OTP is correct, get all the other user info from DB
 
     //Delay for 2 sec
-    Future.delayed(const Duration(seconds: 2), () {
-      //Save data to userInfo
-      UserInfoCRUD().writeUserInfo(widget.username, widget.email);
+    Future.delayed(
+      const Duration(seconds: 2),
+      () {
+        //Save data to userInfo
+        UserInfoCRUD().setUserInfo(widget.username, widget.email);
 
-      Navigator.popUntil(context, (route) => route.isFirst);
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-      );
-      // setState(() {
-      //   _status = 'Wrong OTP. Try again';
-      // });
-    });
+        Navigator.popUntil(context, (route) => route.isFirst);
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+        // setState(() {
+        //   _status = 'Wrong OTP. Try again';
+        // });
+      },
+    );
   }
 
   @override

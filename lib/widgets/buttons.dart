@@ -31,3 +31,37 @@ class PrimaryButton extends StatelessWidget {
     );
   }
 }
+
+class SecondaryButton extends StatelessWidget {
+  final String text;
+  final Function onPressed;
+  final bool isLoading;
+
+  const SecondaryButton(
+      {super.key,
+        required this.text,
+        required this.onPressed,
+        this.isLoading = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () => onPressed(),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFFFDFDFD),
+        minimumSize: const Size(double.infinity, 60),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: const BorderSide(color: Color(0xFFDEE3EB), width: 2),
+        ),
+        elevation: 0,
+      ),
+      child: isLoading
+          ? const CircularProgressIndicator(
+        color: Colors.white,
+      )
+          : Text(text,
+          style: const TextStyle(fontSize: 20, color: Color(0xFF757D8B))),
+    );
+  }
+}

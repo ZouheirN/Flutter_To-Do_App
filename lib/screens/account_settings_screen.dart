@@ -16,7 +16,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   @override
   void initState() {
     super.initState();
-    is2FAEnabled = UserInfoCRUD().getUsername() == 'zouheir';
+    is2FAEnabled = UserInfoCRUD().get2FAEnabled();
   }
 
   @override

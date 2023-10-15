@@ -1,4 +1,4 @@
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class UserInfoCRUD {
   final _userInfoBox = Hive.box('userInfo');
@@ -18,8 +18,13 @@ class UserInfoCRUD {
     return _userInfoBox.get('email');
   }
 
+  bool get2FAEnabled() {
+    return true;
+    // return _userInfoBox.get('2fa_enabled');
+  }
+
   void deleteUserInfo() {
-    _userInfoBox.deleteAll(['username','email']);
+    _userInfoBox.deleteAll(['username','email','2fa_enabled']);
   }
 }
 

@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:todo_app/screens/group_tasks_screen.dart';
 import 'package:todo_app/screens/individual_tasks_screen.dart';
-import 'package:todo_app/screens/otp_screen.dart';
 import 'package:todo_app/screens/settings_screen.dart';
-import 'package:todo_app/screens/welcome_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,7 +12,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   int _selectedIndex = 0;
 
   static const List<Widget> _widgetOptions = <Widget>[
@@ -61,14 +58,16 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       body: _widgetOptions.elementAt(_selectedIndex),
-      floatingActionButton: (_selectedIndex == 0 || _selectedIndex == 1) ? FloatingActionButton(
-        onPressed: () {},
-        tooltip: 'Add Todo',
-        hoverColor: const Color(0xFF096B67),
-        focusColor: const Color(0xFF24A09B),
-        splashColor: const Color(0xFF064E4B),
-        child: const Icon(Icons.add),
-      ) : null,
+      floatingActionButton: (_selectedIndex == 0 || _selectedIndex == 1)
+          ? FloatingActionButton(
+              onPressed: () {},
+              tooltip: 'Add Todo',
+              hoverColor: const Color(0xFF096B67),
+              focusColor: const Color(0xFF24A09B),
+              splashColor: const Color(0xFF064E4B),
+              child: const Icon(Icons.add),
+            )
+          : null,
     );
   }
 }

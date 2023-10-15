@@ -60,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
       });
 
       // if user enabled 2fa, then move to otp. If not, then save userInfo and move to home
-      if (is2FAEnabled!) {
+      if (is2FAEnabled) {
         if (context.mounted) {
           Navigator.of(context).push(
             MaterialPageRoute(
@@ -88,6 +88,13 @@ class _LoginScreenState extends State<LoginScreen> {
   void _forgetPassword() {
     Navigator.of(context).push(
         MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()));
+  }
+
+  @override
+  void dispose() {
+    _usernameOrEmailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   @override

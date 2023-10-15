@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../widgets/card.dart';
 import '../widgets/skeleton_shimmer.dart';
 
@@ -12,14 +13,22 @@ class GroupTasksScreen extends StatefulWidget {
 class _GroupTasksScreenState extends State<GroupTasksScreen> {
   late bool _isLoading;
 
-  @override
-  void initState() {
-    _isLoading = true;
+  void getData() async {
+    //TODO get data from DB
+
     Future.delayed(const Duration(seconds: 2), () {
+      if (!mounted) return;
+
       setState(() {
         _isLoading = false;
       });
     });
+  }
+
+  @override
+  void initState() {
+    _isLoading = true;
+    getData();
     super.initState();
   }
 

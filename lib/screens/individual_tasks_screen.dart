@@ -16,8 +16,9 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
   void getData() async {
     //TODO get data from DB
 
-
     Future.delayed(const Duration(seconds: 2), () {
+      if (!mounted) return;
+
       setState(() {
         _isLoading = false;
       });

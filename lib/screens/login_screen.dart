@@ -1,4 +1,8 @@
+import 'dart:math';
+
+import 'package:bcrypt/bcrypt.dart';
 import 'package:flutter/material.dart';
+import 'package:todo_app/screens/forgot_password_screen.dart';
 import 'package:todo_app/screens/otp_screen.dart';
 import 'package:todo_app/services/user_info_crud.dart';
 import 'package:todo_app/widgets/buttons.dart';
@@ -28,7 +32,13 @@ class _LoginScreenState extends State<LoginScreen> {
       });
 
       final usernameOrEmail = _usernameOrEmailController.text.trim();
-      // final password = _passwordController.text;
+      final password = _passwordController.text;
+
+      // Hash the password
+      final String hashedPassword = BCrypt.hashpw(
+          password, BCrypt.gensalt(secureRandom: Random(password.length)));
+      print('Password: $password');
+      print('Hashed Password: $hashedPassword');
 
       //TODO check if credentials are correct
 
@@ -43,16 +53,16 @@ class _LoginScreenState extends State<LoginScreen> {
       }
 
       //TODO Check if user enabled 2FA
-      bool is2FAEnabled = true;
+      bool? is2FAEnabled;
 
       setState(() {
         _isLoading = false;
       });
 
       // if user enabled 2fa, then move to otp. If not, then save userInfo and move to home
-      if (is2FAEnabled) {
+      if (is2FAEnabled!) {
         if (context.mounted) {
-          Navigator.of(context).pushReplacement(
+          Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => OTPScreen(
                 username: usernameOrEmail,
@@ -76,7 +86,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _forgetPassword() {
-    //TODO Forgot Password
+    Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()));
   }
 
   @override

@@ -34,7 +34,7 @@ class PrimaryButton extends StatelessWidget {
 
 class SecondaryButton extends StatelessWidget {
   final String text;
-  final Function onPressed;
+  final Function? onPressed;
   final bool isLoading;
 
   const SecondaryButton(
@@ -46,7 +46,7 @@ class SecondaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () => onPressed(),
+      onPressed: onPressed == null ? null : () => onPressed!(),
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xFFFDFDFD),
         minimumSize: const Size(double.infinity, 60),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/screens/otp_screen.dart';
 import 'package:todo_app/screens/register_screen.dart';
 import 'package:todo_app/widgets/buttons.dart';
 
@@ -39,6 +38,9 @@ class WelcomeScreen extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(height: 90),
+            Image.asset('assets/images/logo.png',
+                height: 200, width: 200, fit: BoxFit.contain),
             const Spacer(),
             PrimaryButton(
                 text: 'Login',
@@ -49,13 +51,37 @@ class WelcomeScreen extends StatelessWidget {
                   );
                 }),
             const SizedBox(height: 20),
-            PrimaryButton(text: 'Register', onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                    builder: (context) => const RegisterScreen()),
-              );
-            }),
-            const SizedBox(height: 200),
+            Row(children: [
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.only(left: 5, right: 15),
+                  child: const Divider(
+                    color: Color(0xFFDEE3EB),
+                    height: 10,
+                  ),
+                ),
+              ),
+              const Text('or', style: TextStyle(color: Color(0xFF757D8B))),
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.only(left: 15, right: 5),
+                  child: const Divider(
+                    color: Color(0xFFDEE3EB),
+                    height: 10,
+                  ),
+                ),
+              ),
+            ]),
+            const SizedBox(height: 20),
+            PrimaryButton(
+                text: 'Register',
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (context) => const RegisterScreen()),
+                  );
+                }),
+            const SizedBox(height: 100),
           ],
         ),
       ),

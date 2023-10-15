@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/screens/otp_screen.dart';
 import 'package:todo_app/services/user_info_crud.dart';
 import 'package:todo_app/widgets/buttons.dart';
 
@@ -37,23 +38,39 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (isEmail) {
         //TODO get username from DB
-        userInfoCRUD().writeUserInfo('', usernameOrEmail);
       } else {
         //TODO get email from DB
-        userInfoCRUD().writeUserInfo(usernameOrEmail, '');
       }
 
       //TODO Check if user enabled 2FA
+      bool is2FAEnabled = true;
 
       setState(() {
         _isLoading = false;
       });
 
-      if (context.mounted) {
-        Navigator.popUntil(context, (route) => route.isFirst);
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-        );
+      // if user enabled 2fa, then move to otp. If not, then save userInfo and move to home
+      if (is2FAEnabled) {
+        if (context.mounted) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => OTPScreen(
+                username: usernameOrEmail,
+                // TODO get email from DB
+                email: '',
+              ),
+            ),
+          );
+        }
+      } else {
+        //Save data to userInfo
+        UserInfoCRUD().writeUserInfo(usernameOrEmail, '');
+        if (context.mounted) {
+          Navigator.popUntil(context, (route) => route.isFirst);
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+          );
+        }
       }
     }
   }

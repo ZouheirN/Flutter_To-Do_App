@@ -36,10 +36,12 @@ class _OTPScreenState extends State<OTPScreen> {
 
     //TODO logic for checking OTP
 
+    //TODO if OTP is correct, get all the other user info from DB
+
     //Delay for 2 sec
     Future.delayed(const Duration(seconds: 2), () {
       //Save data to userInfo
-      userInfoCRUD().writeUserInfo(widget.username, widget.email);
+      UserInfoCRUD().writeUserInfo(widget.username, widget.email);
 
       Navigator.popUntil(context, (route) => route.isFirst);
       Navigator.of(context).pushReplacement(

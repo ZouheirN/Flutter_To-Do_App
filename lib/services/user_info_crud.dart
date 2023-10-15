@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 
-class userInfoCRUD {
+class UserInfoCRUD {
   final _userInfoBox = Hive.box('userInfo');
 
   void writeUserInfo(String username, String email) {
@@ -16,7 +16,7 @@ class userInfoCRUD {
     return _userInfoBox.get('email');
   }
 
-  void deleteuserInfo() {
+  void deleteUserInfo() {
     _userInfoBox.deleteAll(['username','email']);
   }
 }

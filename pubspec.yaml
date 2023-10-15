@@ -40,6 +40,7 @@ dependencies:
   count_down_time: ^0.0.8
   hive:
   hive_flutter:
+  introduction_screen: ^3.1.12
 
 dev_dependencies:
   flutter_test:

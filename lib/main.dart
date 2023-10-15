@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todo_app/screens/home_screen.dart';
+import 'package:todo_app/screens/onboarding_screen.dart';
 import 'package:todo_app/screens/welcome_screen.dart';
 
 Future<void> main() async {
@@ -15,18 +16,26 @@ Future<void> main() async {
   ));
 
   var userInfoBox = await Hive.openBox('userInfo');
+  var onboard = await Hive.openBox('onboard');
 
   // print(userInfoBox.containsKey('username'));
   // print(userInfoBox.get('username'));
 
-  runApp(MyApp(isLoggedIn: userInfoBox.containsKey('username')));
+  runApp(
+    MyApp(
+      isOnboardFinished: onboard.containsKey('finished'),
+      isLoggedIn: userInfoBox.containsKey('username') ?? false,
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
   final bool isLoggedIn;
+  final bool isOnboardFinished;
 
   const MyApp({
     super.key,
+    required this.isOnboardFinished,
     required this.isLoggedIn,
   });
 
@@ -43,7 +52,11 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: isLoggedIn ? const HomeScreen() : const WelcomeScreen(),
+      home: isOnboardFinished
+          ? isLoggedIn
+              ? const HomeScreen()
+              : const WelcomeScreen()
+          : const OnboardingScreen(),
     );
   }
 }

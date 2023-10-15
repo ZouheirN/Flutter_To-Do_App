@@ -7,7 +7,7 @@ class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   void _logout(BuildContext context) {
-    userInfoCRUD().deleteuserInfo();
+    UserInfoCRUD().deleteUserInfo();
 
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
@@ -40,7 +40,7 @@ class SettingsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              userInfoCRUD().getUsername(),
+              UserInfoCRUD().getUsername(),
               style: const TextStyle(
                 fontSize: 26,
                 fontWeight: FontWeight.bold,

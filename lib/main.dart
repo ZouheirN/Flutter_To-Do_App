@@ -9,10 +9,10 @@ import 'package:todo_app/screens/welcome_screen.dart';
 Future<void> main() async {
   await Hive.initFlutter();
 
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    systemNavigationBarColor: Colors.white,
-    systemNavigationBarDividerColor: Colors.white,
-  ));
+  // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+  //   systemNavigationBarColor: Colors.white,
+  //   systemNavigationBarDividerColor: Colors.white,
+  // ));
 
   var userInfoBox = await Hive.openBox('userInfo');
   var onboard = await Hive.openBox('onboard');

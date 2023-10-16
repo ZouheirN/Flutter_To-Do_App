@@ -7,7 +7,7 @@ class UserInfoCRUD {
     _userInfoBox.put('username', username);
     _userInfoBox.put('email', email);
 
-    //todo add userid, 2fa setting, picture,
+    //todo add userid, 2fa setting, picture, auth
   }
 
   String getUsername() {
@@ -21,6 +21,14 @@ class UserInfoCRUD {
   bool get2FAEnabled() {
     return true;
     // return _userInfoBox.get('2fa_enabled');
+  }
+
+  bool getAuthEnabled() {
+    return _userInfoBox.get('auth_enabled') ?? false;
+  }
+
+  void setAuth(bool auth) {
+    _userInfoBox.put('auth_enabled', auth);
   }
 
   void deleteUserInfo() {

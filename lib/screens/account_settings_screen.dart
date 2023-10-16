@@ -11,12 +11,14 @@ class AccountSettingsScreen extends StatefulWidget {
 }
 
 class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
-  bool is2FAEnabled = false;
+  bool _is2FAEnabled = false;
+  bool _isAuthenticationEnabled = false;
 
   @override
   void initState() {
     super.initState();
-    is2FAEnabled = UserInfoCRUD().get2FAEnabled();
+    _is2FAEnabled = UserInfoCRUD().get2FAEnabled();
+    _isAuthenticationEnabled = UserInfoCRUD().getAuthEnabled();
   }
 
   @override
@@ -67,7 +69,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
             ListTile(
               leading: const Icon(Icons.security_outlined, color: Color(0xFF757D8B),),
               trailing: Switch(
-                value: is2FAEnabled,
+                value: _is2FAEnabled,
                 activeColor: Theme.of(context).primaryColor,
                 // thumbColor: MaterialStateProperty.all(Colors.white),
                 // inactiveThumbColor: Colors.black,
@@ -75,7 +77,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                   //TODO set 2fa in userinfo
 
                   setState(() {
-                    is2FAEnabled = value;
+                    _is2FAEnabled = value;
                   });
                 },
               ),
@@ -87,6 +89,30 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               ),
               textColor: Colors.grey[800],
             ),
+            ListTile(
+              leading: const Icon(Icons.fingerprint, color: Color(0xFF757D8B),),
+              trailing: Switch(
+                value: _isAuthenticationEnabled,
+                activeColor: Theme.of(context).primaryColor,
+                // thumbColor: MaterialStateProperty.all(Colors.white),
+                // inactiveThumbColor: Colors.black,
+                onChanged: (bool value) {
+                  UserInfoCRUD().setAuth(value);
+
+                  setState(() {
+                    _isAuthenticationEnabled = value;
+                  });
+                },
+              ),
+              title: const Text(
+                'Enable Biometric Authentication',
+                style: TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+              textColor: Colors.grey[800],
+            ),
+
             // ListTile(
             //   leading: const Icon(Icons.manage_accounts),
             //   iconColor: Colors.grey,

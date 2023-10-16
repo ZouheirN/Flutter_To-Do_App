@@ -3,6 +3,9 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:todo_app/screens/group_tasks_screen.dart';
 import 'package:todo_app/screens/individual_tasks_screen.dart';
 import 'package:todo_app/screens/settings_screen.dart';
+import 'package:todo_app/services/local_auth_api.dart';
+import 'package:todo_app/services/user_info_crud.dart';
+import 'package:todo_app/widgets/buttons.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,6 +16,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+  bool _isAuthenticated = false;
 
   static const List<Widget> _widgetOptions = <Widget>[
     IndividualTasksScreen(),
@@ -20,8 +24,54 @@ class _HomeScreenState extends State<HomeScreen> {
     SettingsScreen(),
   ];
 
+  void _authenticateOnStart() async {
+    final isAuthenticated = await LocalAuthApi.authenticate();
+
+    if (isAuthenticated) {
+      setState(() {
+        _isAuthenticated = true;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    if (UserInfoCRUD().getAuthEnabled()) {
+      _authenticateOnStart();
+    } else {
+      _isAuthenticated = true;
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (!_isAuthenticated) {
+      return Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'You have Biometric Authentication enabled. Please authenticate to continue.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                PrimaryButton(
+                    text: 'Authenticate', onPressed: _authenticateOnStart),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       bottomNavigationBar: Container(
         color: Colors.white,

@@ -3,6 +3,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 class UserInfoCRUD {
   final _userInfoBox = Hive.box('userInfo');
 
+  //TODO encrypt and decrypt
+
   void setUserInfo(String username, String email) {
     _userInfoBox.put('username', username);
     _userInfoBox.put('email', email);

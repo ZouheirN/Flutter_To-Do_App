@@ -1,4 +1,4 @@
-package com.zouheirn.todoapp.todo_app
+package com.zouheirn.todoapp
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

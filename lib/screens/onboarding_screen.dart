@@ -56,10 +56,10 @@ class OnboardingScreen extends StatelessWidget {
             ),
           ),
           PageViewModel(
-            title: 'Access Your Tasks Anywhere',
-            body: 'Your tasks are synced across all your devices!',
+            title: 'Security Is Our Number One Priority',
+            body: 'We use the latest security technologies to keep your data safe!',
             image: Image.network(
-                'https://img.freepik.com/free-vector/backup-data-recovery-keeping-files-safe-flat-composition-with-male-character-vector-illustration_98292-9042.jpg?w=826&t=st=1697353929~exp=1697354529~hmac=9dea0470de1b591eb5b4a69002fe483e62bc77c19e22c59366fcbd55e70b7e6c'),
+                'https://img.freepik.com/free-vector/cloud-computing-security-abstract-concept-illustration_335657-2105.jpg?w=740&t=st=1697555708~exp=1697556308~hmac=e90e87e2949c50294d78dadf76111205b599410b0fd9a9763da434a0f403ac09'),
             decoration: const PageDecoration(
               imagePadding: EdgeInsets.only(top: 80),
               bodyTextStyle: TextStyle(

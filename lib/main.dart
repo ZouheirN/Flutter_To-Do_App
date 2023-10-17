@@ -5,14 +5,56 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todo_app/screens/home_screen.dart';
 import 'package:todo_app/screens/onboarding_screen.dart';
 import 'package:todo_app/screens/welcome_screen.dart';
+import 'package:freerasp/freerasp.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
 
   // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
   //   systemNavigationBarColor: Colors.white,
   //   systemNavigationBarDividerColor: Colors.white,
   // ));
+
+  //freeRASP
+  // create configuration for freeRASP
+  // final config = TalsecConfig(
+  //   androidConfig: AndroidConfig(
+  //     packageName: 'com.zouheir.todoapp',
+  //     signingCertHashes: [
+  //       'AKoRu...'
+  //     ],
+  //     supportedStores: ['com.sec.android.app.samsungapps'],
+  //   ),
+  //
+  //   iosConfig: IOSConfig(
+  //     bundleIds: ['YOUR_APP_BUNDLE_ID'],
+  //     teamId: 'M8AK35...',
+  //   ),
+  //   watcherMail: 'your_mail@example.com',
+  //   isProd: false,
+  // );
+  //
+  // // Setting up callbacks
+  // final callback = ThreatCallback(
+  //     onAppIntegrity: () => print("App integrity"),
+  //     onObfuscationIssues: () => print("Obfuscation issues"),
+  //     onDebug: () => print("Debugging"),
+  //     onDeviceBinding: () => print("Device binding"),
+  //     onDeviceID: () => print("Device ID"),
+  //     onHooks: () => print("Hooks"),
+  //     onPasscode: () => print("Passcode not set"),
+  //     onPrivilegedAccess: () => print("Privileged access"),
+  //     onSecureHardwareNotAvailable: () => print("Secure hardware not available"),
+  //     onSimulator: () => print("Simulator"),
+  //     onUnofficialStore: () => print("Unofficial store")
+  // );
+  //
+  // // Attaching listener
+  // Talsec.instance.attachListener(callback);
+  //
+  // // start freeRASP
+  // await Talsec.instance.start(config);
 
   var userInfoBox = await Hive.openBox('userInfo');
   var onboard = await Hive.openBox('onboard');

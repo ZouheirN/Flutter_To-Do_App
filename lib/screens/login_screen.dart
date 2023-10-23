@@ -4,6 +4,7 @@ import 'package:bcrypt/bcrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app/screens/forgot_password_screen.dart';
 import 'package:todo_app/screens/otp_screen.dart';
+import 'package:todo_app/services/http_requests.dart';
 import 'package:todo_app/services/user_info_crud.dart';
 import 'package:todo_app/widgets/buttons.dart';
 
@@ -37,10 +38,11 @@ class _LoginScreenState extends State<LoginScreen> {
       // Hash the password
       final String hashedPassword = BCrypt.hashpw(
           password, BCrypt.gensalt(secureRandom: Random(password.length)));
-      print('Password: $password');
-      print('Hashed Password: $hashedPassword');
+      // print('Password: $password');
+      // print('Hashed Password: $hashedPassword');
 
       //TODO check if credentials are correct
+      await login(usernameOrEmail, password);
 
       final bool isEmail = RegExp(
               r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")

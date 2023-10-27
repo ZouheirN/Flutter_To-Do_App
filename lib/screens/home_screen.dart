@@ -3,6 +3,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:todo_app/screens/group_tasks_screen.dart';
 import 'package:todo_app/screens/individual_tasks_screen.dart';
 import 'package:todo_app/screens/settings_screen.dart';
+import 'package:todo_app/services/individual_tasks_crud.dart';
 import 'package:todo_app/services/local_auth_api.dart';
 import 'package:todo_app/services/user_info_crud.dart';
 import 'package:todo_app/widgets/buttons.dart';
@@ -110,7 +111,12 @@ class _HomeScreenState extends State<HomeScreen> {
       body: _widgetOptions.elementAt(_selectedIndex),
       floatingActionButton: (_selectedIndex == 0 || _selectedIndex == 1)
           ? FloatingActionButton(
-              onPressed: () {},
+              onPressed: () {
+                if (_selectedIndex == 0) {
+                  IndividualTasksCRUD().addIndividualTask('taskName', 'taskDetails');
+                } else if (_selectedIndex == 1) {
+                }
+              },
               tooltip: 'Add Todo',
               hoverColor: const Color(0xFF096B67),
               focusColor: const Color(0xFF24A09B),

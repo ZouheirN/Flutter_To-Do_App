@@ -12,16 +12,14 @@ class IndividualTasksScreen extends StatefulWidget {
 
 class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
   late bool _isLoading;
+  List _individualTasks = [];
 
   void getData() async {
     //TODO get data from DB
 
-    Future.delayed(const Duration(seconds: 2), () {
-      if (!mounted) return;
-
-      setState(() {
-        _isLoading = false;
-      });
+    if (!mounted) return;
+    setState(() {
+      _isLoading = false;
     });
   }
 
@@ -45,42 +43,37 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
               separatorBuilder: (context, index) => const SizedBox(height: 16),
               itemCount: 5,
             )
-          : SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  // const SizedBox(height: 20),
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Today',
-                        style: TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  TaskCard(
-                    color: Theme.of(context).primaryColor,
-                  ),
-                  TaskCard(
-                    color: Theme.of(context).primaryColor,
-                  ),
-                  TaskCard(
-                    color: Theme.of(context).primaryColor,
-                  ),
-                  TaskCard(
-                    color: Theme.of(context).primaryColor,
-                  ),
-                  TaskCard(
-                    color: Theme.of(context).primaryColor,
-                  ),
-                ],
+          : Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              // const SizedBox(height: 20),
+              // const Row(
+              //   mainAxisAlignment: MainAxisAlignment.start,
+              //   children: [
+              //     Text(
+              //       'Today',
+              //       style: TextStyle(
+              //         fontSize: 26,
+              //         fontWeight: FontWeight.bold,
+              //       ),
+              //     ),
+              //   ],
+              // ),
+              const SizedBox(height: 20),
+              Expanded(
+                child: ListView.builder(
+                  itemBuilder: (context, index) {
+                    return TaskCard(
+                      taskName: 'Task Name',
+                      taskDetails: 'Task Details',
+                      color: Theme.of(context).primaryColor,
+                    );
+                  },
+                  itemCount: _individualTasks.length,
+                ),
               ),
-            ),
+            ],
+          ),
     );
   }
 }

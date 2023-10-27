@@ -20,6 +20,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   bool _obscureText = true;
   bool _isLoading = false;
+  String _status = '';
   final _formKey = GlobalKey<FormState>();
   final _usernameOrEmailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -30,6 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       setState(() {
         _isLoading = true;
+        _status = '';
       });
 
       final usernameOrEmail = _usernameOrEmailController.text.trim();
@@ -42,7 +44,22 @@ class _LoginScreenState extends State<LoginScreen> {
       // print('Hashed Password: $hashedPassword');
 
       //TODO check if credentials are correct
-      await login(usernameOrEmail, password);
+      final credentialsCorrect =
+          await checkCredentials(usernameOrEmail, password);
+
+      if (credentialsCorrect == ReturnTypes.fail) {
+        setState(() {
+          _isLoading = false;
+          _status = 'Invalid Credentials';
+        });
+        return;
+      } else if (credentialsCorrect == ReturnTypes.error) {
+        setState(() {
+          _isLoading = false;
+          _status = 'An Error Occurred, Please Try Again';
+        });
+        return;
+      }
 
       final bool isEmail = RegExp(
               r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
@@ -59,6 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       setState(() {
         _isLoading = false;
+        _status = '';
       });
 
       // if user enabled 2fa, then move to otp. If not, then save userInfo and move to home
@@ -235,6 +253,17 @@ class _LoginScreenState extends State<LoginScreen> {
                               ],
                             ),
                             const Spacer(),
+                            const SizedBox(height: 20),
+                            Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                _status,
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
                             const SizedBox(height: 20),
                             PrimaryButton(
                               text: 'Login',

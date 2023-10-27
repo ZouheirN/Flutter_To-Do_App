@@ -62,15 +62,15 @@ class _GroupTasksScreenState extends State<GroupTasksScreen> {
                     ],
                   ),
                   SizedBox(height: 20),
-                  TaskCard(
-                    color: Colors.red,
-                  ),
-                  TaskCard(
-                    color: Colors.purple,
-                  ),
-                  TaskCard(
-                    color: Colors.green,
-                  ),
+                  // TaskCard(
+                  //   color: Colors.red,
+                  // ),
+                  // TaskCard(
+                  //   color: Colors.purple,
+                  // ),
+                  // TaskCard(
+                  //   color: Colors.green,
+                  // ),
                 ],
               ),
             ),

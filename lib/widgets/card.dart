@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 class TaskCard extends StatelessWidget {
+  final String taskName;
+  final String taskDetails;
   final Color color;
 
-  const TaskCard({super.key, required this.color});
+  const TaskCard({super.key, required this.color, required this.taskName, required this.taskDetails});
 
   @override
   Widget build(BuildContext context) {

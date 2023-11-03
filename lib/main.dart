@@ -4,7 +4,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todo_app/screens/home_screen.dart';
 import 'package:todo_app/screens/onboarding_screen.dart';
 import 'package:todo_app/screens/welcome_screen.dart';
-import 'package:todo_app/services/individual_tasks_crud.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,6 +14,7 @@ Future<void> main() async {
   //   systemNavigationBarDividerColor: Colors.white,
   // ));
 
+  // open boxes
   var userInfoBox = await Hive.openBox('userInfo');
   var onboard = await Hive.openBox('onboard');
   await Hive.openBox('individualTasks');

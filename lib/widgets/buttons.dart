@@ -39,9 +39,9 @@ class SecondaryButton extends StatelessWidget {
 
   const SecondaryButton(
       {super.key,
-        required this.text,
-        required this.onPressed,
-        this.isLoading = false});
+      required this.text,
+      required this.onPressed,
+      this.isLoading = false});
 
   @override
   Widget build(BuildContext context) {
@@ -58,10 +58,30 @@ class SecondaryButton extends StatelessWidget {
       ),
       child: isLoading
           ? const CircularProgressIndicator(
-        color: Colors.white,
-      )
+              color: Colors.white,
+            )
           : Text(text,
-          style: const TextStyle(fontSize: 20, color: Color(0xFF757D8B))),
+              style: const TextStyle(fontSize: 20, color: Color(0xFF757D8B))),
+    );
+  }
+}
+
+class DialogButton extends StatelessWidget {
+  final String text;
+  VoidCallback onPressed;
+
+  DialogButton({
+    super.key,
+    required this.text,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialButton(
+      onPressed: onPressed,
+      color: Theme.of(context).primaryColor,
+      child: Text(text),
     );
   }
 }

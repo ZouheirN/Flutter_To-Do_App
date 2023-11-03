@@ -1,26 +1,39 @@
+import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class IndividualTasksCRUD {
   final _individualTasksBox = Hive.box('individualTasks');
 
-  void addIndividualTask(String taskName, String taskDetails) {
-    //todo generate unique id
+  List individualTasks = [];
 
-    // _individualTasksBox.add(IndividualTask()
-    //   ..taskId = 1
-    //   ..taskName = taskName
-    //   ..taskDetails = taskDetails);
+  // void addIndividualTask(String taskName, String taskDetails, Color color) {
+  //   individualTasks.add({
+  //     'taskName': taskName,
+  //     'taskDetails': taskDetails,
+  //     'color': color.value,
+  //     'taskCompleted': false,
+  //   });
+  //   print('TASKS: $individualTasks');
+  //   //todo send to db
+  // }
 
-    //todo send to db
+  void loadIndividualTasks() {
+    individualTasks = _individualTasksBox.get("IndividualTasksList");
   }
 
-  List getAllIndividualTasks() {
-    return _individualTasksBox.values.toList();
+  void updateIndividualTasks() {
+    _individualTasksBox.put("IndividualTasksList", individualTasks);
+
+    //todo send it to db
   }
 
-  void deleteIndividualTask(int taskId) {
-    _individualTasksBox.deleteAt(taskId);
+// List getAllIndividualTasks() {
+//   return _individualTasksBox.values.toList();
+// }
 
-    //todo delete from db
-  }
+// void deleteIndividualTask(int taskId) {
+//   _individualTasksBox.deleteAt(taskId);
+//
+//   //todo delete from db
+// }
 }

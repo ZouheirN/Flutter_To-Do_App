@@ -4,8 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:todo_app/screens/login_screen.dart';
+import 'package:todo_app/screens/welcome_screen.dart';
 import 'package:todo_app/services/individual_tasks_crud.dart';
+import 'package:todo_app/services/user_info_crud.dart';
 
+import '../services/http_requests.dart';
 import '../widgets/card.dart';
 import '../widgets/dialogbox.dart';
 import '../widgets/skeleton_shimmer.dart';
@@ -107,15 +111,23 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
         ),
       ),
     );
-    await Future.delayed(const Duration(seconds: 5));
 
-    // final taskID = await addTaskToDB(
-    //     _nameController.text,
-    //     _descriptionController.text,
-    //     _priorityController.text,
-    //     _colorController.text);
+    final taskID = await addTaskToDB(
+      _nameController.text,
+      _descriptionController.text,
+      _priorityController.text,
+      _colorController.text,
+      context,
+    );
 
-    String taskID = "1";
+    if (taskID == ReturnTypes.invalidToken) {
+      UserInfoCRUD().deleteUserInfo();
+      Navigator.popUntil(context, (route) => route.isFirst);
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+      );
+      return;
+    }
 
     setState(() {
       _individualTasksCRUD.individualTasks.add({
@@ -137,7 +149,46 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
     _individualTasksCRUD.updateIndividualTasks();
   }
 
-  void deleteTask(int index) {
+  Future<void> deleteTask(int index) async {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Deleting Task', textAlign: TextAlign.center),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            LoadingAnimationWidget.staggeredDotsWave(
+              color: Theme.of(context).primaryColor,
+              size: 50,
+            ),
+          ],
+        ),
+      ),
+    );
+
+    final deleteResponse = await deleteTaskFromDB(
+        _individualTasksCRUD.individualTasks[index]['id'], context);
+
+    if (deleteResponse == ReturnTypes.invalidToken) {
+      UserInfoCRUD().deleteUserInfo();
+      Navigator.popUntil(context, (route) => route.isFirst);
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+      );
+      return;
+    }
+
+    Navigator.pop(context);
+
+    if (deleteResponse != ReturnTypes.success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Error deleting task'),
+        ),
+      );
+      return;
+    }
+
     setState(() {
       _individualTasksCRUD.individualTasks.removeAt(index);
     });

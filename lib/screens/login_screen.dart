@@ -3,7 +3,7 @@ import 'package:todo_app/screens/forgot_password_screen.dart';
 import 'package:todo_app/screens/otp_screen.dart';
 import 'package:todo_app/services/user_info_crud.dart';
 import 'package:todo_app/widgets/buttons.dart';
-
+import '../services/http_requests.dart';
 import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -39,23 +39,23 @@ class _LoginScreenState extends State<LoginScreen> {
       // print('Password: $password');
       // print('Hashed Password: $hashedPassword');
 
-      //check if credentials are correct
-      // final credentialsCorrect =
-      //     await checkCredentials(usernameOrEmail, password);
-      //
-      // if (credentialsCorrect == ReturnTypes.fail) {
-      //   setState(() {
-      //     _isLoading = false;
-      //     _status = 'Invalid Credentials';
-      //   });
-      //   return;
-      // } else if (credentialsCorrect == ReturnTypes.error) {
-      //   setState(() {
-      //     _isLoading = false;
-      //     _status = 'An Error Occurred, Please Try Again';
-      //   });
-      //   return;
-      // }
+      // check if credentials are correct
+      final credentialsCorrect =
+          await checkCredentials(usernameOrEmail, password);
+
+      if (credentialsCorrect == ReturnTypes.fail) {
+        setState(() {
+          _isLoading = false;
+          _status = 'Invalid Credentials';
+        });
+        return;
+      } else if (credentialsCorrect == ReturnTypes.error) {
+        setState(() {
+          _isLoading = false;
+          _status = 'An Error Occurred, Please Try Again';
+        });
+        return;
+      }
 
       final bool isEmail = RegExp(
               r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")

@@ -1,12 +1,12 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:todo_app/services/user_info_crud.dart';
 
 enum ReturnTypes {
   success,
   fail,
   error,
+  invalidToken,
 }
 
 final dio = Dio();
@@ -31,9 +31,8 @@ Future<dynamic> checkCredentials(
   return ReturnTypes.success;
 }
 
-Future<dynamic> addTaskToDB(String title, String description,
-    String priority, String color) async {
-
+Future<dynamic> addTaskToDB(String title, String description, String priority,
+    String color, BuildContext context) async {
   final token = UserInfoCRUD().getToken();
 
   try {
@@ -47,16 +46,49 @@ Future<dynamic> addTaskToDB(String title, String description,
         "priority": priority,
         "color": color,
       },
+      options: Options(
+        headers: {
+          "Authorization": "Bearer $token",
+        },
+      ),
     );
 
-    //todo check token validation
-
-    final data = jsonDecode(response.data);
-    return data["_id"];
+    print(response.data);
+    return response.data["_id"];
   } on DioException catch (e) {
     if (e.response == null) return ReturnTypes.error;
 
     print('Error: ${e.response!.data}');
+    if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+      return ReturnTypes.invalidToken;
+    }
+    return ReturnTypes.fail;
+  }
+}
+
+Future<dynamic> deleteTaskFromDB(String taskId, BuildContext context) async {
+  final token = UserInfoCRUD().getToken();
+
+  try {
+    await dio.delete(
+      'https://todobuddy.onrender.com/api/task/$taskId',
+      options: Options(
+        headers: {
+          "Authorization": "Bearer $token",
+        },
+      ),
+    );
+
+    return ReturnTypes.success;
+  } on DioException catch (e) {
+    if (e.response == null) return ReturnTypes.error;
+
+    print('Error: ${e.response!.data}');
+
+    if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+      return ReturnTypes.invalidToken;
+    }
+
     return ReturnTypes.fail;
   }
 }

@@ -48,7 +48,10 @@ dependencies:
   dio: ^5.3.3
   flutter_slidable: ^3.0.1
   flutter_material_color_picker: ^1.2.0
-#  flutter_windowmanager: ^0.2.0
+  flutter_windowmanager: ^0.2.0
+  animated_toggle_switch: ^0.8.0
+  animated_custom_dropdown: ^2.0.0
+  loading_animation_widget: ^1.2.0+4
 
 dev_dependencies:
   flutter_test:

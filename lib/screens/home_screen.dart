@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'package:flutter_windowmanager/flutter_windowmanager.dart';
+import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:todo_app/screens/group_tasks_screen.dart';
 import 'package:todo_app/screens/individual_tasks_screen.dart';
@@ -21,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _widgetOptions = [
     IndividualTasksScreen(),
-    const GroupTasksScreen(),
+    // const GroupTasksScreen(),
     const SettingsScreen(),
   ];
 
@@ -42,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
     } else {
       _isAuthenticated = true;
     }
-    // await FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
+    FlutterWindowManager.clearFlags(FlutterWindowManager.FLAG_SECURE);
     super.initState();
   }
 
@@ -84,8 +84,8 @@ class _HomeScreenState extends State<HomeScreen> {
             color: Colors.grey,
             activeColor: Theme.of(context).primaryColor,
             tabBackgroundColor: Colors.grey.shade200,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            gap: 8,
+            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+            gap: 6,
             selectedIndex: _selectedIndex,
             onTabChange: (index) {
               setState(() {
@@ -95,12 +95,12 @@ class _HomeScreenState extends State<HomeScreen> {
             tabs: const [
               GButton(
                 icon: Icons.person,
-                text: 'Individual Tasks',
+                text: 'Tasks',
               ),
-              GButton(
-                icon: Icons.group,
-                text: 'Group Tasks',
-              ),
+              // GButton(
+              //   icon: Icons.group,
+              //   text: 'Group Tasks',
+              // ),
               GButton(
                 icon: Icons.settings,
                 text: 'Settings',

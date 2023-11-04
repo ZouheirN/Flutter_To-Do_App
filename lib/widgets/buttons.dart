@@ -68,19 +68,21 @@ class SecondaryButton extends StatelessWidget {
 
 class DialogButton extends StatelessWidget {
   final String text;
+  final int? color;
   VoidCallback onPressed;
 
   DialogButton({
     super.key,
     required this.text,
     required this.onPressed,
+    this.color,
   });
 
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
       onPressed: onPressed,
-      color: Theme.of(context).primaryColor,
+      color: color == null ? Theme.of(context).primaryColor : Color(color!),
       child: Text(text),
     );
   }

@@ -1,12 +1,15 @@
+import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 class TaskCard extends StatelessWidget {
+  final String taskId;
   final String taskName;
   final String taskDetails;
   final int color;
-  final bool taskCompleted;
-  Function(bool?)? onChanged;
+  final String taskStatus;
+  final String priority;
+  Function(int?)? onChanged;
   Function(BuildContext)? deleteFunction;
 
   TaskCard({
@@ -14,10 +17,25 @@ class TaskCard extends StatelessWidget {
     required this.color,
     required this.taskName,
     required this.taskDetails,
-    required this.taskCompleted,
+    required this.taskStatus,
     required this.onChanged,
     required this.deleteFunction,
+    required this.priority,
+    required this.taskId,
   });
+
+  int priorityToInt(String priority) {
+    switch (priority) {
+      case 'Low':
+        return 0;
+      case 'Medium':
+        return 1;
+      case 'High':
+        return 2;
+      default:
+        return 0;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +63,7 @@ class TaskCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                height: 40,
+                height: 60,
                 decoration: BoxDecoration(
                   color: Color(color),
                   borderRadius: const BorderRadius.only(
@@ -65,24 +83,43 @@ class TaskCard extends StatelessWidget {
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          decoration: taskCompleted
+                          decoration: taskStatus == 'Finished'
                               ? TextDecoration.lineThrough
                               : TextDecoration.none,
                         ),
                       ),
-                      Checkbox(
-                        value: taskCompleted,
+                      AnimatedToggleSwitch<int>.size(
+                        current: priorityToInt(priority),
                         onChanged: onChanged,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(2.0),
+                        loading: false,
+                        values: const [0, 1, 2],
+                        spacing: 5,
+                        selectedIconScale: 0.8,
+                        iconList: const [
+                          Icon(Icons.hourglass_empty,
+                              size: 30, color: Colors.red),
+                          Icon(Icons.hourglass_full,
+                              size: 30, color: Colors.orange),
+                          Icon(Icons.check_circle,
+                              size: 30, color: Colors.green),
+                        ],
+                        style: const ToggleStyle(
+                          borderColor: Color(0xFFDEE3EB),
                         ),
-                        side: MaterialStateBorderSide.resolveWith(
-                          (states) =>
-                              const BorderSide(width: 1.0, color: Colors.white),
-                        ),
-                        activeColor: Colors.white,
-                        checkColor: Color(color),
-                      ),
+                      )
+                      // Checkbox(
+                      //   value: taskCompleted,
+                      //   onChanged: onChanged,
+                      //   shape: RoundedRectangleBorder(
+                      //     borderRadius: BorderRadius.circular(2.0),
+                      //   ),
+                      //   side: MaterialStateBorderSide.resolveWith(
+                      //     (states) =>
+                      //         const BorderSide(width: 1.0, color: Colors.white),
+                      //   ),
+                      //   activeColor: Colors.white,
+                      //   checkColor: Color(color),
+                      // ),
                     ],
                   ),
                 ),

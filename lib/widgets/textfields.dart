@@ -46,3 +46,41 @@ class _PrimaryTextFieldState extends State<PrimaryTextField> {
     );
   }
 }
+
+
+class DialogTextField extends StatefulWidget {
+  final TextEditingController? textController;
+  final String hintText;
+
+  const DialogTextField({
+    super.key,
+    this.textController,
+    required this.hintText,
+  });
+
+  @override
+  State<DialogTextField> createState() => _DialogTextFieldState();
+}
+
+class _DialogTextFieldState extends State<DialogTextField> {
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: widget.textController,
+      decoration: InputDecoration(
+        contentPadding:
+        const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+        filled: true,
+        fillColor: const Color(0xFFF4F5F7),
+        hintText: widget.hintText,
+        border: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+        ),
+        enabledBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderSide: BorderSide(color: Color(0xFFDEE3EB), width: 2),
+        ),
+      ),
+    );
+  }
+}

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:todo_app/screens/group_tasks_screen.dart';
 import 'package:todo_app/screens/individual_tasks_screen.dart';
 import 'package:todo_app/screens/settings_screen.dart';
 import 'package:todo_app/services/local_auth_api.dart';
@@ -94,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
             },
             tabs: const [
               GButton(
-                icon: Icons.person,
+                icon: Icons.checklist_rounded,
                 text: 'Tasks',
               ),
               // GButton(

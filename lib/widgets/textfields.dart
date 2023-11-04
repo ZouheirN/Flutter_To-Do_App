@@ -51,11 +51,12 @@ class _PrimaryTextFieldState extends State<PrimaryTextField> {
 class DialogTextField extends StatefulWidget {
   final TextEditingController? textController;
   final String hintText;
+  final String? Function(String?)? validator;
 
   const DialogTextField({
     super.key,
     this.textController,
-    required this.hintText,
+    required this.hintText, required this.validator,
   });
 
   @override
@@ -67,6 +68,7 @@ class _DialogTextFieldState extends State<DialogTextField> {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: widget.textController,
+      validator: widget.validator,
       decoration: InputDecoration(
         contentPadding:
         const EdgeInsets.symmetric(vertical: 20, horizontal: 20),

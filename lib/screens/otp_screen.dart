@@ -43,7 +43,7 @@ class _OTPScreenState extends State<OTPScreen> {
       const Duration(seconds: 2),
       () {
         //Save data to userInfo
-        UserInfoCRUD().setUserInfo(widget.username, widget.email);
+        // UserInfoCRUD().setUserInfo(widget.username, widget.email);
 
         Navigator.popUntil(context, (route) => route.isFirst);
         Navigator.of(context).pushReplacement(

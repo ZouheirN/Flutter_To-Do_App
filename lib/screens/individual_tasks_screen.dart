@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:todo_app/services/individual_tasks_crud.dart';
 
 import '../widgets/card.dart';
@@ -7,7 +11,7 @@ import '../widgets/dialogbox.dart';
 import '../widgets/skeleton_shimmer.dart';
 
 class IndividualTasksScreen extends StatefulWidget {
-  IndividualTasksScreen({
+  const IndividualTasksScreen({
     super.key,
   });
 
@@ -16,9 +20,9 @@ class IndividualTasksScreen extends StatefulWidget {
 }
 
 class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
+  bool isFabVisible = true;
   late bool _isLoading;
 
-  // late bool _isEmpty = false;
   final _individualTasksBox = Hive.box('individualTasks');
   final IndividualTasksCRUD _individualTasksCRUD = IndividualTasksCRUD();
 
@@ -27,9 +31,10 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
   final _descriptionController = TextEditingController();
   final _colorController = TextEditingController();
   final _priorityController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   void getData() async {
-    await Future.delayed(const Duration(seconds: 1));
+    // todo get data from db
 
     if (_individualTasksBox.get('IndividualTasksList') == null) {
       if (!mounted) return;
@@ -45,17 +50,17 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
     }
   }
 
-  void statusChanged(int? value, int index) {
-    String priority = 'Low';
-    if (value == 1) priority = 'Medium';
-    if (value == 2) priority = 'High';
+  Future<FutureOr<void>> statusChanged(int? value, int index) async {
+    String status = 'Unfinished';
+    if (value == 1) status = 'In Progress';
+    if (value == 2) status = 'Finished';
 
     //todo send it to db
-
+    await Future.delayed(const Duration(seconds: 1));
     //todo wait for response
 
     setState(() {
-      _individualTasksCRUD.individualTasks[index]['priority'] = priority;
+      _individualTasksCRUD.individualTasks[index]['status'] = status;
     });
     _individualTasksCRUD.updateIndividualTasks();
   }
@@ -68,16 +73,47 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
         descriptionController: _descriptionController,
         colorController: _colorController,
         priorityController: _priorityController,
-        onAdd: () => addNewTask(),
-        onCancel: () => Navigator.pop(context),
+        formKey: _formKey,
+        onAdd: () => addNewTask(context),
+        onCancel: () => onCancel(context),
       ),
     );
   }
 
-  void addNewTask() {
-    //todo send it to db
+  void onCancel(BuildContext context) {
+    Navigator.pop(context);
+    _nameController.clear();
+    _descriptionController.clear();
+    _colorController.clear();
+    _priorityController.clear();
+  }
 
-    //todo get id from db
+  Future<void> addNewTask(BuildContext context) async {
+    final isFormValid = _formKey.currentState!.validate();
+    if (!isFormValid) return;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Adding', textAlign: TextAlign.center),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            LoadingAnimationWidget.staggeredDotsWave(
+              color: Theme.of(context).primaryColor,
+              size: 50,
+            ),
+          ],
+        ),
+      ),
+    );
+    await Future.delayed(const Duration(seconds: 5));
+
+    // final taskID = await addTaskToDB(
+    //     _nameController.text,
+    //     _descriptionController.text,
+    //     _priorityController.text,
+    //     _colorController.text);
 
     String taskID = "1";
 
@@ -87,12 +123,16 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
         'title': _nameController.text,
         'description': _descriptionController.text,
         'color': _colorController.text,
-        'priority': _priorityController.text,
+        'priority':
+            _priorityController.text == '' ? 'Low' : _priorityController.text,
         'status': 'Unfinished',
       });
       _nameController.clear();
       _descriptionController.clear();
+      _colorController.clear();
+      _priorityController.clear();
     });
+    Navigator.pop(context);
     Navigator.pop(context);
     _individualTasksCRUD.updateIndividualTasks();
   }
@@ -119,19 +159,19 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          createNewTask();
-        },
-        tooltip: 'Add Todo',
-        hoverColor: const Color(0xFF096B67),
-        focusColor: const Color(0xFF24A09B),
-        splashColor: const Color(0xFF064E4B),
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: isFabVisible
+          ? FloatingActionButton(
+              onPressed: () {
+                createNewTask();
+              },
+              tooltip: 'Add Todo',
+              hoverColor: const Color(0xFF096B67),
+              focusColor: const Color(0xFF24A09B),
+              splashColor: const Color(0xFF064E4B),
+              child: const Icon(Icons.add),
+            )
+          : null,
       body: Padding(
         padding: const EdgeInsets.only(top: 40, left: 20, right: 20),
         child: _isLoading
@@ -162,30 +202,46 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
                   // ),
                   // const SizedBox(height: 20),
                   Expanded(
-                    child: ListView.builder(
-                      itemBuilder: (context, index) {
-                        int colorInt = int.parse(
-                            _individualTasksCRUD.individualTasks[index]
-                                ['color'],
-                            radix: 16);
+                    child: NotificationListener<UserScrollNotification>(
+                      onNotification: (notification) {
+                        if (notification.direction == ScrollDirection.forward) {
+                          if (!isFabVisible) {
+                            setState(() => isFabVisible = true);
+                          }
+                        } else if (notification.direction ==
+                            ScrollDirection.reverse) {
+                          if (isFabVisible) {
+                            setState(() => isFabVisible = false);
+                          }
+                        }
 
-                        return TaskCard(
-                          taskName: _individualTasksCRUD.individualTasks[index]
-                              ['title'],
-                          taskDetails: _individualTasksCRUD
-                              .individualTasks[index]['description'],
-                          color: colorInt,
-                          taskStatus: _individualTasksCRUD
-                              .individualTasks[index]['status'],
-                          priority: _individualTasksCRUD.individualTasks[index]
-                              ['priority'],
-                          taskId: _individualTasksCRUD.individualTasks[index]
-                              ['id'],
-                          onChanged: (value) => statusChanged(value, index),
-                          deleteFunction: (context) => deleteTask(index),
-                        );
+                        return true;
                       },
-                      itemCount: _individualTasksCRUD.individualTasks.length,
+                      child: ListView.builder(
+                        itemBuilder: (context, index) {
+                          int colorInt = int.parse(
+                              _individualTasksCRUD.individualTasks[index]
+                                  ['color'],
+                              radix: 16);
+
+                          return TaskCard(
+                            taskName: _individualTasksCRUD
+                                .individualTasks[index]['title'],
+                            taskDetails: _individualTasksCRUD
+                                .individualTasks[index]['description'],
+                            color: colorInt,
+                            taskStatus: _individualTasksCRUD
+                                .individualTasks[index]['status'],
+                            priority: _individualTasksCRUD
+                                .individualTasks[index]['priority'],
+                            taskId: _individualTasksCRUD.individualTasks[index]
+                                ['id'],
+                            onChanged: (value) => statusChanged(value, index),
+                            deleteFunction: (context) => deleteTask(index),
+                          );
+                        },
+                        itemCount: _individualTasksCRUD.individualTasks.length,
+                      ),
                     ),
                   ),
                 ],

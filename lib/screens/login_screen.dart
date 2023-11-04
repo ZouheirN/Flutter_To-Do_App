@@ -1,10 +1,6 @@
-import 'dart:math';
-
-import 'package:bcrypt/bcrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app/screens/forgot_password_screen.dart';
 import 'package:todo_app/screens/otp_screen.dart';
-import 'package:todo_app/services/http_requests.dart';
 import 'package:todo_app/services/user_info_crud.dart';
 import 'package:todo_app/widgets/buttons.dart';
 
@@ -38,28 +34,28 @@ class _LoginScreenState extends State<LoginScreen> {
       final password = _passwordController.text;
 
       // Hash the password
-      final String hashedPassword = BCrypt.hashpw(
-          password, BCrypt.gensalt(secureRandom: Random(password.length)));
+      // final String hashedPassword = BCrypt.hashpw(
+      //     password, BCrypt.gensalt(secureRandom: Random(password.length)));
       // print('Password: $password');
       // print('Hashed Password: $hashedPassword');
 
-      //TODO check if credentials are correct
-      final credentialsCorrect =
-          await checkCredentials(usernameOrEmail, password);
-
-      if (credentialsCorrect == ReturnTypes.fail) {
-        setState(() {
-          _isLoading = false;
-          _status = 'Invalid Credentials';
-        });
-        return;
-      } else if (credentialsCorrect == ReturnTypes.error) {
-        setState(() {
-          _isLoading = false;
-          _status = 'An Error Occurred, Please Try Again';
-        });
-        return;
-      }
+      //check if credentials are correct
+      // final credentialsCorrect =
+      //     await checkCredentials(usernameOrEmail, password);
+      //
+      // if (credentialsCorrect == ReturnTypes.fail) {
+      //   setState(() {
+      //     _isLoading = false;
+      //     _status = 'Invalid Credentials';
+      //   });
+      //   return;
+      // } else if (credentialsCorrect == ReturnTypes.error) {
+      //   setState(() {
+      //     _isLoading = false;
+      //     _status = 'An Error Occurred, Please Try Again';
+      //   });
+      //   return;
+      // }
 
       final bool isEmail = RegExp(
               r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
@@ -94,7 +90,14 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       } else {
         //Save data to userInfo
-        UserInfoCRUD().setUserInfo(usernameOrEmail, '');
+        UserInfoCRUD().setUserInfo(
+          username: usernameOrEmail,
+          email: '',
+          is2FAEnabled: false,
+          isBiometricAuthEnabled: false,
+          token: '',
+        );
+
         if (context.mounted) {
           Navigator.popUntil(context, (route) => route.isFirst);
           Navigator.of(context).pushReplacement(

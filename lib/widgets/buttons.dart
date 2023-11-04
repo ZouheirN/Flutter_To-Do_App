@@ -69,9 +69,9 @@ class SecondaryButton extends StatelessWidget {
 class DialogButton extends StatelessWidget {
   final String text;
   final int? color;
-  VoidCallback onPressed;
+  final VoidCallback onPressed;
 
-  DialogButton({
+  const DialogButton({
     super.key,
     required this.text,
     required this.onPressed,
@@ -80,10 +80,17 @@ class DialogButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialButton(
+    return ElevatedButton(
       onPressed: onPressed,
-      color: color == null ? Theme.of(context).primaryColor : Color(color!),
-      child: Text(text),
+      style: ElevatedButton.styleFrom(
+        minimumSize: const Size(100, 45),
+        backgroundColor:
+            color == null ? Theme.of(context).primaryColor : Color(color!),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+      ),
+      child: Text(text, style: const TextStyle(color: Colors.white)),
     );
   }
 }

@@ -3,11 +3,18 @@ import 'package:hive_flutter/hive_flutter.dart';
 class UserInfoCRUD {
   final _userInfoBox = Hive.box('userInfo');
 
-  void setUserInfo(String username, String email) {
+  Future<void> setUserInfo({
+    required String username,
+    required String email,
+    required bool is2FAEnabled,
+    required bool isBiometricAuthEnabled,
+    required String token,
+  }) async {
     _userInfoBox.put('username', username);
     _userInfoBox.put('email', email);
-
-    //todo add userid, 2fa setting, picture, auth
+    _userInfoBox.put('2fa_enabled', is2FAEnabled);
+    _userInfoBox.put('auth_enabled', isBiometricAuthEnabled);
+    _userInfoBox.put('token', token);
   }
 
   String getUsername() {
@@ -19,8 +26,7 @@ class UserInfoCRUD {
   }
 
   bool get2FAEnabled() {
-    return true;
-    // return _userInfoBox.get('2fa_enabled');
+    return _userInfoBox.get('2fa_enabled');
   }
 
   bool getAuthEnabled() {
@@ -31,8 +37,17 @@ class UserInfoCRUD {
     _userInfoBox.put('auth_enabled', auth);
   }
 
+  String getToken() {
+    return _userInfoBox.get('token');
+  }
+
   void deleteUserInfo() {
-    _userInfoBox.deleteAll(['username','email','2fa_enabled']);
+    _userInfoBox.deleteAll([
+      'username',
+      'email',
+      '2fa_enabled',
+      'auth_enabled',
+      'token',
+    ]);
   }
 }
-

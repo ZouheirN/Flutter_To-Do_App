@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -9,10 +11,10 @@ class TaskCard extends StatelessWidget {
   final int color;
   final String taskStatus;
   final String priority;
-  Function(int?)? onChanged;
-  Function(BuildContext)? deleteFunction;
+  final FutureOr<void> Function(int)? onChanged;
+  final Function(BuildContext)? deleteFunction;
 
-  TaskCard({
+  const TaskCard({
     super.key,
     required this.color,
     required this.taskName,
@@ -24,13 +26,13 @@ class TaskCard extends StatelessWidget {
     required this.taskId,
   });
 
-  int priorityToInt(String priority) {
-    switch (priority) {
-      case 'Low':
+  int statusToInt(String status) {
+    switch (status) {
+      case 'Unfinished':
         return 0;
-      case 'Medium':
+      case 'In Progress':
         return 1;
-      case 'High':
+      case 'Finished':
         return 2;
       default:
         return 0;
@@ -85,26 +87,28 @@ class TaskCard extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                           decoration: taskStatus == 'Finished'
                               ? TextDecoration.lineThrough
-                              : TextDecoration.none,
+                              : taskStatus == 'In Progress'
+                                  ? TextDecoration.underline
+                                  : TextDecoration.none,
                         ),
                       ),
-                      AnimatedToggleSwitch<int>.size(
-                        current: priorityToInt(priority),
+                      AnimatedToggleSwitch<int>.rolling(
+                        current: statusToInt(taskStatus),
                         onChanged: onChanged,
-                        loading: false,
                         values: const [0, 1, 2],
-                        spacing: 5,
-                        selectedIconScale: 0.8,
+                        spacing: 0,
                         iconList: const [
-                          Icon(Icons.hourglass_empty,
+                          Icon(Icons.hourglass_empty_rounded,
                               size: 30, color: Colors.red),
-                          Icon(Icons.hourglass_full,
+                          Icon(Icons.hourglass_top_rounded,
                               size: 30, color: Colors.orange),
-                          Icon(Icons.check_circle,
+                          Icon(Icons.check_circle_rounded,
                               size: 30, color: Colors.green),
                         ],
                         style: const ToggleStyle(
                           borderColor: Color(0xFFDEE3EB),
+                          backgroundColor: Color(0xFFF4F5F7),
+                          // indicatorColor: Theme.of(context).primaryColor.,
                         ),
                       )
                       // Checkbox(
@@ -129,13 +133,13 @@ class TaskCard extends StatelessWidget {
                 // subtitle: Text('Task Details'),
               ),
               const Divider(thickness: 0.1, indent: 20, endIndent: 20),
-              const Padding(
-                padding: EdgeInsets.only(left: 20, right: 20, bottom: 10),
+              Padding(
+                padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Date'),
-                    Text('Some options'),
+                    const Text('Date'),
+                    Text('Priority: $priority'),
                   ],
                 ),
               ),

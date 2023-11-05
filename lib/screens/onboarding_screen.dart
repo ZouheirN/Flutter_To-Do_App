@@ -24,7 +24,7 @@ class OnboardingScreen extends StatelessWidget {
         },
         pages: [
           PageViewModel(
-            title: 'Welcome to ToDo Buddy',
+            title: 'Welcome To ToDo Buddy',
             body: 'Are you ready to manage your tasks? Let\'s get started!',
             image: Image.network(
                 'https://img.freepik.com/free-vector/personal-goals-checklist-concept-illustration_114360-13205.jpg?w=740&t=st=1699182839~exp=1699183439~hmac=2a5aebba537b4078d0a93efe2916dc5b9fad61ec1b2775e063c1d948d08d25c5'),

@@ -44,22 +44,22 @@ class _LoginScreenState extends State<LoginScreen> {
       // print('Hashed Password: $hashedPassword');
 
       // check if credentials are correct and get token
-      // final token =
-      //     await checkCredentialsAndGetToken(usernameOrEmail, hashedPassword);
-      //
-      // if (token == ReturnTypes.fail) {
-      //   setState(() {
-      //     _isLoading = false;
-      //     _status = 'Invalid Credentials';
-      //   });
-      //   return;
-      // } else if (token == ReturnTypes.error) {
-      //   setState(() {
-      //     _isLoading = false;
-      //     _status = 'An Error Occurred, Please Try Again';
-      //   });
-      //   return;
-      // }
+      final token =
+          await checkCredentialsAndGetToken(usernameOrEmail, hashedPassword);
+
+      if (token == ReturnTypes.fail) {
+        setState(() {
+          _isLoading = false;
+          _status = 'Invalid Credentials';
+        });
+        return;
+      } else if (token == ReturnTypes.error) {
+        setState(() {
+          _isLoading = false;
+          _status = 'An Error Occurred, Please Try Again';
+        });
+        return;
+      }
 
       final bool isEmail = RegExp(
               r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")

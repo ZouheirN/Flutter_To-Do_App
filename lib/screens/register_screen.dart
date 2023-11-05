@@ -1,3 +1,4 @@
+import 'package:fancy_password_field/fancy_password_field.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app/screens/otp_screen.dart';
 import 'package:todo_app/widgets/buttons.dart';
@@ -12,6 +13,7 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final _passController = TextEditingController();
+  final FancyPasswordController _passwordValidatorController = FancyPasswordController();
   final _confirmPassController = TextEditingController();
   final _emailController = TextEditingController();
   final _usernameController = TextEditingController();
@@ -26,7 +28,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       });
 
       //TODO check if username and email are unique
-
 
       setState(() {
         _isLoading = false;
@@ -178,9 +179,63 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(height: 10),
-                            TextFormField(
+                            FancyPasswordField(
                               controller: _passController,
-                              obscureText: true,
+                              passwordController: _passwordValidatorController,
+                              validationRules: {
+                                DigitValidationRule(),
+                                UppercaseValidationRule(),
+                                LowercaseValidationRule(),
+                                SpecialCharacterValidationRule(),
+                                MinCharactersValidationRule(8),
+                              },
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your password';
+                                }
+
+                                return _passwordValidatorController.areAllRulesValidated
+                                    ? null
+                                    : 'Please validate all rules';
+                              },
+                              validationRuleBuilder: (rules, value) {
+                                return SizedBox(
+                                  height: 120,
+                                  child: ListView(
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    children: rules.map(
+                                      (rule) {
+                                        final ruleValidated =
+                                            rule.validate(value);
+                                        return Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                              ruleValidated
+                                                  ? Icons.check
+                                                  : Icons.close,
+                                              color: ruleValidated
+                                                  ? Colors.green
+                                                  : Colors.red,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              rule.name,
+                                              style: TextStyle(
+                                                color: ruleValidated
+                                                    ? Colors.green
+                                                    : Colors.red,
+                                              ),
+                                            )
+                                          ],
+                                        );
+                                      },
+                                    ).toList(),
+                                  ),
+                                );
+                              },
                               decoration: const InputDecoration(
                                 contentPadding: EdgeInsets.symmetric(
                                     vertical: 20, horizontal: 20),
@@ -198,21 +253,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       color: Color(0xFFDEE3EB), width: 2),
                                 ),
                               ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter your password';
-                                }
-
-                                if (value.length < 8) {
-                                  return 'Password must be at least 8 characters';
-                                }
-
-                                if (value != _confirmPassController.text) {
-                                  return 'Password does not match';
-                                }
-
-                                return null;
-                              },
                             ),
                             const SizedBox(height: 20),
                             const Text(

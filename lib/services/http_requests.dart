@@ -1,6 +1,17 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app/services/user_info_crud.dart';
+import 'package:todo_app/widgets/global_snackbar.dart';
+import '../screens/welcome_screen.dart';
+
+void invalidTokenResponse(BuildContext context) {
+  UserInfoCRUD().deleteUserInfo();
+  Navigator.popUntil(context, (route) => route.isFirst);
+  Navigator.of(context).pushReplacement(
+    MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+  );
+  showGlobalSnackBar('Your session has expired. Please log in again.');
+}
 
 enum ReturnTypes {
   success,
@@ -24,7 +35,6 @@ Future<dynamic> checkCredentials(
   } on DioException catch (e) {
     if (e.response == null) return ReturnTypes.error;
 
-    print('Error: ${e.response!.data}');
     return ReturnTypes.fail;
   }
 
@@ -54,11 +64,11 @@ Future<dynamic> addTaskToDB(String title, String description, String priority,
     );
 
     print(response.data);
-    return response.data["_id"];
+
+    return [response.data["_id"], response.data["createdAt"]];
   } on DioException catch (e) {
     if (e.response == null) return ReturnTypes.error;
 
-    print('Error: ${e.response!.data}');
     if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
       return ReturnTypes.invalidToken;
     }
@@ -82,8 +92,6 @@ Future<dynamic> deleteTaskFromDB(String taskId, BuildContext context) async {
     return ReturnTypes.success;
   } on DioException catch (e) {
     if (e.response == null) return ReturnTypes.error;
-
-    print('Error: ${e.response!.data}');
 
     if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
       return ReturnTypes.invalidToken;

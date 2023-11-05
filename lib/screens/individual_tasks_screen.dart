@@ -4,14 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:todo_app/screens/login_screen.dart';
-import 'package:todo_app/screens/welcome_screen.dart';
+import 'package:pull_to_refresh_plus/pull_to_refresh_plus.dart';
 import 'package:todo_app/services/individual_tasks_crud.dart';
-import 'package:todo_app/services/user_info_crud.dart';
 
 import '../services/http_requests.dart';
 import '../widgets/card.dart';
 import '../widgets/dialogbox.dart';
+import '../widgets/global_snackbar.dart';
 import '../widgets/skeleton_shimmer.dart';
 
 class IndividualTasksScreen extends StatefulWidget {
@@ -24,8 +23,11 @@ class IndividualTasksScreen extends StatefulWidget {
 }
 
 class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
-  bool isFabVisible = true;
+  bool _isFabVisible = true;
   late bool _isLoading;
+
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
 
   final _individualTasksBox = Hive.box('individualTasks');
   final IndividualTasksCRUD _individualTasksCRUD = IndividualTasksCRUD();
@@ -37,9 +39,16 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
   final _priorityController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  void getData() async {
-    // todo get data from db
+  void _onRefresh() async {
+    // monitor network fetch
+    await Future.delayed(const Duration(milliseconds: 1000));
+    // if failed,use refreshFailed()
+    _refreshController.refreshCompleted();
 
+    //todo get data from db
+  }
+
+  void getData() async {
     if (_individualTasksBox.get('IndividualTasksList') == null) {
       if (!mounted) return;
       setState(() {
@@ -112,7 +121,7 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
       ),
     );
 
-    final taskID = await addTaskToDB(
+    final taskIdAndDate = await addTaskToDB(
       _nameController.text,
       _descriptionController.text,
       _priorityController.text,
@@ -120,24 +129,21 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
       context,
     );
 
-    if (taskID == ReturnTypes.invalidToken) {
-      UserInfoCRUD().deleteUserInfo();
-      Navigator.popUntil(context, (route) => route.isFirst);
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const WelcomeScreen()),
-      );
+    if (taskIdAndDate == ReturnTypes.invalidToken) {
+      invalidTokenResponse(context);
       return;
     }
 
     setState(() {
       _individualTasksCRUD.individualTasks.add({
-        'id': taskID,
+        'id': taskIdAndDate[0],
         'title': _nameController.text,
         'description': _descriptionController.text,
         'color': _colorController.text,
         'priority':
             _priorityController.text == '' ? 'Low' : _priorityController.text,
         'status': 'Unfinished',
+        'creationDate': taskIdAndDate[1],
       });
       _nameController.clear();
       _descriptionController.clear();
@@ -170,22 +176,14 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
         _individualTasksCRUD.individualTasks[index]['id'], context);
 
     if (deleteResponse == ReturnTypes.invalidToken) {
-      UserInfoCRUD().deleteUserInfo();
-      Navigator.popUntil(context, (route) => route.isFirst);
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const WelcomeScreen()),
-      );
+      invalidTokenResponse(context);
       return;
     }
 
     Navigator.pop(context);
 
     if (deleteResponse != ReturnTypes.success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Error deleting task'),
-        ),
-      );
+      showGlobalSnackBar('Error deleting task. Please try again.');
       return;
     }
 
@@ -211,7 +209,7 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: isFabVisible
+      floatingActionButton: _isFabVisible
           ? FloatingActionButton(
               onPressed: () {
                 createNewTask();
@@ -256,42 +254,51 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
                     child: NotificationListener<UserScrollNotification>(
                       onNotification: (notification) {
                         if (notification.direction == ScrollDirection.forward) {
-                          if (!isFabVisible) {
-                            setState(() => isFabVisible = true);
+                          if (!_isFabVisible) {
+                            setState(() => _isFabVisible = true);
                           }
                         } else if (notification.direction ==
                             ScrollDirection.reverse) {
-                          if (isFabVisible) {
-                            setState(() => isFabVisible = false);
+                          if (_isFabVisible) {
+                            setState(() => _isFabVisible = false);
                           }
                         }
 
                         return true;
                       },
-                      child: ListView.builder(
-                        itemBuilder: (context, index) {
-                          int colorInt = int.parse(
-                              _individualTasksCRUD.individualTasks[index]
-                                  ['color'],
-                              radix: 16);
+                      child: SmartRefresher(
+                        controller: _refreshController,
+                        enablePullDown: true,
+                        header: const ClassicHeader(),
+                        onRefresh: _onRefresh,
+                        child: ListView.builder(
+                          itemBuilder: (context, index) {
+                            int colorInt = int.parse(
+                                _individualTasksCRUD.individualTasks[index]
+                                    ['color'],
+                                radix: 16);
 
-                          return TaskCard(
-                            taskName: _individualTasksCRUD
-                                .individualTasks[index]['title'],
-                            taskDetails: _individualTasksCRUD
-                                .individualTasks[index]['description'],
-                            color: colorInt,
-                            taskStatus: _individualTasksCRUD
-                                .individualTasks[index]['status'],
-                            priority: _individualTasksCRUD
-                                .individualTasks[index]['priority'],
-                            taskId: _individualTasksCRUD.individualTasks[index]
-                                ['id'],
-                            onChanged: (value) => statusChanged(value, index),
-                            deleteFunction: (context) => deleteTask(index),
-                          );
-                        },
-                        itemCount: _individualTasksCRUD.individualTasks.length,
+                            return TaskCard(
+                              taskName: _individualTasksCRUD
+                                  .individualTasks[index]['title'],
+                              taskDetails: _individualTasksCRUD
+                                  .individualTasks[index]['description'],
+                              color: colorInt,
+                              taskStatus: _individualTasksCRUD
+                                  .individualTasks[index]['status'],
+                              priority: _individualTasksCRUD
+                                  .individualTasks[index]['priority'],
+                              taskId: _individualTasksCRUD
+                                  .individualTasks[index]['id'],
+                              creationDate: _individualTasksCRUD
+                                  .individualTasks[index]['creationDate'],
+                              onChanged: (value) => statusChanged(value, index),
+                              deleteFunction: (context) => deleteTask(index),
+                            );
+                          },
+                          itemCount:
+                              _individualTasksCRUD.individualTasks.length,
+                        ),
                       ),
                     ),
                   ),

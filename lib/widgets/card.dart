@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:intl/intl.dart';
 
 class TaskCard extends StatelessWidget {
   final String taskId;
@@ -11,6 +12,7 @@ class TaskCard extends StatelessWidget {
   final int color;
   final String taskStatus;
   final String priority;
+  final String creationDate;
   final FutureOr<void> Function(int)? onChanged;
   final Function(BuildContext)? deleteFunction;
 
@@ -24,6 +26,7 @@ class TaskCard extends StatelessWidget {
     required this.deleteFunction,
     required this.priority,
     required this.taskId,
+    required this.creationDate,
   });
 
   int statusToInt(String status) {
@@ -37,6 +40,16 @@ class TaskCard extends StatelessWidget {
       default:
         return 0;
     }
+  }
+
+  String convertISO8601ToReadableString(String iso8601String) {
+    // Parse the ISO 8601 date string
+    final dateTime = DateTime.parse(iso8601String);
+
+    // Format the DateTime as a readable string
+    final formattedString = DateFormat('MMMM d, y - HH:mm').format(dateTime);
+
+    return formattedString;
   }
 
   @override
@@ -138,7 +151,7 @@ class TaskCard extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Date'),
+                    Text('${convertISO8601ToReadableString(creationDate)}'),
                     Text('Priority: $priority'),
                   ],
                 ),

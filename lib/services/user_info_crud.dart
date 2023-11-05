@@ -1,4 +1,5 @@
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:todo_app/services/user_token.dart';
 
 class UserInfoCRUD {
   final _userInfoBox = Hive.box('userInfo');
@@ -14,7 +15,7 @@ class UserInfoCRUD {
     _userInfoBox.put('email', email);
     _userInfoBox.put('2fa_enabled', is2FAEnabled);
     _userInfoBox.put('auth_enabled', isBiometricAuthEnabled);
-    _userInfoBox.put('token', token);
+    UserToken.setToken(token);
   }
 
   String getUsername() {
@@ -37,17 +38,13 @@ class UserInfoCRUD {
     _userInfoBox.put('auth_enabled', auth);
   }
 
-  String getToken() {
-    return _userInfoBox.get('token');
-  }
-
   void deleteUserInfo() {
     _userInfoBox.deleteAll([
       'username',
       'email',
       '2fa_enabled',
       'auth_enabled',
-      'token',
     ]);
+    UserToken.deleteToken();
   }
 }

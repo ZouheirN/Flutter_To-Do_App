@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app/services/user_info_crud.dart';
+import 'package:todo_app/services/user_token.dart';
 import 'package:todo_app/widgets/global_snackbar.dart';
 import '../screens/welcome_screen.dart';
 
@@ -43,7 +44,10 @@ Future<dynamic> checkCredentials(
 
 Future<dynamic> addTaskToDB(String title, String description, String priority,
     String color, BuildContext context) async {
-  final token = UserInfoCRUD().getToken();
+  final String token = await UserToken.getToken();
+  if (token == '') {
+    return ReturnTypes.invalidToken;
+  }
 
   try {
     Response response;
@@ -63,8 +67,6 @@ Future<dynamic> addTaskToDB(String title, String description, String priority,
       ),
     );
 
-    print(response.data);
-
     return [response.data["_id"], response.data["createdAt"]];
   } on DioException catch (e) {
     if (e.response == null) return ReturnTypes.error;
@@ -77,7 +79,10 @@ Future<dynamic> addTaskToDB(String title, String description, String priority,
 }
 
 Future<dynamic> deleteTaskFromDB(String taskId, BuildContext context) async {
-  final token = UserInfoCRUD().getToken();
+  final String token = await UserToken.getToken();
+  if (token == '') {
+    return ReturnTypes.invalidToken;
+  }
 
   try {
     await dio.delete(

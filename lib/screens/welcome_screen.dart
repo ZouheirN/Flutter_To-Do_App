@@ -28,7 +28,7 @@ class WelcomeScreen extends StatelessWidget {
                       ),
                     ),
                     TextSpan(
-                      text: 'Todo List App',
+                      text: 'ToDo Buddy',
                       style: TextStyle(
                         color: Theme.of(context).primaryColor,
                       ),

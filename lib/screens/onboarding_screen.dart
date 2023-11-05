@@ -24,10 +24,10 @@ class OnboardingScreen extends StatelessWidget {
         },
         pages: [
           PageViewModel(
-            title: 'Welcome to Todo App',
+            title: 'Welcome to ToDo Buddy',
             body: 'Are you ready to manage your tasks? Let\'s get started!',
             image: Image.network(
-                'https://img.freepik.com/free-vector/hand-drawn-essay-illustration_23-2150292643.jpg?w=740&t=st=1697353456~exp=1697354056~hmac=a4e73046083049bfb6697a8a233bd1c4e1c6c39108483b3bf7f6d2c526ccf3c6'),
+                'https://img.freepik.com/free-vector/personal-goals-checklist-concept-illustration_114360-13205.jpg?w=740&t=st=1699182839~exp=1699183439~hmac=2a5aebba537b4078d0a93efe2916dc5b9fad61ec1b2775e063c1d948d08d25c5'),
             decoration: const PageDecoration(
               imagePadding: EdgeInsets.only(top: 80),
               bodyTextStyle: TextStyle(
@@ -40,8 +40,8 @@ class OnboardingScreen extends StatelessWidget {
             ),
           ),
           PageViewModel(
-            title: 'Sharing Tasks',
-            body: 'You can share your tasks with your friends and family!',
+            title: 'Get Those Tasks Done!',
+            body: 'Your tasks are synced across all your devices!',
             image: Image.network(
                 'https://img.freepik.com/free-vector/task-management-abstract-concept-illustration_335657-2127.jpg?w=740&t=st=1697353835~exp=1697354435~hmac=fc8dd658c95463a95ac1ef0f4c8122dde0a673e814b9e1a20649a5d70a9e0b20'),
             decoration: const PageDecoration(

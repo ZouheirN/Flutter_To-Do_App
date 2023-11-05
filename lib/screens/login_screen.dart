@@ -43,17 +43,17 @@ class _LoginScreenState extends State<LoginScreen> {
       // print('Password: $password');
       // print('Hashed Password: $hashedPassword');
 
-      // check if credentials are correct
-      // final credentialsCorrect =
-      //     await checkCredentials(usernameOrEmail, hashedPassword);
+      // check if credentials are correct and get token
+      // final token =
+      //     await checkCredentialsAndGetToken(usernameOrEmail, hashedPassword);
       //
-      // if (credentialsCorrect == ReturnTypes.fail) {
+      // if (token == ReturnTypes.fail) {
       //   setState(() {
       //     _isLoading = false;
       //     _status = 'Invalid Credentials';
       //   });
       //   return;
-      // } else if (credentialsCorrect == ReturnTypes.error) {
+      // } else if (token == ReturnTypes.error) {
       //   setState(() {
       //     _isLoading = false;
       //     _status = 'An Error Occurred, Please Try Again';
@@ -71,8 +71,9 @@ class _LoginScreenState extends State<LoginScreen> {
         //TODO get email from DB
       }
 
-      //TODO Check if user enabled 2FA
+      //TODO Check if user enabled 2FA and auth
       bool? is2FAEnabled = false;
+      bool? isBiometricAuthEnabled = false;
 
       setState(() {
         _isLoading = false;
@@ -95,10 +96,10 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         //Save data to userInfo
         UserInfoCRUD().setUserInfo(
-          username: usernameOrEmail,
-          email: '',
-          is2FAEnabled: false,
-          isBiometricAuthEnabled: false,
+          username: 'test',
+          email: 'test',
+          is2FAEnabled: is2FAEnabled,
+          isBiometricAuthEnabled: isBiometricAuthEnabled,
           token: '',
         );
 

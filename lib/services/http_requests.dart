@@ -23,23 +23,24 @@ enum ReturnTypes {
 
 final dio = Dio();
 
-Future<dynamic> checkCredentials(
+Future<dynamic> checkCredentialsAndGetToken(
     String usernameOrEmail, String password) async {
   try {
-    await dio.post(
+    Response response;
+    response = await dio.post(
       'https://todobuddy.onrender.com/api/user/login',
       data: {
         "signature": usernameOrEmail,
         "password": password,
       },
     );
+
+    return response.data["token"];
   } on DioException catch (e) {
     if (e.response == null) return ReturnTypes.error;
 
     return ReturnTypes.fail;
   }
-
-  return ReturnTypes.success;
 }
 
 Future<dynamic> addTaskToDB(String title, String description, String priority,

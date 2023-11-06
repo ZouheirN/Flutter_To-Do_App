@@ -14,8 +14,10 @@ import '../widgets/global_snackbar.dart';
 import '../widgets/skeleton_shimmer.dart';
 
 class IndividualTasksScreen extends StatefulWidget {
+  final bool isFirstTimeLoggingIn;
+
   const IndividualTasksScreen({
-    super.key,
+    super.key, required this.isFirstTimeLoggingIn,
   });
 
   @override
@@ -40,12 +42,46 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
   final _formKey = GlobalKey<FormState>();
 
   void _onRefresh() async {
-    // monitor network fetch
-    await Future.delayed(const Duration(milliseconds: 1000));
-    // if failed,use refreshFailed()
-    _refreshController.refreshCompleted();
+    dynamic tasks = await getTasksFromDB();
 
-    //todo get data from db
+    print(tasks);
+
+    if (tasks == ReturnTypes.invalidToken) {
+      invalidTokenResponse(context);
+      return;
+    }
+
+    if (tasks == ReturnTypes.error || tasks == ReturnTypes.fail) {
+      showGlobalSnackBar('Error getting tasks. Please try again.');
+      _refreshController.refreshFailed();
+      return;
+    }
+
+    tasks = tasks as List<dynamic>;
+
+    if (tasks.isEmpty) {
+      showGlobalSnackBar('No tasks found.');
+      _refreshController.refreshFailed();
+      return;
+    }
+
+    _individualTasksCRUD.deleteAllIndividualTasks();
+
+    for (var task in tasks) {
+      _individualTasksCRUD.individualTasks.add({
+        'id': task['_id'],
+        'title': task['title'],
+        'description': task['description'],
+        'color': task['color'],
+        'priority': task['priority'],
+        'status': task['status'],
+        'creationDate': task['createdAt'],
+      });
+    }
+
+    _individualTasksCRUD.updateIndividualTasks();
+    _refreshController.refreshCompleted();
+    setState(() {});
   }
 
   void getData() async {
@@ -61,6 +97,43 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
         _isLoading = false;
       });
     }
+  }
+
+  void getDataFromDB() async {
+    dynamic tasks = await getTasksFromDB();
+
+    print(tasks);
+
+    if (tasks == ReturnTypes.invalidToken) {
+      invalidTokenResponse(context);
+      return;
+    }
+
+    if (tasks == ReturnTypes.error || tasks == ReturnTypes.fail) {
+      showGlobalSnackBar('Error getting tasks. Please try again.');
+      return;
+    }
+
+    tasks = tasks as List<dynamic>;
+
+    _individualTasksCRUD.deleteAllIndividualTasks();
+
+    for (var task in tasks) {
+      _individualTasksCRUD.individualTasks.add({
+        'id': task['_id'],
+        'title': task['title'],
+        'description': task['description'],
+        'color': task['color'],
+        'priority': task['priority'],
+        'status': task['status'],
+        'creationDate': task['createdAt'],
+      });
+    }
+
+    _individualTasksCRUD.updateIndividualTasks();
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   Future<FutureOr<void>> statusChanged(int? value, int index) async {
@@ -203,7 +276,11 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    getData();
+    if (widget.isFirstTimeLoggingIn) {
+      getDataFromDB();
+    }else {
+      getData();
+    }
   }
 
   @override

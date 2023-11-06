@@ -8,7 +8,9 @@ import 'package:todo_app/services/user_info_crud.dart';
 import 'package:todo_app/widgets/buttons.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final bool isFirstTimeLoggingIn;
+
+  const HomeScreen({super.key, required this.isFirstTimeLoggingIn});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -18,11 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   bool _isAuthenticated = false;
 
-  final List<Widget> _widgetOptions = [
-    IndividualTasksScreen(),
-    // const GroupTasksScreen(),
-    const SettingsScreen(),
-  ];
+  late List<Widget> _widgetOptions = [];
 
   void _authenticateOnStart() async {
     final isAuthenticated = await LocalAuthApi.authenticate();
@@ -36,6 +34,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    _widgetOptions = [
+      IndividualTasksScreen(
+        isFirstTimeLoggingIn: widget.isFirstTimeLoggingIn,
+      ),
+      const SettingsScreen(),
+    ];
     if (UserInfoCRUD().getAuthEnabled()) {
       _authenticateOnStart();
     } else {

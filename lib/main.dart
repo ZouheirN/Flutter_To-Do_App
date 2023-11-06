@@ -58,7 +58,9 @@ class MyApp extends StatelessWidget {
         ),
         home: isOnboardFinished
             ? isLoggedIn
-                ? const HomeScreen()
+                ? const HomeScreen(
+                    isFirstTimeLoggingIn: false,
+                  )
                 : const WelcomeScreen()
             : const OnboardingScreen(),
       ),

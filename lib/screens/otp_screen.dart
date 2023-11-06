@@ -47,7 +47,9 @@ class _OTPScreenState extends State<OTPScreen> {
 
         Navigator.popUntil(context, (route) => route.isFirst);
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(builder: (context) => const HomeScreen(
+            isFirstTimeLoggingIn: true,
+          )),
         );
         // setState(() {
         //   _status = 'Wrong OTP. Try again';

@@ -15,6 +15,7 @@ class IndividualTasksCRUD {
   }
 
   void deleteAllIndividualTasks() {
-    _individualTasksBox.delete("IndividualTasksList");
+    individualTasks = [];
+    updateIndividualTasks();
   }
 }

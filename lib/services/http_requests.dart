@@ -77,6 +77,34 @@ Future<dynamic> signUp(
   }
 }
 
+Future<dynamic> getTasksFromDB() async {
+  final String token = await UserToken.getToken();
+  if (token == '') {
+    return ReturnTypes.invalidToken;
+  }
+
+  try {
+    Response response;
+    response = await dio.get(
+      'https://todobuddy.onrender.com/api/task',
+      options: Options(
+        headers: {
+          "Authorization": "Bearer $token",
+        },
+      ),
+    );
+
+    return response.data;
+  } on DioException catch (e) {
+    if (e.response == null) return ReturnTypes.error;
+
+    if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+      return ReturnTypes.invalidToken;
+    }
+    return ReturnTypes.fail;
+  }
+}
+
 Future<dynamic> addTaskToDB(String title, String description, String priority,
     String color, BuildContext context) async {
   final String token = await UserToken.getToken();

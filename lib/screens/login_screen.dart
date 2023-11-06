@@ -66,20 +66,6 @@ class _LoginScreenState extends State<LoginScreen> {
       final is2FAEnabled = response['is2FAEnabled'];
       final isBiometricAuthEnabled = response['isBiometricAuthEnabled'];
 
-      // final bool isEmail = RegExp(
-      //         r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-      //     .hasMatch(usernameOrEmail);
-      //
-      // if (isEmail) {
-      //   //TODO get username from DB
-      // } else {
-      //   //TODO get email from DB
-      // }
-
-      // //TODO Check if user enabled 2FA and auth
-      // bool? is2FAEnabled = false;
-      // bool? isBiometricAuthEnabled = false;
-
       setState(() {
         _isLoading = false;
         _status = '';
@@ -110,7 +96,9 @@ class _LoginScreenState extends State<LoginScreen> {
         if (context.mounted) {
           Navigator.popUntil(context, (route) => route.isFirst);
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const HomeScreen()),
+            MaterialPageRoute(builder: (context) => const HomeScreen(
+              isFirstTimeLoggingIn: true,
+            )),
           );
         }
       }

@@ -67,21 +67,22 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
 
     _individualTasksCRUD.deleteAllIndividualTasks();
 
-    for (var task in tasks) {
-      _individualTasksCRUD.individualTasks.add({
-        'id': task['_id'],
-        'title': task['title'],
-        'description': task['description'],
-        'color': task['color'],
-        'priority': task['priority'],
-        'status': task['status'],
-        'creationDate': task['createdAt'],
-      });
-    }
+    setState(() {
+      for (var task in tasks) {
+        _individualTasksCRUD.individualTasks.add({
+          'id': task['_id'],
+          'title': task['title'],
+          'description': task['description'],
+          'color': task['color'],
+          'priority': task['priority'],
+          'status': task['status'],
+          'creationDate': task['createdAt'],
+        });
+      }
+    });
 
     _individualTasksCRUD.updateIndividualTasks();
     _refreshController.refreshCompleted();
-    setState(() {});
   }
 
   void getData() async {

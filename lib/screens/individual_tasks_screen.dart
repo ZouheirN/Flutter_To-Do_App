@@ -6,6 +6,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pull_to_refresh_plus/pull_to_refresh_plus.dart';
 import 'package:todo_app/services/individual_tasks_crud.dart';
+import 'package:todo_app/widgets/dialogs.dart';
 
 import '../services/http_requests.dart';
 import '../widgets/card.dart';
@@ -17,7 +18,8 @@ class IndividualTasksScreen extends StatefulWidget {
   final bool isFirstTimeLoggingIn;
 
   const IndividualTasksScreen({
-    super.key, required this.isFirstTimeLoggingIn,
+    super.key,
+    required this.isFirstTimeLoggingIn,
   });
 
   @override
@@ -67,6 +69,7 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
 
     _individualTasksCRUD.deleteAllIndividualTasks();
 
+    if (!mounted) return;
     setState(() {
       for (var task in tasks) {
         _individualTasksCRUD.individualTasks.add({
@@ -119,22 +122,23 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
 
     _individualTasksCRUD.deleteAllIndividualTasks();
 
-    for (var task in tasks) {
-      _individualTasksCRUD.individualTasks.add({
-        'id': task['_id'],
-        'title': task['title'],
-        'description': task['description'],
-        'color': task['color'],
-        'priority': task['priority'],
-        'status': task['status'],
-        'creationDate': task['createdAt'],
-      });
-    }
-
-    _individualTasksCRUD.updateIndividualTasks();
+    if (!mounted) return;
     setState(() {
+      for (var task in tasks) {
+        _individualTasksCRUD.individualTasks.add({
+          'id': task['_id'],
+          'title': task['title'],
+          'description': task['description'],
+          'color': task['color'],
+          'priority': task['priority'],
+          'status': task['status'],
+          'creationDate': task['createdAt'],
+        });
+      }
       _isLoading = false;
     });
+
+    _individualTasksCRUD.updateIndividualTasks();
   }
 
   Future<FutureOr<void>> statusChanged(int? value, int index) async {
@@ -179,21 +183,7 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
     final isFormValid = _formKey.currentState!.validate();
     if (!isFormValid) return;
 
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Adding', textAlign: TextAlign.center),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            LoadingAnimationWidget.staggeredDotsWave(
-              color: Theme.of(context).primaryColor,
-              size: 50,
-            ),
-          ],
-        ),
-      ),
-    );
+    showLoadingDialog('Adding Task', context);
 
     final taskIdAndDate = await addTaskToDB(
       _nameController.text,
@@ -230,21 +220,7 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
   }
 
   Future<void> deleteTask(int index) async {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Deleting Task', textAlign: TextAlign.center),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            LoadingAnimationWidget.staggeredDotsWave(
-              color: Theme.of(context).primaryColor,
-              size: 50,
-            ),
-          ],
-        ),
-      ),
-    );
+    showLoadingDialog('Deleting Task', context);
 
     final deleteResponse = await deleteTaskFromDB(
         _individualTasksCRUD.individualTasks[index]['id'], context);
@@ -279,7 +255,7 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
     super.didChangeDependencies();
     if (widget.isFirstTimeLoggingIn) {
       getDataFromDB();
-    }else {
+    } else {
       getData();
     }
   }

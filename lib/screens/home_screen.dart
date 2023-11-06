@@ -45,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
     } else {
       _isAuthenticated = true;
     }
-    FlutterWindowManager.clearFlags(FlutterWindowManager.FLAG_SECURE);
+    FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
     super.initState();
   }
 

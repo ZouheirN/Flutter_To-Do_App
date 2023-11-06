@@ -44,7 +44,10 @@ class TaskCard extends StatelessWidget {
 
   String convertISO8601ToReadableString(String iso8601String) {
     // Parse the ISO 8601 date string
-    final dateTime = DateTime.parse(iso8601String);
+    DateTime dateTime = DateTime.parse(iso8601String).toUtc();
+
+    // Converting to local time
+    dateTime = dateTime.toLocal();
 
     // Format the DateTime as a readable string
     final formattedString = DateFormat('MMMM d, y - HH:mm').format(dateTime);
@@ -151,7 +154,7 @@ class TaskCard extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('${convertISO8601ToReadableString(creationDate)}'),
+                    Text(convertISO8601ToReadableString(creationDate)),
                     Text('Priority: $priority'),
                   ],
                 ),

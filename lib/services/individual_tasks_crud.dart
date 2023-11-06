@@ -13,4 +13,8 @@ class IndividualTasksCRUD {
   void updateIndividualTasks() {
     _individualTasksBox.put("IndividualTasksList", individualTasks);
   }
+
+  void deleteAllIndividualTasks() {
+    _individualTasksBox.delete("IndividualTasksList");
+  }
 }

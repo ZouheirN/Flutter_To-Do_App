@@ -39,7 +39,8 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               ),
             ),
             const SizedBox(height: 10),
-            PrimaryTextField(hintText: UserInfoCRUD().getUsername(), enabled: false),
+            PrimaryTextField(
+                hintText: UserInfoCRUD().getUsername(), enabled: false),
             const SizedBox(height: 20),
             const Text(
               'Email',
@@ -49,7 +50,8 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               ),
             ),
             const SizedBox(height: 10),
-            PrimaryTextField(hintText: UserInfoCRUD().getEmail(), enabled: false),
+            PrimaryTextField(
+                hintText: UserInfoCRUD().getEmail(), enabled: false),
             const SizedBox(height: 20),
             const Text(
               'Password',
@@ -67,7 +69,10 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               endIndent: 10,
             ),
             ListTile(
-              leading: const Icon(Icons.security_outlined, color: Color(0xFF757D8B),),
+              leading: const Icon(
+                Icons.security_outlined,
+                color: Color(0xFF757D8B),
+              ),
               trailing: Switch(
                 value: _is2FAEnabled,
                 activeColor: Theme.of(context).primaryColor,
@@ -90,7 +95,10 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               textColor: Colors.grey[800],
             ),
             ListTile(
-              leading: const Icon(Icons.fingerprint, color: Color(0xFF757D8B),),
+              leading: const Icon(
+                Icons.fingerprint,
+                color: Color(0xFF757D8B),
+              ),
               trailing: Switch(
                 value: _isAuthenticationEnabled,
                 activeColor: Theme.of(context).primaryColor,
@@ -112,7 +120,25 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               ),
               textColor: Colors.grey[800],
             ),
-
+            const Divider(
+              thickness: 0.1,
+              indent: 10,
+              endIndent: 10,
+            ),
+            const ListTile(
+              leading: Icon(
+                Icons.no_accounts_rounded,
+                color: Colors.red,
+              ),
+              title: Text(
+                'Delete Account',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
             // ListTile(
             //   leading: const Icon(Icons.manage_accounts),
             //   iconColor: Colors.grey,

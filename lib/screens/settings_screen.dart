@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/screens/account_settings_screen.dart';
 import 'package:todo_app/screens/welcome_screen.dart';
+import 'package:todo_app/services/individual_tasks_crud.dart';
 import 'package:todo_app/services/user_info_crud.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -8,6 +9,7 @@ class SettingsScreen extends StatelessWidget {
 
   void _logout(BuildContext context) {
     UserInfoCRUD().deleteUserInfo();
+    IndividualTasksCRUD().deleteAllIndividualTasks();
 
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(

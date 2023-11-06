@@ -57,7 +57,8 @@ dependencies:
   intl: ^0.18.1
   flutter_secure_storage: ^9.0.0
   fancy_password_field: ^2.0.0
-  
+  string_validator: ^1.0.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

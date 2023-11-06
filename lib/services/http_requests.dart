@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:todo_app/services/user_info_crud.dart';
 import 'package:todo_app/services/user_token.dart';
 import 'package:todo_app/widgets/global_snackbar.dart';
+
 import '../screens/welcome_screen.dart';
 
 void invalidTokenResponse(BuildContext context) {
@@ -19,6 +20,7 @@ enum ReturnTypes {
   fail,
   error,
   invalidToken,
+  emailTaken,
 }
 
 final dio = Dio();
@@ -35,9 +37,41 @@ Future<dynamic> checkCredentialsAndGetToken(
       },
     );
 
-    return response.data["token"];
+    return {
+      'token': response.data["token"],
+      'username': response.data["username"],
+      'email': response.data["email"],
+      'is2FAEnabled': response.data["is2FAEnabled"],
+      'isBiometricAuthEnabled': response.data["isBiometricAuthEnabled"],
+    };
   } on DioException catch (e) {
     if (e.response == null) return ReturnTypes.error;
+
+
+    print(e.response!.data);
+    return ReturnTypes.fail;
+  }
+}
+
+Future<dynamic> signUp(
+    String username, String email, String password) async {
+  try {
+    await dio.post(
+      'https://todobuddy.onrender.com/api/user/signup',
+      data: {
+        "username": username,
+        "password": password,
+        "email": email,
+      },
+    );
+
+    return ReturnTypes.success;
+  } on DioException catch (e) {
+    if (e.response == null) return ReturnTypes.error;
+
+    if (e.response!.data['error'] == 'Email already in-use.') {
+      return ReturnTypes.emailTaken;
+    }
 
     return ReturnTypes.fail;
   }

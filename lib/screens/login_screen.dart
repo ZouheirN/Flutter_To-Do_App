@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:bcrypt/bcrypt.dart';
 import 'package:flutter/material.dart';
+import 'package:string_validator/string_validator.dart';
 import 'package:todo_app/screens/forgot_password_screen.dart';
 import 'package:todo_app/screens/otp_screen.dart';
 import 'package:todo_app/services/user_info_crud.dart';
@@ -40,20 +41,18 @@ class _LoginScreenState extends State<LoginScreen> {
       // Hash the password
       final String hashedPassword = BCrypt.hashpw(
           password, BCrypt.gensalt(secureRandom: Random(password.length)));
-      // print('Password: $password');
-      // print('Hashed Password: $hashedPassword');
 
       // check if credentials are correct and get token
-      final token =
+      final response =
           await checkCredentialsAndGetToken(usernameOrEmail, hashedPassword);
 
-      if (token == ReturnTypes.fail) {
+      if (response == ReturnTypes.fail) {
         setState(() {
           _isLoading = false;
           _status = 'Invalid Credentials';
         });
         return;
-      } else if (token == ReturnTypes.error) {
+      } else if (response == ReturnTypes.error) {
         setState(() {
           _isLoading = false;
           _status = 'An Error Occurred, Please Try Again';
@@ -61,19 +60,25 @@ class _LoginScreenState extends State<LoginScreen> {
         return;
       }
 
-      final bool isEmail = RegExp(
-              r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-          .hasMatch(usernameOrEmail);
+      final token = response['token'];
+      final username = response['username'];
+      final email = response['email'];
+      final is2FAEnabled = response['is2FAEnabled'];
+      final isBiometricAuthEnabled = response['isBiometricAuthEnabled'];
 
-      if (isEmail) {
-        //TODO get username from DB
-      } else {
-        //TODO get email from DB
-      }
+      // final bool isEmail = RegExp(
+      //         r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+      //     .hasMatch(usernameOrEmail);
+      //
+      // if (isEmail) {
+      //   //TODO get username from DB
+      // } else {
+      //   //TODO get email from DB
+      // }
 
-      //TODO Check if user enabled 2FA and auth
-      bool? is2FAEnabled = false;
-      bool? isBiometricAuthEnabled = false;
+      // //TODO Check if user enabled 2FA and auth
+      // bool? is2FAEnabled = false;
+      // bool? isBiometricAuthEnabled = false;
 
       setState(() {
         _isLoading = false;
@@ -86,9 +91,8 @@ class _LoginScreenState extends State<LoginScreen> {
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => OTPScreen(
-                username: usernameOrEmail,
-                // TODO get email from DB
-                email: '',
+                username: username,
+                email: email,
               ),
             ),
           );
@@ -96,11 +100,11 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         //Save data to userInfo
         UserInfoCRUD().setUserInfo(
-          username: 'test',
-          email: 'test',
+          username: username,
+          email: email,
           is2FAEnabled: is2FAEnabled,
           isBiometricAuthEnabled: isBiometricAuthEnabled,
-          token: '',
+          token: token,
         );
 
         if (context.mounted) {
@@ -186,15 +190,20 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Please enter your username';
+                                  return 'Please enter your username or email';
                                 }
 
-                                final bool usernameValid = RegExp(
-                                        r"^[A-Za-z0-9]+(?:[ _-][A-Za-z0-9]+)*$")
-                                    .hasMatch(value);
+                                value = trim(value);
+                                value = escape(value);
+
+                                bool usernameValid = false;
+
+                                if (isAscii(value) || isEmail(value)) {
+                                  usernameValid = true;
+                                }
 
                                 if (!usernameValid) {
-                                  return 'Please enter a valid username';
+                                  return 'Please enter a valid username or email';
                                 }
 
                                 return null;
@@ -242,6 +251,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 if (value == null || value.isEmpty) {
                                   return 'Please enter your password';
                                 }
+
                                 return null;
                               },
                             ),

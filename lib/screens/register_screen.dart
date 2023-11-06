@@ -1,5 +1,6 @@
 import 'package:fancy_password_field/fancy_password_field.dart';
 import 'package:flutter/material.dart';
+import 'package:string_validator/string_validator.dart';
 import 'package:todo_app/screens/otp_screen.dart';
 import 'package:todo_app/widgets/buttons.dart';
 
@@ -13,7 +14,8 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final _passController = TextEditingController();
-  final FancyPasswordController _passwordValidatorController = FancyPasswordController();
+  final FancyPasswordController _passwordValidatorController =
+      FancyPasswordController();
   final _confirmPassController = TextEditingController();
   final _emailController = TextEditingController();
   final _usernameController = TextEditingController();
@@ -119,9 +121,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   return 'Please enter your username';
                                 }
 
-                                final bool usernameValid = RegExp(
-                                        r"^[A-Za-z0-9]+(?:[ _-][A-Za-z0-9]+)*$")
-                                    .hasMatch(value);
+                                value = trim(value);
+                                value = escape(value);
+
+                                final bool usernameValid = isAscii(value);
 
                                 if (!usernameValid) {
                                   return 'Please enter a valid username';
@@ -161,9 +164,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   return 'Please enter your email';
                                 }
 
-                                final bool emailValid = RegExp(
-                                        r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                    .hasMatch(value);
+                                value = trim(value);
+                                value = escape(value);
+
+                                final bool emailValid = isEmail(value);
 
                                 if (!emailValid) {
                                   return 'Please enter a valid email';
@@ -194,7 +198,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   return 'Please enter your password';
                                 }
 
-                                return _passwordValidatorController.areAllRulesValidated
+                                return _passwordValidatorController
+                                        .areAllRulesValidated
                                     ? null
                                     : 'Please validate all rules';
                               },

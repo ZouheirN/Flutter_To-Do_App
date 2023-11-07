@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
-import 'package:todo_app/services/user_info_crud.dart';
 
 import 'home_screen.dart';
 
@@ -23,6 +22,7 @@ class _OTPScreenState extends State<OTPScreen> {
 
   void _requestOTP() {
     // TODO logic for requesting OTP
+    // await requestOTP(email);
 
     setState(() {
       _isCountDownFinished = false;
@@ -35,27 +35,26 @@ class _OTPScreenState extends State<OTPScreen> {
     });
 
     //TODO logic for checking OTP
+    // bool isOTPCorrect = await checkOTP(pin, email);
 
     //TODO if OTP is correct, get all the other user info from DB
+    // if isOTPCorrect, save info from isOTPCorrect.
+    // if not correct, setState to 'Wrong OTP. Try again'
 
-    //Delay for 2 sec
-    Future.delayed(
-      const Duration(seconds: 2),
-      () {
-        //Save data to userInfo
-        // UserInfoCRUD().setUserInfo(widget.username, widget.email);
+    //Save data to userInfo
+    // UserInfoCRUD().setUserInfo(widget.username, widget.email);
 
-        Navigator.popUntil(context, (route) => route.isFirst);
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const HomeScreen(
-            isFirstTimeLoggingIn: true,
-          )),
-        );
-        // setState(() {
-        //   _status = 'Wrong OTP. Try again';
-        // });
-      },
+    Navigator.popUntil(context, (route) => route.isFirst);
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => const HomeScreen(
+          isFirstTimeLoggingIn: true,
+        ),
+      ),
     );
+    // setState(() {
+    //   _status = 'Wrong OTP. Try again';
+    // });
   }
 
   @override

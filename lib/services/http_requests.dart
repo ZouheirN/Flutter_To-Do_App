@@ -21,6 +21,7 @@ enum ReturnTypes {
   error,
   invalidToken,
   emailTaken,
+  usernameTaken,
 }
 
 final dio = Dio();
@@ -47,14 +48,11 @@ Future<dynamic> checkCredentialsAndGetToken(
   } on DioException catch (e) {
     if (e.response == null) return ReturnTypes.error;
 
-
-    print(e.response!.data);
     return ReturnTypes.fail;
   }
 }
 
-Future<dynamic> signUp(
-    String username, String email, String password) async {
+Future<dynamic> signUp(String username, String email, String password) async {
   try {
     await dio.post(
       'https://todobuddy.onrender.com/api/user/signup',
@@ -71,6 +69,8 @@ Future<dynamic> signUp(
 
     if (e.response!.data['error'] == 'Email already in-use.') {
       return ReturnTypes.emailTaken;
+    } else if (e.response!.data['error'] == 'Username already in-use.') {
+      return ReturnTypes.usernameTaken;
     }
 
     return ReturnTypes.fail;

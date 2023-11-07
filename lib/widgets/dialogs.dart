@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:todo_app/widgets/buttons.dart';
 
 void showLoadingDialog(String text, BuildContext context) => showDialog(
       context: context,
@@ -19,3 +20,18 @@ void showLoadingDialog(String text, BuildContext context) => showDialog(
         ),
       ),
     );
+
+void showTextDialog(String title, String text, BuildContext context) => showDialog(
+  context: context,
+  builder: (context) => AlertDialog(
+    title: Text(title, textAlign: TextAlign.center),
+    content: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        DialogButton(text: text, onPressed: () {
+          Navigator.pop(context);
+        })
+      ],
+    ),
+  ),
+);

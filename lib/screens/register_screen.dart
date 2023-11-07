@@ -2,7 +2,9 @@ import 'package:fancy_password_field/fancy_password_field.dart';
 import 'package:flutter/material.dart';
 import 'package:string_validator/string_validator.dart';
 import 'package:todo_app/screens/otp_screen.dart';
+import 'package:todo_app/services/http_requests.dart';
 import 'package:todo_app/widgets/buttons.dart';
+import 'package:todo_app/widgets/global_snackbar.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -30,10 +32,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
       });
 
       //TODO check if username and email are unique
+      final signUpStatus = await signUp(_usernameController.text.trim(),
+          _emailController.text.trim(), _passController.text);
 
       setState(() {
         _isLoading = false;
       });
+
+      if (signUpStatus == ReturnTypes.emailTaken) {
+        if (!mounted) return;
+        showGlobalSnackBar('Email is already taken');
+        return;
+      } else if (signUpStatus == ReturnTypes.usernameTaken) {
+        if (!mounted) return;
+        showGlobalSnackBar('Username is already taken');
+        return;
+      } else if (signUpStatus == ReturnTypes.fail ||
+          signUpStatus == ReturnTypes.error) {
+        if (!mounted) return;
+        showGlobalSnackBar('An Error Occurred, Please Try Again');
+        return;
+      }
 
       if (context.mounted) {
         Navigator.of(context).push(

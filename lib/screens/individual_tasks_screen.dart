@@ -1,13 +1,10 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pull_to_refresh_plus/pull_to_refresh_plus.dart';
 import 'package:todo_app/services/individual_tasks_crud.dart';
 import 'package:todo_app/widgets/dialogs.dart';
-
 import '../services/http_requests.dart';
 import '../widgets/card.dart';
 import '../widgets/dialogbox.dart';
@@ -46,9 +43,8 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
   void _onRefresh() async {
     dynamic tasks = await getTasksFromDB();
 
-    print(tasks);
-
     if (tasks == ReturnTypes.invalidToken) {
+      if (!mounted) return;
       invalidTokenResponse(context);
       return;
     }
@@ -106,9 +102,8 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
   void getDataFromDB() async {
     dynamic tasks = await getTasksFromDB();
 
-    print(tasks);
-
     if (tasks == ReturnTypes.invalidToken) {
+      if (!mounted) return;
       invalidTokenResponse(context);
       return;
     }
@@ -194,6 +189,7 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
     );
 
     if (taskIdAndDate == ReturnTypes.invalidToken) {
+      if (!mounted) return;
       invalidTokenResponse(context);
       return;
     }
@@ -214,6 +210,7 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
       _colorController.clear();
       _priorityController.clear();
     });
+    if (!mounted) return;
     Navigator.pop(context);
     Navigator.pop(context);
     _individualTasksCRUD.updateIndividualTasks();
@@ -226,10 +223,12 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
         _individualTasksCRUD.individualTasks[index]['id'], context);
 
     if (deleteResponse == ReturnTypes.invalidToken) {
+      if (!mounted) return;
       invalidTokenResponse(context);
       return;
     }
 
+    if (!mounted) return;
     Navigator.pop(context);
 
     if (deleteResponse != ReturnTypes.success) {

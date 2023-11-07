@@ -115,31 +115,18 @@ class TaskCard extends StatelessWidget {
                         spacing: 0,
                         iconList: const [
                           Icon(Icons.hourglass_empty_rounded,
-                              size: 30, color: Colors.red),
+                              size: 30),
                           Icon(Icons.hourglass_top_rounded,
-                              size: 30, color: Colors.orange),
-                          Icon(Icons.check_circle_rounded,
-                              size: 30, color: Colors.green),
+                              size: 30),
+                          Icon(Icons.hourglass_full_rounded,
+                              size: 30),
                         ],
-                        style: const ToggleStyle(
-                          borderColor: Color(0xFFDEE3EB),
-                          backgroundColor: Color(0xFFF4F5F7),
-                          // indicatorColor: Theme.of(context).primaryColor.,
+                        style: ToggleStyle(
+                          borderColor: const Color(0xFFDEE3EB),
+                          backgroundColor: const Color(0xFFF4F5F7),
+                          indicatorColor: Color(color),
                         ),
                       )
-                      // Checkbox(
-                      //   value: taskCompleted,
-                      //   onChanged: onChanged,
-                      //   shape: RoundedRectangleBorder(
-                      //     borderRadius: BorderRadius.circular(2.0),
-                      //   ),
-                      //   side: MaterialStateBorderSide.resolveWith(
-                      //     (states) =>
-                      //         const BorderSide(width: 1.0, color: Colors.white),
-                      //   ),
-                      //   activeColor: Colors.white,
-                      //   checkColor: Color(color),
-                      // ),
                     ],
                   ),
                 ),

@@ -59,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
       const SettingsScreen(),
     ];
 
-    if (UserInfoCRUD().getAuthEnabled()) {
+    if (UserInfoCRUD().getAuthEnabled() && !widget.isFirstTimeLoggingIn) {
       _authenticateOnStart();
     } else {
       _isAuthenticated = true;

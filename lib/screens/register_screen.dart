@@ -209,7 +209,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 DigitValidationRule(),
                                 UppercaseValidationRule(),
                                 LowercaseValidationRule(),
-                                SpecialCharacterValidationRule(),
+                                // SpecialCharacterValidationRule(),
                                 MinCharactersValidationRule(8),
                               },
                               validator: (value) {

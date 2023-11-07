@@ -106,7 +106,7 @@ Future<dynamic> getTasksFromDB() async {
 }
 
 Future<dynamic> addTaskToDB(String title, String description, String priority,
-    String color, BuildContext context) async {
+    String color) async {
   final String token = await UserToken.getToken();
   if (token == '') {
     return ReturnTypes.invalidToken;
@@ -141,7 +141,7 @@ Future<dynamic> addTaskToDB(String title, String description, String priority,
   }
 }
 
-Future<dynamic> deleteTaskFromDB(String taskId, BuildContext context) async {
+Future<dynamic> deleteTaskFromDB(String taskId) async {
   final String token = await UserToken.getToken();
   if (token == '') {
     return ReturnTypes.invalidToken;
@@ -150,6 +150,37 @@ Future<dynamic> deleteTaskFromDB(String taskId, BuildContext context) async {
   try {
     await dio.delete(
       'https://todobuddy.onrender.com/api/task/$taskId',
+      options: Options(
+        headers: {
+          "Authorization": "Bearer $token",
+        },
+      ),
+    );
+
+    return ReturnTypes.success;
+  } on DioException catch (e) {
+    if (e.response == null) return ReturnTypes.error;
+
+    if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+      return ReturnTypes.invalidToken;
+    }
+
+    return ReturnTypes.fail;
+  }
+}
+
+Future<dynamic> editTaskFromDB(String taskId, String status) async {
+  final String token = await UserToken.getToken();
+  if (token == '') {
+    return ReturnTypes.invalidToken;
+  }
+
+  try {
+    await dio.patch(
+      'https://todobuddy.onrender.com/api/task/$taskId',
+      data: {
+        'status': status,
+      },
       options: Options(
         headers: {
           "Authorization": "Bearer $token",

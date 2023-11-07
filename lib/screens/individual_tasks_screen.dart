@@ -1,10 +1,12 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pull_to_refresh_plus/pull_to_refresh_plus.dart';
 import 'package:todo_app/services/individual_tasks_crud.dart';
 import 'package:todo_app/widgets/dialogs.dart';
+
 import '../services/http_requests.dart';
 import '../widgets/card.dart';
 import '../widgets/dialogbox.dart';
@@ -136,14 +138,25 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
     _individualTasksCRUD.updateIndividualTasks();
   }
 
-  Future<FutureOr<void>> statusChanged(int? value, int index) async {
+  Future<FutureOr<void>?> statusChanged(int? value, int index) async {
     String status = 'Unfinished';
     if (value == 1) status = 'In Progress';
     if (value == 2) status = 'Finished';
 
-    //todo send it to db
-    await Future.delayed(const Duration(seconds: 1));
-    //todo wait for response
+    // send it to db
+    final response = await editTaskFromDB(
+        _individualTasksCRUD.individualTasks[index]['id'], status);
+
+    if (response == ReturnTypes.invalidToken) {
+      if (!mounted) return null;
+      invalidTokenResponse(context);
+      return null;
+    }
+
+    if (response == ReturnTypes.error || response == ReturnTypes.fail) {
+      showGlobalSnackBar('Error changing task status. Please try again.');
+      return null;
+    }
 
     setState(() {
       _individualTasksCRUD.individualTasks[index]['status'] = status;
@@ -185,7 +198,6 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
       _descriptionController.text,
       _priorityController.text,
       _colorController.text,
-      context,
     );
 
     if (taskIdAndDate == ReturnTypes.invalidToken) {
@@ -220,7 +232,7 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
     showLoadingDialog('Deleting Task', context);
 
     final deleteResponse = await deleteTaskFromDB(
-        _individualTasksCRUD.individualTasks[index]['id'], context);
+        _individualTasksCRUD.individualTasks[index]['id']);
 
     if (deleteResponse == ReturnTypes.invalidToken) {
       if (!mounted) return;

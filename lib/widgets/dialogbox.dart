@@ -128,7 +128,11 @@ class _DialogBoxState extends State<DialogBox> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     DialogButton(text: 'Add', onPressed: widget.onAdd),
-                    DialogButton(text: 'Cancel', onPressed: widget.onCancel),
+                    DialogButton(
+                      text: 'Cancel',
+                      onPressed: widget.onCancel,
+                      color: 0xFFFF0000,
+                    ),
                   ],
                 )
               ],

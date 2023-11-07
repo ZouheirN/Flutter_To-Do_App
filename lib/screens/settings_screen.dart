@@ -34,49 +34,50 @@ class SettingsScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Center(
+            const Center(
               child: Stack(
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 50,
+                    backgroundImage: NetworkImage('https://i.imgur.com/BoN9kdC.png'),
                     // backgroundImage: AssetImage('assets/images/profile.png'),
                   ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                              width: 3,
-                              color: Colors.white,
-                            ),
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(
-                                50,
-                              ),
-                            ),
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                offset: const Offset(1, 3),
-                                color: Colors.black.withOpacity(
-                                  0.1,
-                                ),
-                                blurRadius: 3,
-                              ),
-                            ]),
-                        child: Padding(
-                          padding: const EdgeInsets.all(2.0),
-                          child: Icon(
-                            Icons.edit,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  // Positioned(
+                  //   bottom: 0,
+                  //   right: 0,
+                  //   child: GestureDetector(
+                  //     onTap: () {},
+                  //     child: Container(
+                  //       decoration: BoxDecoration(
+                  //           border: Border.all(
+                  //             width: 3,
+                  //             color: Colors.white,
+                  //           ),
+                  //           borderRadius: const BorderRadius.all(
+                  //             Radius.circular(
+                  //               50,
+                  //             ),
+                  //           ),
+                  //           color: Colors.white,
+                  //           boxShadow: [
+                  //             BoxShadow(
+                  //               offset: const Offset(1, 3),
+                  //               color: Colors.black.withOpacity(
+                  //                 0.1,
+                  //               ),
+                  //               blurRadius: 3,
+                  //             ),
+                  //           ]),
+                  //       child: Padding(
+                  //         padding: const EdgeInsets.all(2.0),
+                  //         child: Icon(
+                  //           Icons.edit,
+                  //           color: Theme.of(context).primaryColor,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),

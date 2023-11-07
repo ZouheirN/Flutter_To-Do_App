@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_fgbg/flutter_fgbg.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:todo_app/screens/individual_tasks_screen.dart';
@@ -20,6 +23,8 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   bool _isAuthenticated = false;
 
+  late StreamSubscription<FGBGType> subscription;
+
   late List<Widget> _widgetOptions = [];
 
   void _authenticateOnStart() async {
@@ -34,19 +39,40 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    subscription = FGBGEvents.stream.listen((event) {
+      if (event == FGBGType.foreground) {
+        setState(() {
+          _isAuthenticated = false;
+        });
+        if (UserInfoCRUD().getAuthEnabled()) {
+          _authenticateOnStart();
+        } else {
+          _isAuthenticated = true;
+        }
+      }
+    });
+
     _widgetOptions = [
       IndividualTasksScreen(
         isFirstTimeLoggingIn: widget.isFirstTimeLoggingIn,
       ),
       const SettingsScreen(),
     ];
+
     if (UserInfoCRUD().getAuthEnabled()) {
       _authenticateOnStart();
     } else {
       _isAuthenticated = true;
     }
+
     FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
   }
 
   @override

@@ -27,6 +27,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
 
   Future<void> _login() async {
+    FocusManager.instance.primaryFocus?.unfocus();
+
     if (_formKey.currentState!.validate()) {
       if (_isLoading) return;
 

@@ -2,12 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:overlay_support/overlay_support.dart';
+import 'package:safe_device/safe_device.dart';
+import 'package:todo_app/screens/drm_screen.dart';
 import 'package:todo_app/screens/home_screen.dart';
 import 'package:todo_app/screens/onboarding_screen.dart';
 import 'package:todo_app/screens/welcome_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  bool isJailBroken = await SafeDevice.isJailBroken;
+
+  if (isJailBroken) {
+    runApp(const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: DrmScreen(),
+    ));
+    return;
+  }
+
   await Hive.initFlutter();
 
   // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -19,9 +32,6 @@ Future<void> main() async {
   var userInfoBox = await Hive.openBox('userInfo');
   var onboard = await Hive.openBox('onboard');
   await Hive.openBox('individualTasks');
-
-  // print(userInfoBox.containsKey('username'));
-  // print(userInfoBox.get('username'));
 
   runApp(
     MyApp(

@@ -24,6 +24,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _isLoading = false;
 
   Future<void> _register() async {
+    FocusManager.instance.primaryFocus?.unfocus();
+
     if (_formKey.currentState!.validate()) {
       if (_isLoading) return;
 
@@ -41,16 +43,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       if (signUpStatus == ReturnTypes.emailTaken) {
         if (!mounted) return;
-        showGlobalSnackBar('Email is already taken');
+        showGlobalSnackBar('Email is already taken.');
         return;
       } else if (signUpStatus == ReturnTypes.usernameTaken) {
         if (!mounted) return;
-        showGlobalSnackBar('Username is already taken');
+        showGlobalSnackBar('Username is already taken.');
         return;
       } else if (signUpStatus == ReturnTypes.fail ||
           signUpStatus == ReturnTypes.error) {
         if (!mounted) return;
-        showGlobalSnackBar('An Error Occurred, Please Try Again');
+        showGlobalSnackBar('An Error Occurred, Please Try Again.');
         return;
       }
 

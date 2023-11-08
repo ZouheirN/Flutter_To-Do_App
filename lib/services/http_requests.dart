@@ -66,7 +66,7 @@ Future<dynamic> signUp(String username, String email, String password) async {
     return ReturnTypes.success;
   } on DioException catch (e) {
     if (e.response == null) return ReturnTypes.error;
-
+    
     if (e.response!.data['error'] == 'Email already in-use.') {
       return ReturnTypes.emailTaken;
     } else if (e.response!.data['error'] == 'Username already in-use.') {

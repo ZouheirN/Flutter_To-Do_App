@@ -13,6 +13,7 @@ class TaskCard extends StatelessWidget {
   final String taskStatus;
   final String priority;
   final String creationDate;
+  final String estimatedDate;
   final FutureOr<void> Function(int)? onChanged;
   final Function(BuildContext)? deleteFunction;
 
@@ -27,6 +28,7 @@ class TaskCard extends StatelessWidget {
     required this.priority,
     required this.taskId,
     required this.creationDate,
+    required this.estimatedDate,
   });
 
   int statusToInt(String status) {
@@ -42,17 +44,26 @@ class TaskCard extends StatelessWidget {
     }
   }
 
-  String convertISO8601ToReadableString(String iso8601String) {
-    // Parse the ISO 8601 date string
-    DateTime dateTime = DateTime.parse(iso8601String).toUtc();
+  // String convertISO8601ToReadableString(String iso8601String) {
+  //   // Parse the ISO 8601 date string
+  //   DateTime dateTime = DateTime.parse(iso8601String).toUtc();
+  //
+  //   // Converting to local time
+  //   dateTime = dateTime.toLocal();
+  //
+  //   // Format the DateTime as a readable string
+  //   final formattedString = DateFormat('MMMM d, y - HH:mm').format(dateTime);
+  //
+  //   return formattedString;
+  // }
 
-    // Converting to local time
+  String formatDateString(String inputString) {
+    DateTime dateTime = DateTime.parse(inputString);
+
+    // if (toLocal) {
     dateTime = dateTime.toLocal();
-
-    // Format the DateTime as a readable string
-    final formattedString = DateFormat('MMMM d, y - HH:mm').format(dateTime);
-
-    return formattedString;
+    // }
+    return DateFormat('E MMM d, y - HH:mm').format(dateTime);
   }
 
   @override
@@ -79,6 +90,7 @@ class TaskCard extends StatelessWidget {
           color: Colors.white,
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 height: 60,
@@ -96,16 +108,28 @@ class TaskCard extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        taskName,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          decoration: taskStatus == 'Finished'
-                              ? TextDecoration.lineThrough
-                              : taskStatus == 'In Progress'
-                                  ? TextDecoration.underline
-                                  : TextDecoration.none,
+                      Flexible(
+                        child: FittedBox(
+                          fit: BoxFit.contain,
+                          child: Column(
+                            children: [
+                              Text(
+                                taskName,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              Text(
+                                'Priority: $priority',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       AnimatedToggleSwitch<int>.rolling(
@@ -114,12 +138,9 @@ class TaskCard extends StatelessWidget {
                         values: const [0, 1, 2],
                         spacing: 0,
                         iconList: const [
-                          Icon(Icons.hourglass_empty_rounded,
-                              size: 30),
-                          Icon(Icons.hourglass_top_rounded,
-                              size: 30),
-                          Icon(Icons.hourglass_full_rounded,
-                              size: 30),
+                          Icon(Icons.hourglass_empty_rounded, size: 30),
+                          Icon(Icons.hourglass_top_rounded, size: 30),
+                          Icon(Icons.hourglass_full_rounded, size: 30),
                         ],
                         style: ToggleStyle(
                           borderColor: const Color(0xFFDEE3EB),
@@ -141,8 +162,16 @@ class TaskCard extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(convertISO8601ToReadableString(creationDate)),
-                    Text('Priority: $priority'),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                            'Created On: ${formatDateString(creationDate)}'),
+                        Text(
+                            'Estimated Date: ${formatDateString(estimatedDate)}'),
+                      ],
+                    ),
+                    // Text('Priority: $priority'),
                   ],
                 ),
               ),

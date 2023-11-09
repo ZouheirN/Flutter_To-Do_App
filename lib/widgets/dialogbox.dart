@@ -9,6 +9,7 @@ class DialogBox extends StatefulWidget {
   final TextEditingController descriptionController;
   final TextEditingController colorController;
   final TextEditingController priorityController;
+  final TextEditingController dateController;
   final VoidCallback onAdd;
   final VoidCallback onCancel;
   final GlobalKey<FormState> formKey;
@@ -22,6 +23,7 @@ class DialogBox extends StatefulWidget {
     required this.colorController,
     required this.priorityController,
     required this.formKey,
+    required this.dateController,
   });
 
   @override
@@ -79,6 +81,7 @@ class _DialogBoxState extends State<DialogBox> {
                   validator: (value) =>
                       value == null ? 'Please select a priority' : null,
                 ),
+                DateTextField(textController: widget.dateController),
                 const SizedBox(height: 12),
                 DialogButton(
                     text: 'Color',

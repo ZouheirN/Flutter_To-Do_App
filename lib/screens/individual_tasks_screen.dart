@@ -40,6 +40,7 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
   final _descriptionController = TextEditingController();
   final _colorController = TextEditingController();
   final _priorityController = TextEditingController();
+  final _dateController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   void _onRefresh() async {
@@ -78,6 +79,7 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
           'priority': task['priority'],
           'status': task['status'],
           'creationDate': task['createdAt'],
+          'estimatedDate': task['estimatedDate'],
         });
       }
     });
@@ -130,6 +132,7 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
           'priority': task['priority'],
           'status': task['status'],
           'creationDate': task['createdAt'],
+          'estimatedDate': task['estimatedDate']
         });
       }
       _isLoading = false;
@@ -151,9 +154,7 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
       if (!mounted) return null;
       invalidTokenResponse(context);
       return null;
-    }
-
-    if (response == ReturnTypes.error || response == ReturnTypes.fail) {
+    } else if (response == ReturnTypes.error || response == ReturnTypes.fail) {
       showGlobalSnackBar('Error changing task status. Please try again.');
       return null;
     }
@@ -172,6 +173,7 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
         descriptionController: _descriptionController,
         colorController: _colorController,
         priorityController: _priorityController,
+        dateController: _dateController,
         formKey: _formKey,
         onAdd: () => addNewTask(context),
         onCancel: () => onCancel(context),
@@ -185,6 +187,7 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
     _descriptionController.clear();
     _colorController.clear();
     _priorityController.clear();
+    _dateController.clear();
   }
 
   Future<void> addNewTask(BuildContext context) async {
@@ -198,11 +201,16 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
       _descriptionController.text,
       _priorityController.text,
       _colorController.text,
+      _dateController.text,
     );
 
     if (taskIdAndDate == ReturnTypes.invalidToken) {
       if (!mounted) return;
       invalidTokenResponse(context);
+      return;
+    } else if (taskIdAndDate == ReturnTypes.fail ||
+        taskIdAndDate == ReturnTypes.error) {
+      showGlobalSnackBar('Error adding task. Please try again.');
       return;
     }
 
@@ -216,11 +224,13 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
             _priorityController.text == '' ? 'Low' : _priorityController.text,
         'status': 'Unfinished',
         'creationDate': taskIdAndDate[1],
+        'estimatedDate': _dateController.text,
       });
       _nameController.clear();
       _descriptionController.clear();
       _colorController.clear();
       _priorityController.clear();
+      _dateController.clear();
     });
     if (!mounted) return;
     Navigator.pop(context);
@@ -357,6 +367,9 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
                                   .individualTasks[index]['id'],
                               creationDate: _individualTasksCRUD
                                   .individualTasks[index]['creationDate'],
+                              // estimatedDate: _individualTasksCRUD
+                              //     .individualTasks[index]['estimatedDate'],
+                              estimatedDate: '2023-11-09 19:12:00.000',
                               onChanged: (value) => statusChanged(value, index),
                               deleteFunction: (context) => deleteTask(index),
                             );

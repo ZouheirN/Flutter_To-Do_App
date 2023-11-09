@@ -60,6 +60,7 @@ dependencies:
   string_validator: ^1.0.2
   flutter_fgbg: ^0.3.0
   safe_device: ^1.1.4
+  flutter_datetime_picker_plus: ^2.1.0
 
 dev_dependencies:
   flutter_test:

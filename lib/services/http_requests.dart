@@ -106,7 +106,7 @@ Future<dynamic> getTasksFromDB() async {
 }
 
 Future<dynamic> addTaskToDB(String title, String description, String priority,
-    String color) async {
+    String color, String estimatedDate) async {
   final String token = await UserToken.getToken();
   if (token == '') {
     return ReturnTypes.invalidToken;
@@ -122,6 +122,7 @@ Future<dynamic> addTaskToDB(String title, String description, String priority,
         "status": "Unfinished",
         "priority": priority,
         "color": color,
+        "estimatedDate": estimatedDate,
       },
       options: Options(
         headers: {

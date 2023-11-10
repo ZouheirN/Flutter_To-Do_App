@@ -33,7 +33,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         _isLoading = true;
       });
 
-      //TODO check if username and email are unique
       final signUpStatus = await signUp(_usernameController.text.trim(),
           _emailController.text.trim(), _passController.text);
 
@@ -56,13 +55,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
         return;
       }
 
-      return;
       if (context.mounted) {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => OTPScreen(
-              username: _usernameController.text.trim(),
+              token: signUpStatus['token'],
               email: _emailController.text.trim(),
+              isNotVerifiedFromLogin: false,
             ),
           ),
         );

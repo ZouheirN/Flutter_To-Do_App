@@ -17,6 +17,9 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   bool _is2FAEnabled = false;
   bool _isAuthenticationEnabled = false;
 
+  bool _is2FALoading = false;
+  bool _isBioAuthLoading = false;
+
   @override
   void initState() {
     super.initState();
@@ -76,30 +79,47 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                 Icons.security_outlined,
                 color: Color(0xFF757D8B),
               ),
-              trailing: Switch(
-                value: _is2FAEnabled,
-                activeColor: Theme.of(context).primaryColor,
-                // thumbColor: MaterialStateProperty.all(Colors.white),
-                // inactiveThumbColor: Colors.black,
-                onChanged: (bool value) async {
-                  final newValue = await toggle2FA();
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (_is2FALoading)
+                    const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                      ),
+                    ),
+                  SizedBox(width: _is2FALoading ? 10 : 0),
+                  Switch(
+                    value: _is2FAEnabled,
+                    activeColor: Theme.of(context).primaryColor,
+                    onChanged: (bool value) async {
+                      if (_is2FALoading) return;
+                      setState(() {
+                        _is2FALoading = true;
+                      });
+                      final newValue = await toggle2FA();
 
-                  if (newValue == ReturnTypes.fail ||
-                      newValue == ReturnTypes.error) {
-                    showGlobalSnackBar('Failed to toggle 2FA.');
-                    return;
-                  } else if (newValue == ReturnTypes.invalidToken) {
-                    if (!mounted) return;
-                    invalidTokenResponse(context);
-                    return;
-                  }
+                      if (newValue == ReturnTypes.fail ||
+                          newValue == ReturnTypes.error) {
+                        showGlobalSnackBar('Failed to toggle 2FA.');
+                        return;
+                      } else if (newValue == ReturnTypes.invalidToken) {
+                        if (!mounted) return;
+                        invalidTokenResponse(context);
+                        return;
+                      }
 
-                  UserInfoCRUD().set2FA(newValue);
+                      UserInfoCRUD().set2FA(newValue);
 
-                  setState(() {
-                    _is2FAEnabled = newValue;
-                  });
-                },
+                      setState(() {
+                        _is2FAEnabled = newValue;
+                        _is2FALoading = false;
+                      });
+                    },
+                  ),
+                ],
               ),
               title: const Text(
                 'Enable 2FA',
@@ -114,31 +134,48 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                 Icons.fingerprint,
                 color: Color(0xFF757D8B),
               ),
-              trailing: Switch(
-                value: _isAuthenticationEnabled,
-                activeColor: Theme.of(context).primaryColor,
-                // thumbColor: MaterialStateProperty.all(Colors.white),
-                // inactiveThumbColor: Colors.black,
-                onChanged: (bool value) async {
-                  final newValue = await toggleBiometricAuth();
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (_isBioAuthLoading)
+                    const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                      ),
+                    ),
+                  SizedBox(width: _isBioAuthLoading ? 10 : 0),
+                  Switch(
+                    value: _isAuthenticationEnabled,
+                    activeColor: Theme.of(context).primaryColor,
+                    onChanged: (bool value) async {
+                      if (_isBioAuthLoading) return;
+                      setState(() {
+                        _isBioAuthLoading = true;
+                      });
+                      final newValue = await toggleBiometricAuth();
 
-                  if (newValue == ReturnTypes.fail ||
-                      newValue == ReturnTypes.error) {
-                    showGlobalSnackBar(
-                        'Failed to toggle biometric authentication.');
-                    return;
-                  } else if (newValue == ReturnTypes.invalidToken) {
-                    if (!mounted) return;
-                    invalidTokenResponse(context);
-                    return;
-                  }
+                      if (newValue == ReturnTypes.fail ||
+                          newValue == ReturnTypes.error) {
+                        showGlobalSnackBar(
+                            'Failed to toggle biometric authentication.');
+                        return;
+                      } else if (newValue == ReturnTypes.invalidToken) {
+                        if (!mounted) return;
+                        invalidTokenResponse(context);
+                        return;
+                      }
 
-                  UserInfoCRUD().setAuth(newValue);
+                      UserInfoCRUD().setAuth(newValue);
 
-                  setState(() {
-                    _isAuthenticationEnabled = newValue;
-                  });
-                },
+                      setState(() {
+                        _isAuthenticationEnabled = newValue;
+                        _isBioAuthLoading = false;
+                      });
+                    },
+                  ),
+                ],
               ),
               title: const Text(
                 'Enable Biometric Authentication',

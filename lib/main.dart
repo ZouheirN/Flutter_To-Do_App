@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:overlay_support/overlay_support.dart';
@@ -32,6 +33,8 @@ Future<void> main() async {
   var userInfoBox = await Hive.openBox('userInfo');
   var onboard = await Hive.openBox('onboard');
   await Hive.openBox('individualTasks');
+
+  FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
 
   runApp(
     MyApp(

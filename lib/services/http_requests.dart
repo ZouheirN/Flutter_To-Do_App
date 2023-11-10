@@ -44,10 +44,11 @@ Future<dynamic> checkCredentialsAndGetToken(
       'email': response.data["email"],
       'is2FAEnabled': response.data["is2FAEnabled"],
       'isBiometricAuthEnabled': response.data["isBiometricAuthEnabled"],
+      'isVerified': response.data["isVerified"],
     };
   } on DioException catch (e) {
     if (e.response == null) return ReturnTypes.error;
-
+    print(e.response!.data);
     return ReturnTypes.fail;
   }
 }
@@ -64,17 +65,55 @@ Future<dynamic> signUp(String username, String email, String password) async {
       },
     );
 
-    print(response.data);
-    return ReturnTypes.success;
+    return {
+      'token': response.data["token"],
+    };
   } on DioException catch (e) {
+    if (e.response == null) return ReturnTypes.error;
     print(e.response!.data);
 
-    if (e.response == null) return ReturnTypes.error;
-    
     if (e.response!.data['error'] == 'Email already in-use.') {
       return ReturnTypes.emailTaken;
     } else if (e.response!.data['error'] == 'Username already in-use.') {
       return ReturnTypes.usernameTaken;
+    }
+
+    return ReturnTypes.fail;
+  }
+}
+
+Future<dynamic> checkOTP(String pin, String email, String token) async {
+  try {
+    Response response;
+    response = await dio.post(
+      'https://todobuddy.onrender.com/api/verifyEmail',
+      data: {
+        "pin": pin,
+        "email": email,
+      },
+      options: Options(
+        headers: {
+          "Authorization": "Bearer $token",
+        },
+      ),
+    );
+
+    return {
+      'token': response.data["token"],
+      'username': response.data["username"],
+      'email': response.data["email"],
+      'is2FAEnabled': response.data["is2FAEnabled"],
+      'isBiometricAuthEnabled': response.data["isBiometricAuthEnabled"],
+    };
+  } on DioException catch (e) {
+    if (e.response == null) return ReturnTypes.error;
+
+    if (e.response!.data['error'] == 'UnAuthorized Access!') {
+      return ReturnTypes.fail;
+    }
+
+    if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+      return ReturnTypes.invalidToken;
     }
 
     return ReturnTypes.fail;

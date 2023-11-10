@@ -1,16 +1,21 @@
-import 'package:count_down_time/count_down_time.dart';
 import 'package:flutter/material.dart';
-import 'package:otp_text_field/otp_field.dart';
-import 'package:otp_text_field/otp_field_style.dart';
-import 'package:otp_text_field/style.dart';
+import 'package:pinput/pinput.dart';
+import 'package:todo_app/services/user_info_crud.dart';
+import 'package:todo_app/widgets/global_snackbar.dart';
 
+import '../services/http_requests.dart';
 import 'home_screen.dart';
 
 class OTPScreen extends StatefulWidget {
-  final String username;
   final String email;
+  final String token;
+  final bool isNotVerifiedFromLogin;
 
-  const OTPScreen({super.key, required this.username, required this.email});
+  const OTPScreen(
+      {super.key,
+      required this.email,
+      required this.isNotVerifiedFromLogin,
+      required this.token});
 
   @override
   State<OTPScreen> createState() => _OTPScreenState();
@@ -19,31 +24,55 @@ class OTPScreen extends StatefulWidget {
 class _OTPScreenState extends State<OTPScreen> {
   String _status = '';
   bool _isCountDownFinished = false;
+  bool _isFieldDisabled = false;
 
-  void _requestOTP() {
-    // TODO logic for requesting OTP
-    // await requestOTP(email);
+  // Future<void> _requestOTP() async {
+  //   // TODO logic for requesting OTP
+  //   await requestOTP(email);
+  //
+  //   setState(() {
+  //     _isCountDownFinished = false;
+  //   });
+  // }
 
-    setState(() {
-      _isCountDownFinished = false;
-    });
-  }
-
-  void _checkOTP(pin) {
+  Future<void> _checkOTP(pin) async {
     setState(() {
       _status = 'Checking OTP...';
+      _isFieldDisabled = true;
     });
 
-    //TODO logic for checking OTP
-    // bool isOTPCorrect = await checkOTP(pin, email);
+    // logic for checking OTP
+    final otpStatus = await checkOTP(pin, widget.email, widget.token);
 
-    //TODO if OTP is correct, get all the other user info from DB
-    // if isOTPCorrect, save info from isOTPCorrect.
-    // if not correct, setState to 'Wrong OTP. Try again'
+    // if OTP is correct, get all the other user info from DB
+    if (otpStatus == ReturnTypes.error) {
+      setState(() {
+        _status = '';
+        _isFieldDisabled = false;
+      });
+      showGlobalSnackBar('Something went wrong. Please try again later.');
+      return;
+    } else if (otpStatus == ReturnTypes.fail) {
+      setState(() {
+        _status = 'Wrong OTP. Try again';
+        _isFieldDisabled = false;
+      });
+      return;
+    } else if (otpStatus == ReturnTypes.invalidToken) {
+      if (!mounted) return;
+      invalidTokenResponse(context);
+      return;
+    }
 
-    //Save data to userInfo
-    // UserInfoCRUD().setUserInfo(widget.username, widget.email);
+    UserInfoCRUD().setUserInfo(
+      username: otpStatus['username'],
+      email: otpStatus['email'],
+      is2FAEnabled: otpStatus['is2FAEnabled'],
+      isBiometricAuthEnabled: otpStatus['isBiometricAuthEnabled'],
+      token: otpStatus['token'],
+    );
 
+    if (!mounted) return;
     Navigator.popUntil(context, (route) => route.isFirst);
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
@@ -52,16 +81,13 @@ class _OTPScreenState extends State<OTPScreen> {
         ),
       ),
     );
-    // setState(() {
-    //   _status = 'Wrong OTP. Try again';
-    // });
   }
 
-  @override
-  void initState() {
-    _requestOTP();
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   _requestOTP();
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -76,41 +102,88 @@ class _OTPScreenState extends State<OTPScreen> {
           child: Column(
             children: [
               const SizedBox(height: 100),
-              const Text(
-                'Enter the OTP sent to your email',
-                style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
+              if (widget.isNotVerifiedFromLogin)
+                const Text(
+                  'Your account is not verified yet. Please enter the OTP sent to your email to verify your account',
+                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                )
+              else
+                const Text(
+                  'Enter the OTP sent to your email',
+                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
               // const SizedBox(height: 20),
               // const Text(
               //   'You email starts with: ',
               //   style: TextStyle(fontSize: 16),
               // ),
               const SizedBox(height: 100),
-              OTPTextField(
-                length: 5,
-                otpFieldStyle: OtpFieldStyle(
-                  backgroundColor: const Color(0xFFF4F5F7),
-                  borderColor: const Color(0xFFDEE3EB),
-                  focusBorderColor: const Color(0xFF24A09B),
-                ),
-                width: MediaQuery.of(context).size.width,
-                fieldWidth: 40,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
-                textFieldAlignment: MainAxisAlignment.spaceAround,
-                fieldStyle: FieldStyle.box,
-                onChanged: (s) {
-                  if (s.length < 5) {
+              Pinput(
+                enabled: !_isFieldDisabled,
+                length: 6,
+                onCompleted: _checkOTP,
+                onChanged: (value) {
+                  if (value.length < 6) {
                     setState(() {
                       _status = '';
                     });
                   }
                 },
-                onCompleted: _checkOTP,
+                focusedPinTheme: PinTheme(
+                    width: MediaQuery.of(context).size.width,
+                    height: 70,
+                    textStyle: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: const Color(0xFFF4F5F7),
+                      border: Border.all(
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    )),
+                defaultPinTheme: PinTheme(
+                    width: MediaQuery.of(context).size.width,
+                    height: 70,
+                    textStyle: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: const Color(0xFFF4F5F7),
+                      border: Border.all(
+                        color: const Color(0xFFDEE3EB),
+                      ),
+                    )),
               ),
+              // OTPTextField(
+              //   length: 5,
+              //   otpFieldStyle: OtpFieldStyle(
+              //     backgroundColor: const Color(0xFFF4F5F7),
+              //     borderColor: const Color(0xFFDEE3EB),
+              //     focusBorderColor: const Color(0xFF24A09B),
+              //   ),
+              //   width: MediaQuery.of(context).size.width,
+              //   fieldWidth: 40,
+              //   style: const TextStyle(
+              //     fontSize: 18,
+              //     fontWeight: FontWeight.w700,
+              //   ),
+              //   textFieldAlignment: MainAxisAlignment.spaceAround,
+              //   fieldStyle: FieldStyle.box,
+              //   onChanged: (s) {
+              //     if (s.length < 5) {
+              //       setState(() {
+              //         _status = '';
+              //       });
+              //     }
+              //   },
+              //   onCompleted: _checkOTP,
+              // ),
               const SizedBox(height: 50),
               Text(
                 _status,
@@ -122,41 +195,41 @@ class _OTPScreenState extends State<OTPScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 100),
-              if (_isCountDownFinished == false)
-                const Text(
-                  'Didn\'t receive the OTP? You can request another one in',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 18,
-                    // fontWeight: FontWeight.bold,
-                  ),
-                )
-              else
-                TextButton(
-                  onPressed: _requestOTP,
-                  child: Text(
-                    'Request a new OTP',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).primaryColor),
-                  ),
-                ),
-              if (_isCountDownFinished == false)
-                CountDownTime.minutes(
-                  onTimeOut: () {
-                    setState(() {
-                      _isCountDownFinished = true;
-                    });
-                  },
-                  timeStartInMinutes: 1,
-                  textStyle: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                )
+              // const SizedBox(height: 100),
+              // if (_isCountDownFinished == false)
+              //   const Text(
+              //     'Didn\'t receive the OTP? You can request another one in',
+              //     textAlign: TextAlign.center,
+              //     style: TextStyle(
+              //       fontSize: 18,
+              //       // fontWeight: FontWeight.bold,
+              //     ),
+              //   )
+              // else
+              //   TextButton(
+              //     onPressed: _requestOTP,
+              //     child: Text(
+              //       'Request a new OTP',
+              //       textAlign: TextAlign.center,
+              //       style: TextStyle(
+              //           fontSize: 18,
+              //           fontWeight: FontWeight.bold,
+              //           color: Theme.of(context).primaryColor),
+              //     ),
+              //   ),
+              // if (_isCountDownFinished == false)
+              //   CountDownTime.minutes(
+              //     onTimeOut: () {
+              //       setState(() {
+              //         _isCountDownFinished = true;
+              //       });
+              //     },
+              //     timeStartInMinutes: 1,
+              //     textStyle: const TextStyle(
+              //       fontSize: 18,
+              //       fontWeight: FontWeight.bold,
+              //     ),
+              //   )
             ],
           ),
         ),

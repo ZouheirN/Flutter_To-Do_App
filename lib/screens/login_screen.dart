@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:bcrypt/bcrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:string_validator/string_validator.dart';
-import 'package:todo_app/screens/forgot_password_screen.dart';
 import 'package:todo_app/screens/otp_screen.dart';
 import 'package:todo_app/services/user_info_crud.dart';
 import 'package:todo_app/widgets/buttons.dart';
@@ -67,11 +66,28 @@ class _LoginScreenState extends State<LoginScreen> {
       final email = response['email'];
       final is2FAEnabled = response['is2FAEnabled'];
       final isBiometricAuthEnabled = response['isBiometricAuthEnabled'];
+      final isVerified = response['isVerified'];
 
       setState(() {
         _isLoading = false;
         _status = '';
       });
+
+      // check if user is verified, if not then move to otp screen
+      if (!isVerified) {
+        if (context.mounted) {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => OTPScreen(
+                token: token,
+                email: email,
+                isNotVerifiedFromLogin: true,
+              ),
+            ),
+          );
+        }
+        return;
+      }
 
       // if user enabled 2fa, then move to otp. If not, then save userInfo and move to home
       if (is2FAEnabled) {
@@ -79,8 +95,9 @@ class _LoginScreenState extends State<LoginScreen> {
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => OTPScreen(
-                username: username,
+                token: token,
                 email: email,
+                isNotVerifiedFromLogin: false,
               ),
             ),
           );
@@ -108,8 +125,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _forgetPassword() {
-    Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()));
+    // Navigator.of(context).push(
+    //     MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()));
   }
 
   @override
@@ -161,7 +178,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               const SizedBox(height: 10),
                               TextFormField(
-                                autofillHints: const [AutofillHints.username, AutofillHints.email],
+                                autofillHints: const [
+                                  AutofillHints.username,
+                                  AutofillHints.email
+                                ],
                                 controller: _usernameOrEmailController,
                                 decoration: const InputDecoration(
                                   contentPadding: EdgeInsets.symmetric(

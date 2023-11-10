@@ -38,6 +38,10 @@ class UserInfoCRUD {
     _userInfoBox.put('auth_enabled', auth);
   }
 
+  void set2FA(bool fa) {
+    _userInfoBox.put('2fa_enabled', fa);
+  }
+
   void deleteUserInfo() {
     _userInfoBox.deleteAll([
       'username',

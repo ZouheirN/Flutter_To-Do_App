@@ -15,7 +15,7 @@ class UserToken {
     return await _storage.read(key: 'token') ?? '';
   }
 
- static deleteToken() async {
+  static deleteToken() async {
     await _storage.delete(key: 'token');
   }
 }

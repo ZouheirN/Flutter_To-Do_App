@@ -54,7 +54,8 @@ Future<dynamic> checkCredentialsAndGetToken(
 
 Future<dynamic> signUp(String username, String email, String password) async {
   try {
-    await dio.post(
+    Response response;
+    response = await dio.post(
       'https://todobuddy.onrender.com/api/user/signup',
       data: {
         "username": username,
@@ -63,8 +64,11 @@ Future<dynamic> signUp(String username, String email, String password) async {
       },
     );
 
+    print(response.data);
     return ReturnTypes.success;
   } on DioException catch (e) {
+    print(e.response!.data);
+
     if (e.response == null) return ReturnTypes.error;
     
     if (e.response!.data['error'] == 'Email already in-use.') {
@@ -190,6 +194,72 @@ Future<dynamic> editTaskFromDB(String taskId, String status) async {
     );
 
     return ReturnTypes.success;
+  } on DioException catch (e) {
+    if (e.response == null) return ReturnTypes.error;
+
+    if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+      return ReturnTypes.invalidToken;
+    }
+
+    return ReturnTypes.fail;
+  }
+}
+
+Future<dynamic> toggle2FA() async {
+  final String token = await UserToken.getToken();
+  if (token == '') {
+    return ReturnTypes.invalidToken;
+  }
+
+  try {
+    Response response;
+    response = await dio.get(
+      'https://todobuddy.onrender.com/api/user/2FactorAuth',
+      options: Options(
+        headers: {
+          "Authorization": "Bearer $token",
+        },
+      ),
+    );
+
+    if (response.data == '2 Factor Authentication Disabled') {
+      return false;
+    } else {
+      return true;
+    }
+  } on DioException catch (e) {
+    if (e.response == null) return ReturnTypes.error;
+
+    if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+      return ReturnTypes.invalidToken;
+    }
+
+    return ReturnTypes.fail;
+  }
+}
+
+Future<dynamic> toggleBiometricAuth() async {
+  final String token = await UserToken.getToken();
+  if (token == '') {
+    return ReturnTypes.invalidToken;
+  }
+
+  try {
+    Response response;
+    response = await dio.get(
+      'https://todobuddy.onrender.com/api/user/BiometricAuth',
+      options: Options(
+        headers: {
+          "Authorization": "Bearer $token",
+        },
+      ),
+    );
+
+    if (response.data == 'Biometric Authentication Disabled') {
+      return false;
+    } else {
+      return true;
+    }
   } on DioException catch (e) {
     if (e.response == null) return ReturnTypes.error;
 

@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final String hashedPassword = BCrypt.hashpw(
           password, BCrypt.gensalt(secureRandom: Random(password.length)));
 
-      // check if credentials are correct and get token
+      // check if credentials are correct and get token and user info
       final response =
           await checkCredentialsAndGetToken(usernameOrEmail, hashedPassword);
 

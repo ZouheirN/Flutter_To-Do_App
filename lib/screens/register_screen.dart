@@ -56,6 +56,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         return;
       }
 
+      return;
       if (context.mounted) {
         Navigator.of(context).push(
           MaterialPageRoute(

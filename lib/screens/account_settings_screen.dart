@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/services/http_requests.dart';
 import 'package:todo_app/services/user_info_crud.dart';
 import 'package:todo_app/widgets/buttons.dart';
 import 'package:todo_app/widgets/textfields.dart';
+
+import '../widgets/global_snackbar.dart';
 
 class AccountSettingsScreen extends StatefulWidget {
   const AccountSettingsScreen({super.key});
@@ -78,11 +81,23 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                 activeColor: Theme.of(context).primaryColor,
                 // thumbColor: MaterialStateProperty.all(Colors.white),
                 // inactiveThumbColor: Colors.black,
-                onChanged: (bool value) {
-                  //TODO set 2fa in userinfo
+                onChanged: (bool value) async {
+                  final newValue = await toggle2FA();
+
+                  if (newValue == ReturnTypes.fail ||
+                      newValue == ReturnTypes.error) {
+                    showGlobalSnackBar('Failed to toggle 2FA.');
+                    return;
+                  } else if (newValue == ReturnTypes.invalidToken) {
+                    if (!mounted) return;
+                    invalidTokenResponse(context);
+                    return;
+                  }
+
+                  UserInfoCRUD().set2FA(newValue);
 
                   setState(() {
-                    _is2FAEnabled = value;
+                    _is2FAEnabled = newValue;
                   });
                 },
               ),
@@ -104,11 +119,24 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                 activeColor: Theme.of(context).primaryColor,
                 // thumbColor: MaterialStateProperty.all(Colors.white),
                 // inactiveThumbColor: Colors.black,
-                onChanged: (bool value) {
-                  UserInfoCRUD().setAuth(value);
+                onChanged: (bool value) async {
+                  final newValue = await toggleBiometricAuth();
+
+                  if (newValue == ReturnTypes.fail ||
+                      newValue == ReturnTypes.error) {
+                    showGlobalSnackBar(
+                        'Failed to toggle biometric authentication.');
+                    return;
+                  } else if (newValue == ReturnTypes.invalidToken) {
+                    if (!mounted) return;
+                    invalidTokenResponse(context);
+                    return;
+                  }
+
+                  UserInfoCRUD().setAuth(newValue);
 
                   setState(() {
-                    _isAuthenticationEnabled = value;
+                    _isAuthenticationEnabled = newValue;
                   });
                 },
               ),

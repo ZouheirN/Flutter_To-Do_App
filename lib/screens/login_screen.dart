@@ -8,6 +8,7 @@ import 'package:todo_app/services/user_info_crud.dart';
 import 'package:todo_app/widgets/buttons.dart';
 
 import '../services/http_requests.dart';
+import 'forgot_password_screen.dart';
 import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -73,8 +74,9 @@ class _LoginScreenState extends State<LoginScreen> {
         _status = '';
       });
 
-      // check if user is verified, if not then move to otp screen
-      if (!isVerified) {
+      print('is verified: $isVerified');
+
+      if (!isVerified) { // check if user is verified, if not then move to otp screen
         if (context.mounted) {
           Navigator.of(context).push(
             MaterialPageRoute(
@@ -86,11 +88,8 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           );
         }
-        return;
-      }
-
-      // if user enabled 2fa, then move to otp. If not, then save userInfo and move to home
-      if (is2FAEnabled) {
+      } else
+      if (is2FAEnabled) { // if user enabled 2fa, then move to otp. If not, then save userInfo and move to home
         if (context.mounted) {
           Navigator.of(context).push(
             MaterialPageRoute(
@@ -125,8 +124,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _forgetPassword() {
-    // Navigator.of(context).push(
-    //     MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()));
+    Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()));
   }
 
   @override

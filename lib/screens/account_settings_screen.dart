@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:todo_app/services/http_requests.dart';
 import 'package:todo_app/services/user_info_crud.dart';
 import 'package:todo_app/widgets/buttons.dart';
+import 'package:todo_app/widgets/dialogs.dart';
 import 'package:todo_app/widgets/textfields.dart';
 
 import '../widgets/global_snackbar.dart';
@@ -19,6 +20,79 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
 
   bool _is2FALoading = false;
   bool _isBioAuthLoading = false;
+
+  _changePassword() {
+    // todo change password
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Check Your Email'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'An email was sent to your email address. Please click on the link in the email to reset your password.',
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              PrimaryButton(
+                text: 'OK',
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  _deleteAccount() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Delete Account'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Are you sure you want to delete your account? Your tasks will be deleted as well.',
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  DialogButton(
+                    text: 'Cancel',
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  DialogButton(
+                    text: 'Delete',
+                    color: 0xFFFF0000,
+                    onPressed: () async {
+                      Navigator.of(context).pop();
+                      showLoadingDialog('Deleting Account...', context);
+
+                      // final response = await deleteAccount();
+
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   void initState() {
@@ -67,7 +141,8 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               ),
             ),
             const SizedBox(height: 10),
-            SecondaryButton(text: 'Change Password', onPressed: () {}),
+            SecondaryButton(
+                text: 'Change Password', onPressed: _changePassword),
             const SizedBox(height: 20),
             const Divider(
               thickness: 0.1,
@@ -190,12 +265,12 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               indent: 10,
               endIndent: 10,
             ),
-            const ListTile(
-              leading: Icon(
+            ListTile(
+              leading: const Icon(
                 Icons.no_accounts_rounded,
                 color: Colors.red,
               ),
-              title: Text(
+              title: const Text(
                 'Delete Account',
                 style: TextStyle(
                   fontSize: 16,
@@ -203,6 +278,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+              onTap: _deleteAccount,
             ),
             // ListTile(
             //   leading: const Icon(Icons.manage_accounts),

@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:bcrypt/bcrypt.dart';
 import 'package:fancy_password_field/fancy_password_field.dart';
 import 'package:flutter/material.dart';
 import 'package:string_validator/string_validator.dart';
@@ -33,8 +36,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
         _isLoading = true;
       });
 
+      // Hash the password
+      final String hashedPassword = BCrypt.hashpw(
+          _passController.text, BCrypt.gensalt(secureRandom: Random(_passController.text.length)));
+
       final signUpStatus = await signUp(_usernameController.text.trim(),
-          _emailController.text.trim(), _passController.text);
+          _emailController.text.trim(), hashedPassword);
 
       setState(() {
         _isLoading = false;

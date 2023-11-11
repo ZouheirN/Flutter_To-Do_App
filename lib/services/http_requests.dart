@@ -176,6 +176,7 @@ Future<dynamic> addTaskToDB(String title, String description, String priority,
 
     return [response.data["_id"], response.data["createdAt"]];
   } on DioException catch (e) {
+    print(e.response?.data);
     if (e.response == null) return ReturnTypes.error;
 
     if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {

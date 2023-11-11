@@ -98,18 +98,23 @@ class DateTextField extends StatefulWidget {
 }
 
 class _DateTextFieldState extends State<DateTextField> {
-
-
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       readOnly: true,
+      validator: (value) {
+        value = widget.textController?.text;
+        if (value == null || value.isEmpty) {
+          return 'Please enter a date';
+        }
+        return null;
+      },
       decoration: InputDecoration(
         contentPadding:
             const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
         filled: true,
         fillColor: const Color(0xFFF4F5F7),
-        hintText: widget.textController?.text ?? '',
+        hintText: widget.textController?.text == '' ? 'Estimated Date' : widget.textController?.text,
         border: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(10)),
         ),

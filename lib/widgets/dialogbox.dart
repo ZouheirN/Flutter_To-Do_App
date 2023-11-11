@@ -41,104 +41,110 @@ class _DialogBoxState extends State<DialogBox> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: Colors.white,
-      content: SizedBox(
-        // height: 400,
-        width: 400,
-        child: Form(
-          key: widget.formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                DialogTextField(
-                  textController: widget.nameController,
-                  hintText: 'Task Name',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a task name';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 12),
-                DialogTextField(
-                  textController: widget.descriptionController,
-                  hintText: 'Task Description',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a task description';
-                    }
-                    return null;
-                  },
-                ),
-                PriorityDropdown(
-                  priorityController: widget.priorityController,
-                  // Run validation on item selected
-                  validateOnChange: true,
-                  // Function to validate if the current selected item is valid or not
-                  validator: (value) =>
-                      value == null ? 'Please select a priority' : null,
-                ),
-                DateTextField(textController: widget.dateController),
-                const SizedBox(height: 12),
-                DialogButton(
-                    text: 'Color',
-                    color: colorInt,
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (_) {
-                          return AlertDialog(
-                            contentPadding: const EdgeInsets.all(18.0),
-                            title: const Text("Choose Color"),
-                            content: MaterialColorPicker(
-                              onColorChange: (Color color) {
-                                String colorString = color.toString();
-                                String valueString =
-                                    colorString.split('(0x')[1].split(')')[0];
-                                widget.colorController.text = valueString;
-                              },
-                              selectedColor: Theme.of(context).primaryColor,
-                              colors: [
-                                createMaterialColor(const Color(0xFF24A09B)),
-                                createMaterialColor(Colors.blue),
-                                createMaterialColor(Colors.red),
-                                createMaterialColor(Colors.green),
-                                createMaterialColor(Colors.purple),
-                              ],
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    colorInt = int.parse(
-                                        widget.colorController.text,
-                                        radix: 16);
-                                  });
-                                  Navigator.of(context).pop();
+    return WillPopScope(
+      onWillPop: () {
+        widget.onCancel();
+        return Future.value(true);
+      } ,
+      child: AlertDialog(
+        backgroundColor: Colors.white,
+        content: SizedBox(
+          // height: 400,
+          width: 400,
+          child: Form(
+            key: widget.formKey,
+            child: SingleChildScrollView(
+              child: Column(
+                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  DialogTextField(
+                    textController: widget.nameController,
+                    hintText: 'Task Name',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a task name';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  DialogTextField(
+                    textController: widget.descriptionController,
+                    hintText: 'Task Description',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a task description';
+                      }
+                      return null;
+                    },
+                  ),
+                  PriorityDropdown(
+                    priorityController: widget.priorityController,
+                    // Run validation on item selected
+                    validateOnChange: true,
+                    // Function to validate if the current selected item is valid or not
+                    validator: (value) =>
+                        value == null ? 'Please select a priority' : null,
+                  ),
+                  DateTextField(textController: widget.dateController),
+                  const SizedBox(height: 12),
+                  DialogButton(
+                      text: 'Color',
+                      color: colorInt,
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (_) {
+                            return AlertDialog(
+                              contentPadding: const EdgeInsets.all(18.0),
+                              title: const Text("Choose Color"),
+                              content: MaterialColorPicker(
+                                onColorChange: (Color color) {
+                                  String colorString = color.toString();
+                                  String valueString =
+                                      colorString.split('(0x')[1].split(')')[0];
+                                  widget.colorController.text = valueString;
                                 },
-                                child: const Text('SUBMIT'),
+                                selectedColor: Theme.of(context).primaryColor,
+                                colors: [
+                                  createMaterialColor(const Color(0xFF24A09B)),
+                                  createMaterialColor(Colors.blue),
+                                  createMaterialColor(Colors.red),
+                                  createMaterialColor(Colors.green),
+                                  createMaterialColor(Colors.purple),
+                                ],
                               ),
-                            ],
-                          );
-                        },
-                      );
-                    }),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    DialogButton(text: 'Add', onPressed: widget.onAdd),
-                    DialogButton(
-                      text: 'Cancel',
-                      onPressed: widget.onCancel,
-                      color: 0xFFFF0000,
-                    ),
-                  ],
-                )
-              ],
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      colorInt = int.parse(
+                                          widget.colorController.text,
+                                          radix: 16);
+                                    });
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('SUBMIT'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      DialogButton(text: 'Add', onPressed: widget.onAdd),
+                      DialogButton(
+                        text: 'Cancel',
+                        onPressed: widget.onCancel,
+                        color: 0xFFFF0000,
+                      ),
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
         ),

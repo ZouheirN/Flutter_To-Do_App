@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:pull_to_refresh_plus/pull_to_refresh_plus.dart';
 import 'package:todo_app/services/individual_tasks_crud.dart';
 import 'package:todo_app/widgets/dialogs.dart';
@@ -14,9 +15,9 @@ import '../widgets/global_snackbar.dart';
 import '../widgets/skeleton_shimmer.dart';
 
 class IndividualTasksScreen extends StatefulWidget {
-  final bool isFirstTimeLoggingIn;
+  bool isFirstTimeLoggingIn;
 
-  const IndividualTasksScreen({
+  IndividualTasksScreen({
     super.key,
     required this.isFirstTimeLoggingIn,
   });
@@ -190,6 +191,19 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
     _dateController.clear();
   }
 
+  String convertStringToIso8601(String dateString) {
+    // Define the input format
+    DateFormat inputFormat = DateFormat("E MMM d - HH:mm", "en_US");
+
+    // Parse the input string
+    DateTime dateTime = inputFormat.parse(dateString);
+
+    // Format the DateTime as ISO 8601 string
+    String iso8601String = dateTime.toIso8601String();
+
+    return iso8601String;
+  }
+
   Future<void> addNewTask(BuildContext context) async {
     final isFormValid = _formKey.currentState!.validate();
     if (!isFormValid) return;
@@ -201,7 +215,7 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
       _descriptionController.text,
       _priorityController.text,
       _colorController.text,
-      _dateController.text,
+      convertStringToIso8601(_dateController.text),
     );
 
     if (taskIdAndDate == ReturnTypes.invalidToken) {
@@ -211,6 +225,8 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
     } else if (taskIdAndDate == ReturnTypes.fail ||
         taskIdAndDate == ReturnTypes.error) {
       showGlobalSnackBar('Error adding task. Please try again.');
+      if (!mounted) return;
+      Navigator.pop(context);
       return;
     }
 
@@ -255,6 +271,8 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
 
     if (deleteResponse != ReturnTypes.success) {
       showGlobalSnackBar('Error deleting task. Please try again.');
+      if (!mounted) return;
+      Navigator.pop(context);
       return;
     }
 
@@ -278,6 +296,7 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
       getDataFromDB();
     } else {
       getData();
+      widget.isFirstTimeLoggingIn = false;
     }
   }
 
@@ -367,9 +386,8 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
                                   .individualTasks[index]['id'],
                               creationDate: _individualTasksCRUD
                                   .individualTasks[index]['creationDate'],
-                              // estimatedDate: _individualTasksCRUD
-                              //     .individualTasks[index]['estimatedDate'],
-                              estimatedDate: '2023-11-09 19:12:00.000',
+                              estimatedDate: _individualTasksCRUD
+                                  .individualTasks[index]['estimatedDate'],
                               onChanged: (value) => statusChanged(value, index),
                               deleteFunction: (context) => deleteTask(index),
                             );

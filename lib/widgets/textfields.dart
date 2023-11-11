@@ -132,7 +132,7 @@ class _DateTextFieldState extends State<DateTextField> {
               onConfirm: (date) {
                 setState(() {
                   DateTime dateTime = DateTime.parse(date.toString());
-                  String formattedString = DateFormat('E MMM d - HH:mm').format(dateTime);
+                  String formattedString = DateFormat('E MMM d, y - HH:mm').format(dateTime);
                   widget.textController?.text = formattedString;
                 });
               },

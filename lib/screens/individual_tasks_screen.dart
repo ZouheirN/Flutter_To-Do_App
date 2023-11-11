@@ -193,7 +193,7 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
 
   String convertStringToIso8601(String dateString) {
     // Define the input format
-    DateFormat inputFormat = DateFormat("E MMM d - HH:mm", "en_US");
+    DateFormat inputFormat = DateFormat("E MMM d, y - HH:mm", "en_US");
 
     // Parse the input string
     DateTime dateTime = inputFormat.parse(dateString);
@@ -240,7 +240,7 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
             _priorityController.text == '' ? 'Low' : _priorityController.text,
         'status': 'Unfinished',
         'creationDate': taskIdAndDate[1],
-        'estimatedDate': _dateController.text,
+        'estimatedDate': convertStringToIso8601(_dateController.text),
       });
       _nameController.clear();
       _descriptionController.clear();
@@ -271,8 +271,6 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
 
     if (deleteResponse != ReturnTypes.success) {
       showGlobalSnackBar('Error deleting task. Please try again.');
-      if (!mounted) return;
-      Navigator.pop(context);
       return;
     }
 

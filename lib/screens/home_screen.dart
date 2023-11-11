@@ -5,7 +5,7 @@ import 'package:flutter_fgbg/flutter_fgbg.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:todo_app/screens/individual_tasks_screen.dart';
-import 'package:todo_app/screens/settings_screen.dart';
+import 'package:todo_app/screens/profile_screen.dart';
 import 'package:todo_app/services/local_auth_api.dart';
 import 'package:todo_app/services/user_info_crud.dart';
 import 'package:todo_app/widgets/buttons.dart';
@@ -56,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
       IndividualTasksScreen(
         isFirstTimeLoggingIn: widget.isFirstTimeLoggingIn,
       ),
-      const SettingsScreen(),
+      ProfileScreen(),
     ];
 
     if (UserInfoCRUD().getAuthEnabled() && !widget.isFirstTimeLoggingIn) {
@@ -131,8 +131,8 @@ class _HomeScreenState extends State<HomeScreen> {
               //   text: 'Group Tasks',
               // ),
               GButton(
-                icon: Icons.settings,
-                text: 'Settings',
+                icon: Icons.person_rounded,
+                text: 'Profile',
               ),
             ],
           ),

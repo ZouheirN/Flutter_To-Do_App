@@ -1,11 +1,14 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app/screens/account_settings_screen.dart';
 import 'package:todo_app/screens/welcome_screen.dart';
 import 'package:todo_app/services/individual_tasks_crud.dart';
 import 'package:todo_app/services/user_info_crud.dart';
 
-class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
+class ProfileScreen extends StatelessWidget {
+  ProfileScreen({super.key});
+
+  final IndividualTasksCRUD _individualTasksCRUD = IndividualTasksCRUD();
 
   void _logout(BuildContext context) {
     UserInfoCRUD().deleteUserInfo();
@@ -26,8 +29,45 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
+  Color getStatusColor(String status) {
+    switch (status) {
+      case 'Finished':
+        return Colors.green;
+      case 'In Progress':
+        return Colors.blue;
+      case 'Unfinished':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    _individualTasksCRUD.loadIndividualTasks();
+    Map<String, int> statusCounts = {'Finished': 0, 'In Progress': 0, 'Unfinished': 0};
+
+    // Count the occurrences of each status
+    for (var task in _individualTasksCRUD.individualTasks) {
+      String status = task['status'];
+      if (statusCounts.containsKey(status)) {
+        statusCounts[status] = statusCounts[status]! + 1;
+      }
+    }
+
+    // Generate pie chart data
+    List<PieChartSectionData> pieChartData = statusCounts.entries.map((entry) {
+      String status = entry.key;
+      int count = entry.value;
+
+      return PieChartSectionData(
+        color: getStatusColor(status),
+        value: count.toDouble(),
+        title: '$count',
+        radius: 60,
+      );
+    }).toList();
+
     return Padding(
       padding: const EdgeInsets.only(top: 70, left: 20, right: 20),
       child: SingleChildScrollView(
@@ -119,9 +159,99 @@ class SettingsScreen extends StatelessWidget {
               textColor: Colors.grey[800],
               onTap: () => _logout(context),
             ),
+            const SizedBox(height: 20),
+            SizedBox(
+              height: 220,
+              width: 220,
+              child: PieChart(
+                PieChartData(
+                  sections: pieChartData,
+                  sectionsSpace: 0,
+                  centerSpaceRadius: 55,
+                  startDegreeOffset: -90,
+                ),
+              ),
+            ),
+            if (_individualTasksCRUD.individualTasks.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Indicator(
+                    color: getStatusColor('Finished'),
+                    text: 'Finished',
+                    isSquare: false,
+                  ),
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  Indicator(
+                    color: getStatusColor('In Progress'),
+                    text: 'In Progress',
+                    isSquare: false,
+                  ),
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  Indicator(
+                    color: getStatusColor('Unfinished'),
+                    text: 'Unfinished',
+                    isSquare: false,
+                  ),
+                  const SizedBox(
+                    height: 18,
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class Indicator extends StatelessWidget {
+  const Indicator({
+    super.key,
+    required this.color,
+    required this.text,
+    required this.isSquare,
+    this.size = 16,
+    this.textColor,
+  });
+  final Color color;
+  final String text;
+  final bool isSquare;
+  final double size;
+  final Color? textColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(
+            shape: isSquare ? BoxShape.rectangle : BoxShape.circle,
+            color: color,
+          ),
+        ),
+        const SizedBox(
+          width: 4,
+        ),
+        Text(
+          text,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: textColor,
+          ),
+        )
+      ],
     );
   }
 }

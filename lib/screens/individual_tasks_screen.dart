@@ -15,7 +15,7 @@ import '../widgets/global_snackbar.dart';
 import '../widgets/skeleton_shimmer.dart';
 
 class IndividualTasksScreen extends StatefulWidget {
-  bool isFirstTimeLoggingIn;
+  final bool isFirstTimeLoggingIn;
 
   IndividualTasksScreen({
     super.key,
@@ -156,7 +156,8 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
       invalidTokenResponse(context);
       return null;
     } else if (response == ReturnTypes.error || response == ReturnTypes.fail) {
-      showGlobalSnackBar('Error changing task status. Please try again.');
+      getDataFromDB();
+      showGlobalSnackBar('Error changing task status. Auto-refreshing tasks.');
       return null;
     }
 
@@ -270,7 +271,8 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
     Navigator.pop(context);
 
     if (deleteResponse != ReturnTypes.success) {
-      showGlobalSnackBar('Error deleting task. Please try again.');
+      getDataFromDB();
+      showGlobalSnackBar('Error deleting task. Auto-refreshing tasks.');
       return;
     }
 
@@ -294,7 +296,6 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
       getDataFromDB();
     } else {
       getData();
-      widget.isFirstTimeLoggingIn = false;
     }
   }
 

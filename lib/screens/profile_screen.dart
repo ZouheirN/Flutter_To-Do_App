@@ -172,10 +172,12 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(height: 20),
             if (_individualTasksCRUD.individualTasks.isNotEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
+                mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -199,9 +201,6 @@ class ProfileScreen extends StatelessWidget {
                     color: getStatusColor('Unfinished'),
                     text: 'Unfinished',
                     isSquare: false,
-                  ),
-                  const SizedBox(
-                    height: 18,
                   ),
                 ],
               ),
@@ -231,6 +230,8 @@ class Indicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisSize: MainAxisSize.min ,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Container(
           width: size,

@@ -48,7 +48,7 @@ Future<dynamic> checkCredentialsAndGetToken(
     };
   } on DioException catch (e) {
     if (e.response == null) return ReturnTypes.error;
-    print(e.response!.data);
+
     return ReturnTypes.fail;
   }
 }
@@ -70,7 +70,6 @@ Future<dynamic> signUp(String username, String email, String password) async {
     };
   } on DioException catch (e) {
     if (e.response == null) return ReturnTypes.error;
-    print(e.response!.data);
 
     if (e.response!.data['error'] == 'Email already in-use.') {
       return ReturnTypes.emailTaken;
@@ -261,12 +260,8 @@ Future<dynamic> toggle2FA() async {
         },
       ),
     );
-
-    if (response.data == '2 Factor Authentication Disabled') {
-      return false;
-    } else {
-      return true;
-    }
+    print(response.data);
+    return response.data['is2FAEnabled'];
   } on DioException catch (e) {
     if (e.response == null) return ReturnTypes.error;
 
@@ -295,11 +290,41 @@ Future<dynamic> toggleBiometricAuth() async {
       ),
     );
 
-    if (response.data == 'Biometric Authentication Disabled') {
-      return false;
-    } else {
-      return true;
+    print(response.data);
+    return response.data['isBiometricAuthEnabled'];
+  } on DioException catch (e) {
+    if (e.response == null) return ReturnTypes.error;
+
+    if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+      return ReturnTypes.invalidToken;
     }
+
+    return ReturnTypes.fail;
+  }
+}
+
+Future<dynamic> getUserOptions() async {
+  final String token = await UserToken.getToken();
+  if (token == '') {
+    return ReturnTypes.invalidToken;
+  }
+
+  try {
+    Response response;
+    response = await dio.get(
+      'https://todobuddy.onrender.com/api/user/info',
+      options: Options(
+        headers: {
+          "Authorization": "Bearer $token",
+        },
+      ),
+    );
+
+
+    return {
+      'is2FAEnabled': response.data["is2FAEnabled"],
+      'isBiometricAuthEnabled': response.data["isBiometricAuthEnabled"],
+    };
   } on DioException catch (e) {
     if (e.response == null) return ReturnTypes.error;
 

@@ -9,6 +9,7 @@ import 'package:todo_app/screens/home_screen.dart';
 import 'package:todo_app/screens/onboarding_screen.dart';
 import 'package:todo_app/screens/welcome_screen.dart';
 import 'package:todo_app/services/http_requests.dart';
+import 'package:todo_app/services/user_info_crud.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

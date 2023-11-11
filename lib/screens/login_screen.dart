@@ -62,6 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
         return;
       }
 
+      print(response);
       final token = response['token'];
       final username = response['username'];
       final email = response['email'];
@@ -75,6 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
       });
 
       print('is verified: $isVerified');
+      print('is 2fa enabled: $is2FAEnabled');
 
       if (!isVerified) { // check if user is verified, if not then move to otp screen
         if (context.mounted) {

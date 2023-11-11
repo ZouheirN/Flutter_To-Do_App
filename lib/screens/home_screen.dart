@@ -1,14 +1,13 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_fgbg/flutter_fgbg.dart';
-import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:todo_app/screens/individual_tasks_screen.dart';
 import 'package:todo_app/screens/profile_screen.dart';
 import 'package:todo_app/services/local_auth_api.dart';
 import 'package:todo_app/services/user_info_crud.dart';
 import 'package:todo_app/widgets/buttons.dart';
+import '../services/http_requests.dart';
 
 class HomeScreen extends StatefulWidget {
   final bool isFirstTimeLoggingIn;
@@ -59,13 +58,17 @@ class _HomeScreenState extends State<HomeScreen> {
       ProfileScreen(),
     ];
 
+    getUserOptions().then((value) {
+      UserInfoCRUD().set2FA(value['is2FAEnabled']);
+      UserInfoCRUD().setAuth(value['isBiometricAuthEnabled']);
+    });
+
     if (UserInfoCRUD().getAuthEnabled() && !widget.isFirstTimeLoggingIn) {
       _authenticateOnStart();
     } else {
       _isAuthenticated = true;
     }
 
-    // FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
     super.initState();
   }
 

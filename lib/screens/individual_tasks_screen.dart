@@ -65,6 +65,12 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
     if (tasks.isEmpty) {
       showGlobalSnackBar('No tasks found.');
       _refreshController.refreshFailed();
+      // set tasks to empty
+      if (!mounted) return;
+      setState(() {
+        _individualTasksCRUD.individualTasks = [];
+      });
+      _individualTasksCRUD.updateIndividualTasks();
       return;
     }
 
@@ -80,7 +86,7 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
 
       // set interval to interval - 1 day
       int interval = timeDifference.inSeconds - 86400;
-      if (interval > 5) {
+      if (interval > 5 && task['status'] != 'Finished') {
         // schedule notification
         await NotificationService.showNotification(
           id: stringToUniqueInt(task['_id']),
@@ -155,7 +161,7 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
 
       // set interval to interval - 1 day
       int interval = timeDifference.inSeconds - 86400;
-      if (interval > 5) {
+      if (interval > 5 && task['status'] != 'Finished') {
         // schedule notification
         await NotificationService.showNotification(
           id: stringToUniqueInt(task['_id']),
@@ -206,6 +212,11 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
       return null;
     }
 
+    if (status == 'Finished') {
+      NotificationService.cancelNotification(
+          stringToUniqueInt(_individualTasksCRUD.individualTasks[index]['id']));
+    }
+
     setState(() {
       _individualTasksCRUD.individualTasks[index]['status'] = status;
     });
@@ -242,7 +253,7 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
     DateFormat inputFormat = DateFormat("E MMM d, y - HH:mm", "en_US");
 
     // Parse the input string
-    DateTime dateTime = inputFormat.parse(dateString);
+    DateTime dateTime = inputFormat.parse(dateString).toUtc();
 
     // Format the DateTime as ISO 8601 string
     String iso8601String = dateTime.toIso8601String();

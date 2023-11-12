@@ -1,8 +1,10 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app/screens/account_settings_screen.dart';
 import 'package:todo_app/screens/welcome_screen.dart';
 import 'package:todo_app/services/individual_tasks_crud.dart';
+import 'package:todo_app/services/notifications.dart';
 import 'package:todo_app/services/user_info_crud.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -45,7 +47,11 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _individualTasksCRUD.loadIndividualTasks();
-    Map<String, int> statusCounts = {'Finished': 0, 'In Progress': 0, 'Unfinished': 0};
+    Map<String, int> statusCounts = {
+      'Finished': 0,
+      'In Progress': 0,
+      'Unfinished': 0
+    };
 
     // Count the occurrences of each status
     for (var task in _individualTasksCRUD.individualTasks) {
@@ -79,7 +85,8 @@ class ProfileScreen extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 50,
-                    backgroundImage: NetworkImage('https://i.imgur.com/BoN9kdC.png'),
+                    backgroundImage:
+                        NetworkImage('https://i.imgur.com/BoN9kdC.png'),
                     // backgroundImage: AssetImage('assets/images/profile.png'),
                   ),
                   // Positioned(
@@ -174,37 +181,37 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             if (_individualTasksCRUD.individualTasks.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Indicator(
-                    color: getStatusColor('Finished'),
-                    text: 'Finished',
-                    isSquare: false,
-                  ),
-                  const SizedBox(
-                    height: 4,
-                  ),
-                  Indicator(
-                    color: getStatusColor('In Progress'),
-                    text: 'In Progress',
-                    isSquare: false,
-                  ),
-                  const SizedBox(
-                    height: 4,
-                  ),
-                  Indicator(
-                    color: getStatusColor('Unfinished'),
-                    text: 'Unfinished',
-                    isSquare: false,
-                  ),
-                ],
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Indicator(
+                      color: getStatusColor('Finished'),
+                      text: 'Finished',
+                      isSquare: false,
+                    ),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    Indicator(
+                      color: getStatusColor('In Progress'),
+                      text: 'In Progress',
+                      isSquare: false,
+                    ),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    Indicator(
+                      color: getStatusColor('Unfinished'),
+                      text: 'Unfinished',
+                      isSquare: false,
+                    ),
+                  ],
+                ),
               ),
-            ),
           ],
         ),
       ),
@@ -221,6 +228,7 @@ class Indicator extends StatelessWidget {
     this.size = 16,
     this.textColor,
   });
+
   final Color color;
   final String text;
   final bool isSquare;
@@ -230,7 +238,7 @@ class Indicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisSize: MainAxisSize.min ,
+      mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Container(

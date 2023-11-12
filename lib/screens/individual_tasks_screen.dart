@@ -9,6 +9,7 @@ import 'package:todo_app/services/individual_tasks_crud.dart';
 import 'package:todo_app/widgets/dialogs.dart';
 
 import '../services/http_requests.dart';
+import '../services/notifications.dart';
 import '../widgets/card.dart';
 import '../widgets/dialogbox.dart';
 import '../widgets/global_snackbar.dart';
@@ -17,7 +18,7 @@ import '../widgets/skeleton_shimmer.dart';
 class IndividualTasksScreen extends StatefulWidget {
   final bool isFirstTimeLoggingIn;
 
-  IndividualTasksScreen({
+  const IndividualTasksScreen({
     super.key,
     required this.isFirstTimeLoggingIn,
   });
@@ -205,6 +206,12 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
     return iso8601String;
   }
 
+  int stringToUniqueInt(String input) {
+    int hashValue = input.hashCode;
+
+    return hashValue.abs();
+  }
+
   Future<void> addNewTask(BuildContext context) async {
     final isFormValid = _formKey.currentState!.validate();
     if (!isFormValid) return;
@@ -230,6 +237,24 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
       Navigator.pop(context);
       return;
     }
+
+    // calculate time from now to estimated date
+    final timeDifference =
+        DateTime.parse(convertStringToIso8601(_dateController.text))
+            .difference(DateTime.now());
+
+    // set interval to interval - 1 day
+    int interval = timeDifference.inSeconds - 86400;
+    if (interval < 5) interval = 5;
+
+    // schedule notification
+    await NotificationService.showNotification(
+      id: stringToUniqueInt(taskIdAndDate[0]),
+      title: 'Task Reminder',
+      body: 'Have you finished this task: ${_nameController.text}?',
+      scheduled: true,
+      interval: interval,
+    );
 
     setState(() {
       _individualTasksCRUD.individualTasks.add({
@@ -276,6 +301,9 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
       return;
     }
 
+    NotificationService.cancelNotification(
+        stringToUniqueInt(_individualTasksCRUD.individualTasks[index]['id']));
+    
     setState(() {
       _individualTasksCRUD.individualTasks.removeAt(index);
     });
@@ -329,20 +357,6 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
             : Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  // const SizedBox(height: 20),
-                  // const Row(
-                  //   mainAxisAlignment: MainAxisAlignment.start,
-                  //   children: [
-                  //     Text(
-                  //       'Today',
-                  //       style: TextStyle(
-                  //         fontSize: 26,
-                  //         fontWeight: FontWeight.bold,
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
-                  // const SizedBox(height: 20),
                   Expanded(
                     child: NotificationListener<UserScrollNotification>(
                       onNotification: (notification) {

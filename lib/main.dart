@@ -8,8 +8,7 @@ import 'package:todo_app/screens/drm_screen.dart';
 import 'package:todo_app/screens/home_screen.dart';
 import 'package:todo_app/screens/onboarding_screen.dart';
 import 'package:todo_app/screens/welcome_screen.dart';
-import 'package:todo_app/services/http_requests.dart';
-import 'package:todo_app/services/user_info_crud.dart';
+import 'package:todo_app/services/notifications.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,17 +23,14 @@ Future<void> main() async {
     return;
   }
 
+  await NotificationService.initializeNotification();
+
   await Hive.initFlutter();
-
-  // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-  //   systemNavigationBarColor: Colors.white,
-  //   systemNavigationBarDividerColor: Colors.white,
-  // ));
-
   // open boxes
   var userInfoBox = await Hive.openBox('userInfo');
   var onboard = await Hive.openBox('onboard');
   await Hive.openBox('individualTasks');
+  // await Hive.openBox('notifications');
 
   FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
 

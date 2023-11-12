@@ -70,6 +70,28 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
 
     _individualTasksCRUD.deleteAllIndividualTasks();
 
+    // delete all notifications and set new ones
+    NotificationService.cancelAllNotifications();
+
+    for (var task in tasks) {
+      // calculate time from now to estimated date
+      final timeDifference =
+          DateTime.parse(task['estimatedDate']).difference(DateTime.now());
+
+      // set interval to interval - 1 day
+      int interval = timeDifference.inSeconds - 86400;
+      if (interval > 5) {
+        // schedule notification
+        await NotificationService.showNotification(
+          id: stringToUniqueInt(task['_id']),
+          title: 'Task Reminder',
+          body: 'Have you finished this task: ${task['title']}?',
+          scheduled: true,
+          interval: interval,
+        );
+      }
+    }
+
     if (!mounted) return;
     setState(() {
       for (var task in tasks) {
@@ -122,6 +144,28 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
     tasks = tasks as List<dynamic>;
 
     _individualTasksCRUD.deleteAllIndividualTasks();
+
+    // delete all notifications and set new ones
+    NotificationService.cancelAllNotifications();
+
+    for (var task in tasks) {
+      // calculate time from now to estimated date
+      final timeDifference =
+          DateTime.parse(task['estimatedDate']).difference(DateTime.now());
+
+      // set interval to interval - 1 day
+      int interval = timeDifference.inSeconds - 86400;
+      if (interval > 5) {
+        // schedule notification
+        await NotificationService.showNotification(
+          id: stringToUniqueInt(task['_id']),
+          title: 'Task Reminder',
+          body: 'Have you finished this task: ${task['title']}?',
+          scheduled: true,
+          interval: interval,
+        );
+      }
+    }
 
     if (!mounted) return;
     setState(() {
@@ -245,16 +289,16 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
 
     // set interval to interval - 1 day
     int interval = timeDifference.inSeconds - 86400;
-    if (interval < 5) interval = 5;
-
-    // schedule notification
-    await NotificationService.showNotification(
-      id: stringToUniqueInt(taskIdAndDate[0]),
-      title: 'Task Reminder',
-      body: 'Have you finished this task: ${_nameController.text}?',
-      scheduled: true,
-      interval: interval,
-    );
+    if (interval > 5) {
+      // schedule notification
+      await NotificationService.showNotification(
+        id: stringToUniqueInt(taskIdAndDate[0]),
+        title: 'Task Reminder',
+        body: 'Have you finished this task: ${_nameController.text}?',
+        scheduled: true,
+        interval: interval,
+      );
+    }
 
     setState(() {
       _individualTasksCRUD.individualTasks.add({
@@ -303,7 +347,7 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
 
     NotificationService.cancelNotification(
         stringToUniqueInt(_individualTasksCRUD.individualTasks[index]['id']));
-    
+
     setState(() {
       _individualTasksCRUD.individualTasks.removeAt(index);
     });

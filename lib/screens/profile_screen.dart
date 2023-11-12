@@ -1,4 +1,3 @@
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app/screens/account_settings_screen.dart';
@@ -15,6 +14,9 @@ class ProfileScreen extends StatelessWidget {
   void _logout(BuildContext context) {
     UserInfoCRUD().deleteUserInfo();
     IndividualTasksCRUD().deleteAllIndividualTasks();
+
+    //cancel all notifications
+    NotificationService.cancelAllNotifications();
 
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(

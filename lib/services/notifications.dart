@@ -3,29 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class NotificationService {
-  // final _notificationsBox = Hive.box('notifications');
-
-  // int addNotification(String taskId) {
-  //   final length = _notificationsBox.keys.length;
-  //
-  //   _notificationsBox.put(taskId, length + 1);
-  //   return length + 1;
-  // }
-  //
-  // void deleteNotification(String taskId) {
-  //   _notificationsBox.delete(taskId);
-  //
-  //   // Reassign the notification ids
-  //   // This is done to prevent gaps in the notification ids
-  //   final keys = _notificationsBox.keys.toList();
-  //   for (var i = 0; i < keys.length; i++) {
-  //     _notificationsBox.put(keys[i], i + 1);
-  //   }
-  //
-  //   // Cancel the notification
-  //   NotificationService.cancelNotification(_notificationsBox.get(taskId));
-  // }
-
   static Future<void> initializeNotification() async {
     await AwesomeNotifications().initialize(
       null,
@@ -136,5 +113,9 @@ class NotificationService {
 
   static Future<void> cancelNotification(int id) async {
     await AwesomeNotifications().cancel(id);
+  }
+
+  static Future<void> cancelAllNotifications() async {
+    await AwesomeNotifications().cancelAll();
   }
 }

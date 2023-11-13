@@ -112,9 +112,11 @@ class TaskCard extends StatelessWidget {
                         child: FittedBox(
                           fit: BoxFit.contain,
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 taskName,
+                                textAlign: TextAlign.left,
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
@@ -123,6 +125,7 @@ class TaskCard extends StatelessWidget {
                               ),
                               Text(
                                 'Priority: $priority',
+                                textAlign: TextAlign.left,
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 12,

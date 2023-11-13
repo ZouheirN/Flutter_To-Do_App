@@ -271,8 +271,17 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
     }
 
     if (status == 'Finished') {
+      // Cancel -1 day notification
       NotificationService.cancelNotification(
           stringToUniqueInt(_individualTasksCRUD.individualTasks[index]['id']));
+      // Cancel -1 hour notification
+      NotificationService.cancelNotification(
+          stringToUniqueInt(_individualTasksCRUD.individualTasks[index]['id']) +
+              1);
+      // Cancel same time notification
+      NotificationService.cancelNotification(
+          stringToUniqueInt(_individualTasksCRUD.individualTasks[index]['id']) +
+              2);
     }
 
     setState(() {
@@ -404,8 +413,9 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
         'title': _nameController.text.trim(),
         'description': _descriptionController.text.trim(),
         'color': _colorController.text.trim(),
-        'priority':
-            _priorityController.text.trim() == '' ? 'Low' : _priorityController.text.trim(),
+        'priority': _priorityController.text.trim() == ''
+            ? 'Low'
+            : _priorityController.text.trim(),
         'status': 'Unfinished',
         'creationDate': taskIdAndDate[1],
         'estimatedDate': convertStringToIso8601(_dateController.text.trim()),
@@ -443,8 +453,17 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
       return;
     }
 
+    // Cancel -1 day notification
     NotificationService.cancelNotification(
         stringToUniqueInt(_individualTasksCRUD.individualTasks[index]['id']));
+    // Cancel -1 hour notification
+    NotificationService.cancelNotification(
+        stringToUniqueInt(_individualTasksCRUD.individualTasks[index]['id']) +
+            1);
+    // Cancel same time notification
+    NotificationService.cancelNotification(
+        stringToUniqueInt(_individualTasksCRUD.individualTasks[index]['id']) +
+            2);
 
     setState(() {
       _individualTasksCRUD.individualTasks.removeAt(index);

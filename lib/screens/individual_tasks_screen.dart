@@ -86,6 +86,13 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
 
       // set interval to interval - 1 day
       int interval = timeDifference.inSeconds - 86400;
+
+      // set another interval for - 1 hour
+      int interval2 = timeDifference.inSeconds - 3600;
+
+      // set another interval at the same time of the eta date
+      int interval3 = timeDifference.inSeconds;
+
       if (interval > 5 && task['status'] != 'Finished') {
         // schedule notification
         await NotificationService.showNotification(
@@ -94,6 +101,28 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
           body: 'Have you finished this task: ${task['title']}?',
           scheduled: true,
           interval: interval,
+        );
+      }
+
+      if (interval2 > 5 && task['status'] != 'Finished') {
+        // schedule notification
+        await NotificationService.showNotification(
+          id: stringToUniqueInt(task['_id']) + 1,
+          title: 'Task Reminder',
+          body: 'Have you finished this task: ${task['title']}?',
+          scheduled: true,
+          interval: interval2,
+        );
+      }
+
+      if (interval3 > 5 && task['status'] != 'Finished') {
+        // schedule notification
+        await NotificationService.showNotification(
+          id: stringToUniqueInt(task['_id']) + 2,
+          title: 'Task Reminder',
+          body: 'Have you finished this task: ${task['title']}?',
+          scheduled: true,
+          interval: interval3,
         );
       }
     }
@@ -161,6 +190,13 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
 
       // set interval to interval - 1 day
       int interval = timeDifference.inSeconds - 86400;
+
+      // set another interval for - 1 hour
+      int interval2 = timeDifference.inSeconds - 3600;
+
+      // set another interval at the same time of the eta date
+      int interval3 = timeDifference.inSeconds;
+
       if (interval > 5 && task['status'] != 'Finished') {
         // schedule notification
         await NotificationService.showNotification(
@@ -169,6 +205,28 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
           body: 'Have you finished this task: ${task['title']}?',
           scheduled: true,
           interval: interval,
+        );
+      }
+
+      if (interval2 > 5 && task['status'] != 'Finished') {
+        // schedule notification
+        await NotificationService.showNotification(
+          id: stringToUniqueInt(task['_id']) + 1,
+          title: 'Task Reminder',
+          body: 'Have you finished this task: ${task['title']}?',
+          scheduled: true,
+          interval: interval2,
+        );
+      }
+
+      if (interval3 > 5 && task['status'] != 'Finished') {
+        // schedule notification
+        await NotificationService.showNotification(
+          id: stringToUniqueInt(task['_id']) + 2,
+          title: 'Task Reminder',
+          body: 'Have you finished this task: ${task['title']}?',
+          scheduled: true,
+          interval: interval3,
         );
       }
     }
@@ -274,11 +332,11 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
     showLoadingDialog('Adding Task', context);
 
     final taskIdAndDate = await addTaskToDB(
-      _nameController.text,
-      _descriptionController.text,
-      _priorityController.text,
-      _colorController.text,
-      convertStringToIso8601(_dateController.text),
+      _nameController.text.trim(),
+      _descriptionController.text.trim(),
+      _priorityController.text.trim(),
+      _colorController.text.trim(),
+      convertStringToIso8601(_dateController.text.trim()),
     );
 
     if (taskIdAndDate == ReturnTypes.invalidToken) {
@@ -300,6 +358,13 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
 
     // set interval to interval - 1 day
     int interval = timeDifference.inSeconds - 86400;
+
+    // set another interval for - 1 hour
+    int interval2 = timeDifference.inSeconds - 3600;
+
+    // set another interval at the same time of the eta date
+    int interval3 = timeDifference.inSeconds;
+
     if (interval > 5) {
       // schedule notification
       await NotificationService.showNotification(
@@ -311,17 +376,39 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
       );
     }
 
+    if (interval2 > 5) {
+      // schedule notification
+      await NotificationService.showNotification(
+        id: stringToUniqueInt(taskIdAndDate[0]) + 1,
+        title: 'Task Reminder',
+        body: 'Have you finished this task: ${_nameController.text}?',
+        scheduled: true,
+        interval: interval2,
+      );
+    }
+
+    if (interval3 > 5) {
+      // schedule notification
+      await NotificationService.showNotification(
+        id: stringToUniqueInt(taskIdAndDate[0]) + 2,
+        title: 'Task Reminder',
+        body: 'Have you finished this task: ${_nameController.text}?',
+        scheduled: true,
+        interval: interval3,
+      );
+    }
+
     setState(() {
       _individualTasksCRUD.individualTasks.add({
         'id': taskIdAndDate[0],
-        'title': _nameController.text,
-        'description': _descriptionController.text,
-        'color': _colorController.text,
+        'title': _nameController.text.trim(),
+        'description': _descriptionController.text.trim(),
+        'color': _colorController.text.trim(),
         'priority':
-            _priorityController.text == '' ? 'Low' : _priorityController.text,
+            _priorityController.text.trim() == '' ? 'Low' : _priorityController.text.trim(),
         'status': 'Unfinished',
         'creationDate': taskIdAndDate[1],
-        'estimatedDate': convertStringToIso8601(_dateController.text),
+        'estimatedDate': convertStringToIso8601(_dateController.text.trim()),
       });
       _nameController.clear();
       _descriptionController.clear();

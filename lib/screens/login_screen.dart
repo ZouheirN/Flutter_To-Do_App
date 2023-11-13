@@ -78,7 +78,8 @@ class _LoginScreenState extends State<LoginScreen> {
       print('is verified: $isVerified');
       print('is 2fa enabled: $is2FAEnabled');
 
-      if (!isVerified) { // check if user is verified, if not then move to otp screen
+      if (!isVerified) {
+        // check if user is verified, if not then move to otp screen
         if (context.mounted) {
           Navigator.of(context).push(
             MaterialPageRoute(
@@ -90,8 +91,8 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           );
         }
-      } else
-      if (is2FAEnabled) { // if user enabled 2fa, then move to otp. If not, then save userInfo and move to home
+      } else if (is2FAEnabled) {
+        // if user enabled 2fa, then move to otp. If not, then save userInfo and move to home
         if (context.mounted) {
           Navigator.of(context).push(
             MaterialPageRoute(
@@ -116,9 +117,10 @@ class _LoginScreenState extends State<LoginScreen> {
         if (context.mounted) {
           Navigator.popUntil(context, (route) => route.isFirst);
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const HomeScreen(
-              isFirstTimeLoggingIn: true,
-            )),
+            MaterialPageRoute(
+                builder: (context) => const HomeScreen(
+                      isFirstTimeLoggingIn: true,
+                    )),
           );
         }
       }

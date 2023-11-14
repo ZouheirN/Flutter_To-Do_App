@@ -11,12 +11,14 @@ class PriorityDropdown extends StatelessWidget {
   final TextEditingController priorityController;
   final bool validateOnChange;
   final String? Function(String?)? validator;
+  final String? initialItem;
 
   const PriorityDropdown({
     super.key,
     required this.priorityController,
     required this.validateOnChange,
     this.validator,
+    this.initialItem,
   });
 
   @override
@@ -24,6 +26,7 @@ class PriorityDropdown extends StatelessWidget {
     return CustomDropdown<String>(
       hintText: 'Priority',
       items: _list,
+      initialItem: initialItem,
       // initialItem: _list[0],
       onChanged: (value) {
         priorityController.text = value;

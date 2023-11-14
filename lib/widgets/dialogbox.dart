@@ -10,20 +10,22 @@ class DialogBox extends StatefulWidget {
   final TextEditingController colorController;
   final TextEditingController priorityController;
   final TextEditingController dateController;
-  final VoidCallback onAdd;
+  final VoidCallback? onAdd;
+  final VoidCallback? onEdit;
   final VoidCallback onCancel;
   final GlobalKey<FormState> formKey;
 
   const DialogBox({
     super.key,
     required this.nameController,
-    required this.onAdd,
+    this.onAdd,
     required this.onCancel,
     required this.descriptionController,
     required this.colorController,
     required this.priorityController,
     required this.formKey,
     required this.dateController,
+    this.onEdit,
   });
 
   @override
@@ -45,7 +47,7 @@ class _DialogBoxState extends State<DialogBox> {
       onWillPop: () {
         widget.onCancel();
         return Future.value(true);
-      } ,
+      },
       child: AlertDialog(
         backgroundColor: Colors.white,
         content: SizedBox(
@@ -85,6 +87,9 @@ class _DialogBoxState extends State<DialogBox> {
                     // Function to validate if the current selected item is valid or not
                     validator: (value) =>
                         value == null ? 'Please select a priority' : null,
+                    initialItem: widget.onEdit != null
+                        ? widget.priorityController.text
+                        : null,
                   ),
                   DateTextField(textController: widget.dateController),
                   const SizedBox(height: 12),
@@ -135,7 +140,13 @@ class _DialogBoxState extends State<DialogBox> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      DialogButton(text: 'Add', onPressed: widget.onAdd),
+                      if (widget.onEdit != null)
+                        DialogButton(
+                          text: 'Edit',
+                          onPressed: widget.onEdit!,
+                        )
+                      else
+                        DialogButton(text: 'Add', onPressed: widget.onAdd!),
                       DialogButton(
                         text: 'Cancel',
                         onPressed: widget.onCancel,

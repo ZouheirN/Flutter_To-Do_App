@@ -213,7 +213,7 @@ Future<dynamic> deleteTaskFromDB(String taskId) async {
   }
 }
 
-Future<dynamic> editTaskFromDB(String taskId, String status) async {
+Future<dynamic> editTaskStatusFromDB(String taskId, String status) async {
   final String token = await UserToken.getToken();
   if (token == '') {
     return ReturnTypes.invalidToken;
@@ -225,6 +225,59 @@ Future<dynamic> editTaskFromDB(String taskId, String status) async {
       data: {
         'status': status,
       },
+      options: Options(
+        headers: {
+          "Authorization": "Bearer $token",
+        },
+      ),
+    );
+
+    return ReturnTypes.success;
+  } on DioException catch (e) {
+    if (e.response == null) return ReturnTypes.error;
+
+    if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+      return ReturnTypes.invalidToken;
+    }
+
+    return ReturnTypes.fail;
+  }
+}
+
+Future<dynamic> editTaskFromDB(
+  String? taskId,
+  String? taskName,
+  String? taskDescription,
+  String? priority,
+  String? etaDate,
+  String? color,
+) async {
+  final String token = await UserToken.getToken();
+  if (token == '') {
+    return ReturnTypes.invalidToken;
+  }
+
+  Map data = {};
+  if (taskName != null) {
+    data['title'] = taskName;
+  }
+  if (taskDescription != null) {
+    data['description'] = taskDescription;
+  }
+  if (priority != null) {
+    data['priority'] = priority;
+  }
+  if (etaDate != null) {
+    data['estimatedDate'] = etaDate;
+  }
+  if (color != null) {
+    data['color'] = color;
+  }
+
+  try {
+    await dio.patch(
+      'https://todobuddy.onrender.com/api/task/$taskId',
+      data: data,
       options: Options(
         headers: {
           "Authorization": "Bearer $token",
@@ -319,7 +372,6 @@ Future<dynamic> getUserOptions() async {
         },
       ),
     );
-
 
     return {
       'is2FAEnabled': response.data["is2FAEnabled"],

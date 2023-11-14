@@ -16,6 +16,7 @@ class TaskCard extends StatelessWidget {
   final String estimatedDate;
   final FutureOr<void> Function(int)? onChanged;
   final Function(BuildContext)? deleteFunction;
+  final Function(BuildContext)? editFunction;
 
   const TaskCard({
     super.key,
@@ -29,6 +30,7 @@ class TaskCard extends StatelessWidget {
     required this.taskId,
     required this.creationDate,
     required this.estimatedDate,
+    required this.editFunction,
   });
 
   int statusToInt(String status) {
@@ -71,6 +73,17 @@ class TaskCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Slidable(
+        startActionPane: ActionPane(
+          motion: const StretchMotion(),
+          children: [
+            SlidableAction(
+              onPressed: editFunction,
+              icon: Icons.edit,
+              backgroundColor: Colors.green,
+              borderRadius: BorderRadius.circular(8),
+            )
+          ],
+        ),
         endActionPane: ActionPane(
           motion: const StretchMotion(),
           children: [
@@ -168,8 +181,7 @@ class TaskCard extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                            'Created On: ${formatDateString(creationDate)}'),
+                        Text('Created On: ${formatDateString(creationDate)}'),
                         Text(
                             'Estimated Date: ${formatDateString(estimatedDate)}'),
                       ],

@@ -257,7 +257,7 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
     if (value == 2) status = 'Finished';
 
     // send it to db
-    final response = await editTaskFromDB(
+    final response = await editTaskStatusFromDB(
         _individualTasksCRUD.individualTasks[index]['id'], status);
 
     if (response == ReturnTypes.invalidToken) {
@@ -471,6 +471,164 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
     _individualTasksCRUD.updateIndividualTasks();
   }
 
+  String formatDateString(String inputString) {
+    DateTime dateTime = DateTime.parse(inputString);
+
+    // if (toLocal) {
+    dateTime = dateTime.toLocal();
+    // }
+    return DateFormat('E MMM d, y - HH:mm').format(dateTime);
+  }
+
+  Future<void> editTask(int index) async {
+    _nameController.text = _individualTasksCRUD.individualTasks[index]['title'];
+    _descriptionController.text =
+        _individualTasksCRUD.individualTasks[index]['description'];
+    _colorController.text =
+        _individualTasksCRUD.individualTasks[index]['color'];
+    _priorityController.text =
+        _individualTasksCRUD.individualTasks[index]['priority'];
+    _dateController.text = formatDateString(
+        _individualTasksCRUD.individualTasks[index]
+            ['estimatedDate']); // convertISO8601ToReadableString
+
+    showDialog(
+      context: context,
+      builder: (context) => DialogBox(
+        nameController: _nameController,
+        descriptionController: _descriptionController,
+        colorController: _colorController,
+        priorityController: _priorityController,
+        dateController: _dateController,
+        formKey: _formKey,
+        onCancel: () => onCancel(context),
+        onEdit: () => editTaskFromDialog(index, context),
+      ),
+    );
+  }
+
+  Future<void> editTaskFromDialog(int index, BuildContext context) async {
+    final isFormValid = _formKey.currentState!.validate();
+    if (!isFormValid) return;
+
+    showLoadingDialog('Editing Task', context);
+
+    final editResponse = await editTaskFromDB(
+      _individualTasksCRUD.individualTasks[index]['id'],
+      _nameController.text.trim(),
+      _descriptionController.text.trim(),
+      _priorityController.text.trim(),
+      convertStringToIso8601(_dateController.text.trim()),
+      _colorController.text.trim(),
+    );
+
+    if (editResponse == ReturnTypes.invalidToken) {
+      if (!mounted) return;
+      invalidTokenResponse(context);
+      return;
+    }
+
+    if (!mounted) return;
+    Navigator.pop(context);
+
+    if (editResponse != ReturnTypes.success) {
+      getDataFromDB();
+      showGlobalSnackBar('Error editing task. Auto-refreshing tasks.');
+      return;
+    }
+
+    // check if estimated date is changed, and if it is, cancel all notifications and set new ones
+    if (_individualTasksCRUD.individualTasks[index]['estimatedDate'] !=
+        convertStringToIso8601(_dateController.text.trim())) {
+      // Cancel -1 day notification
+      NotificationService.cancelNotification(
+          stringToUniqueInt(_individualTasksCRUD.individualTasks[index]['id']));
+      // Cancel -1 hour notification
+      NotificationService.cancelNotification(
+          stringToUniqueInt(_individualTasksCRUD.individualTasks[index]['id']) +
+              1);
+      // Cancel same time notification
+      NotificationService.cancelNotification(
+          stringToUniqueInt(_individualTasksCRUD.individualTasks[index]['id']) +
+              2);
+
+      // calculate time from now to estimated date
+      final timeDifference =
+          DateTime.parse(convertStringToIso8601(_dateController.text))
+              .difference(DateTime.now());
+
+      // set interval to interval - 1 day
+      int interval = timeDifference.inSeconds - 86400;
+
+      // set another interval for - 1 hour
+      int interval2 = timeDifference.inSeconds - 3600;
+
+      // set another interval at the same time of the eta date
+      int interval3 = timeDifference.inSeconds;
+
+      if (interval > 5) {
+        // schedule notification
+        await NotificationService.showNotification(
+          id: stringToUniqueInt(
+              _individualTasksCRUD.individualTasks[index]['id']),
+          title: 'Task Reminder',
+          body: 'Have you finished this task: ${_nameController.text}?',
+          scheduled: true,
+          interval: interval,
+        );
+      }
+
+      if (interval2 > 5) {
+        // schedule notification
+        await NotificationService.showNotification(
+          id: stringToUniqueInt(
+                  _individualTasksCRUD.individualTasks[index]['id']) +
+              1,
+          title: 'Task Reminder',
+          body: 'Have you finished this task: ${_nameController.text}?',
+          scheduled: true,
+          interval: interval2,
+        );
+      }
+
+      if (interval3 > 5) {
+        // schedule notification
+        await NotificationService.showNotification(
+          id: stringToUniqueInt(
+                  _individualTasksCRUD.individualTasks[index]['id']) +
+              2,
+          title: 'Task Reminder',
+          body: 'Have you finished this task: ${_nameController.text}?',
+          scheduled: true,
+          interval: interval3,
+        );
+      }
+    }
+
+    setState(() {
+      _individualTasksCRUD.individualTasks[index]['title'] =
+          _nameController.text.trim();
+      _individualTasksCRUD.individualTasks[index]['description'] =
+          _descriptionController.text.trim();
+      _individualTasksCRUD.individualTasks[index]['color'] =
+          _colorController.text.trim();
+      _individualTasksCRUD.individualTasks[index]['priority'] =
+          _priorityController.text.trim() == ''
+              ? 'Low'
+              : _priorityController.text.trim();
+      _individualTasksCRUD.individualTasks[index]['estimatedDate'] =
+          convertStringToIso8601(_dateController.text.trim());
+      _nameController.clear();
+      _descriptionController.clear();
+      _colorController.clear();
+      _priorityController.clear();
+      _dateController.clear();
+    });
+    if (!mounted) return;
+    Navigator.pop(context);
+    _individualTasksCRUD.updateIndividualTasks();
+  }
+
   @override
   void initState() {
     _isLoading = true;
@@ -564,6 +722,7 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
                                   .individualTasks[index]['estimatedDate'],
                               onChanged: (value) => statusChanged(value, index),
                               deleteFunction: (context) => deleteTask(index),
+                              editFunction: (context) => editTask(index),
                             );
                           },
                           itemCount:

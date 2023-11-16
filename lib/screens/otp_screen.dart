@@ -7,13 +7,11 @@ import '../services/http_requests.dart';
 import 'home_screen.dart';
 
 class OTPScreen extends StatefulWidget {
-  final String email;
   final String token;
   final bool isNotVerifiedFromLogin;
 
   const OTPScreen(
       {super.key,
-      required this.email,
       required this.isNotVerifiedFromLogin,
       required this.token});
 
@@ -42,7 +40,7 @@ class _OTPScreenState extends State<OTPScreen> {
     });
 
     // logic for checking OTP
-    final otpStatus = await checkOTP(pin, widget.email, widget.token);
+    final otpStatus = await checkOTP(pin, widget.token);
 
     // if OTP is correct, get all the other user info from DB
     if (otpStatus == ReturnTypes.error) {

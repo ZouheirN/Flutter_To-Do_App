@@ -67,7 +67,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           MaterialPageRoute(
             builder: (context) => OTPScreen(
               token: signUpStatus['token'],
-              email: _emailController.text.trim(),
+              // email: _emailController.text.trim(),
               isNotVerifiedFromLogin: false,
             ),
           ),

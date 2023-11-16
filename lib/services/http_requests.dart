@@ -81,14 +81,14 @@ Future<dynamic> signUp(String username, String email, String password) async {
   }
 }
 
-Future<dynamic> checkOTP(String pin, String email, String token) async {
+Future<dynamic> checkOTP(String pin, String token) async {
   try {
     Response response;
     response = await dio.post(
       'https://todobuddy.onrender.com/api/verifyEmail',
       data: {
         "pin": pin,
-        "email": email,
+        // "email": email,
       },
       options: Options(
         headers: {

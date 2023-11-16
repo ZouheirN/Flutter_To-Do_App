@@ -85,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
             MaterialPageRoute(
               builder: (context) => OTPScreen(
                 token: token,
-                email: email,
+                // email: email,
                 isNotVerifiedFromLogin: true,
               ),
             ),
@@ -98,7 +98,7 @@ class _LoginScreenState extends State<LoginScreen> {
             MaterialPageRoute(
               builder: (context) => OTPScreen(
                 token: token,
-                email: email,
+                // email: email,
                 isNotVerifiedFromLogin: false,
               ),
             ),

@@ -699,6 +699,13 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
                         onRefresh: _onRefresh,
                         child: ListView.builder(
                           itemBuilder: (context, index) {
+                            // reorder list by eta date
+                            _individualTasksCRUD.individualTasks.sort(
+                              (a, b) => DateTime.parse(a['estimatedDate'])
+                                  .compareTo(
+                                      DateTime.parse(b['estimatedDate'])),
+                            );
+
                             int colorInt = int.parse(
                                 _individualTasksCRUD.individualTasks[index]
                                     ['color'],

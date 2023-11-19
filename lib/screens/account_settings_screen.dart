@@ -6,6 +6,7 @@ import 'package:todo_app/widgets/dialogs.dart';
 import 'package:todo_app/widgets/textfields.dart';
 
 import '../widgets/global_snackbar.dart';
+import 'change_password_screen.dart';
 
 class AccountSettingsScreen extends StatefulWidget {
   const AccountSettingsScreen({super.key});
@@ -22,30 +23,10 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   bool _isBioAuthLoading = false;
 
   _changePassword() {
-    // todo change password
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Check Your Email'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'An email was sent to your email address. Please click on the link in the email to reset your password.',
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 20),
-              PrimaryButton(
-                text: 'OK',
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          ),
-        );
-      },
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const ChangePasswordScreen(),
+      ),
     );
   }
 

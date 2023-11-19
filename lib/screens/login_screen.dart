@@ -8,7 +8,7 @@ import 'package:todo_app/services/user_info_crud.dart';
 import 'package:todo_app/widgets/buttons.dart';
 
 import '../services/http_requests.dart';
-import 'forgot_password_screen.dart';
+import 'change_password_screen.dart';
 import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -128,8 +128,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _forgetPassword() {
-    Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()));
+    // Navigator.of(context).push(
+    //     MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()));
   }
 
   @override

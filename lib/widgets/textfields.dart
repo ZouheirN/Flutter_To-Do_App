@@ -6,12 +6,13 @@ class PrimaryTextField extends StatefulWidget {
   final TextEditingController? textController;
   final String hintText;
   final bool enabled;
+  final String? Function(String?)? validator;
 
   const PrimaryTextField({
     super.key,
     this.textController,
     required this.hintText,
-    this.enabled = true,
+    this.enabled = true, this.validator,
   });
 
   @override
@@ -44,6 +45,7 @@ class _PrimaryTextFieldState extends State<PrimaryTextField> {
         ),
       ),
       enabled: widget.enabled,
+      validator: widget.validator,
     );
   }
 }

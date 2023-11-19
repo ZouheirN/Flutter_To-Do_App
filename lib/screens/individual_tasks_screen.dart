@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:pull_to_refresh_plus/pull_to_refresh_plus.dart';
@@ -692,48 +693,59 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
 
                         return true;
                       },
-                      child: SmartRefresher(
-                        controller: _refreshController,
-                        enablePullDown: true,
-                        header: const ClassicHeader(),
-                        onRefresh: _onRefresh,
-                        child: ListView.builder(
-                          itemBuilder: (context, index) {
-                            // reorder list by eta date
-                            _individualTasksCRUD.individualTasks.sort(
-                              (a, b) => DateTime.parse(a['estimatedDate'])
-                                  .compareTo(
-                                      DateTime.parse(b['estimatedDate'])),
-                            );
-
-                            int colorInt = int.parse(
-                                _individualTasksCRUD.individualTasks[index]
-                                    ['color'],
-                                radix: 16);
-
-                            return TaskCard(
-                              taskName: _individualTasksCRUD
-                                  .individualTasks[index]['title'],
-                              taskDetails: _individualTasksCRUD
-                                  .individualTasks[index]['description'],
-                              color: colorInt,
-                              taskStatus: _individualTasksCRUD
-                                  .individualTasks[index]['status'],
-                              priority: _individualTasksCRUD
-                                  .individualTasks[index]['priority'],
-                              taskId: _individualTasksCRUD
-                                  .individualTasks[index]['id'],
-                              creationDate: _individualTasksCRUD
-                                  .individualTasks[index]['creationDate'],
-                              estimatedDate: _individualTasksCRUD
-                                  .individualTasks[index]['estimatedDate'],
-                              onChanged: (value) => statusChanged(value, index),
-                              deleteFunction: (context) => deleteTask(index),
-                              editFunction: (context) => editTask(index),
-                            );
-                          },
-                          itemCount:
-                              _individualTasksCRUD.individualTasks.length,
+                      child: AnimationLimiter(
+                        child: SmartRefresher(
+                          controller: _refreshController,
+                          enablePullDown: true,
+                          header: const ClassicHeader(),
+                          onRefresh: _onRefresh,
+                          child: ListView.builder(
+                            itemBuilder: (context, index) {
+                              // reorder list by eta date
+                              _individualTasksCRUD.individualTasks.sort(
+                                (a, b) => DateTime.parse(a['estimatedDate'])
+                                    .compareTo(
+                                        DateTime.parse(b['estimatedDate'])),
+                              );
+                        
+                              int colorInt = int.parse(
+                                  _individualTasksCRUD.individualTasks[index]
+                                      ['color'],
+                                  radix: 16);
+                        
+                              return AnimationConfiguration.staggeredList(
+                                position: index,
+                                duration: const Duration(milliseconds: 375),
+                                child: SlideAnimation(
+                                  verticalOffset: 50.0,
+                                  child: FadeInAnimation(
+                                    child: TaskCard(
+                                      taskName: _individualTasksCRUD
+                                          .individualTasks[index]['title'],
+                                      taskDetails: _individualTasksCRUD
+                                          .individualTasks[index]['description'],
+                                      color: colorInt,
+                                      taskStatus: _individualTasksCRUD
+                                          .individualTasks[index]['status'],
+                                      priority: _individualTasksCRUD
+                                          .individualTasks[index]['priority'],
+                                      taskId: _individualTasksCRUD
+                                          .individualTasks[index]['id'],
+                                      creationDate: _individualTasksCRUD
+                                          .individualTasks[index]['creationDate'],
+                                      estimatedDate: _individualTasksCRUD
+                                          .individualTasks[index]['estimatedDate'],
+                                      onChanged: (value) => statusChanged(value, index),
+                                      deleteFunction: (context) => deleteTask(index),
+                                      editFunction: (context) => editTask(index),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                            itemCount:
+                                _individualTasksCRUD.individualTasks.length,
+                          ),
                         ),
                       ),
                     ),

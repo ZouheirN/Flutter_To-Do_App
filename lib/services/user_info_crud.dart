@@ -19,7 +19,7 @@ class UserInfoCRUD {
   }
 
   String getUsername() {
-    return _userInfoBox.get('username');
+    return _userInfoBox.get('username') ?? '';
   }
 
   String getEmail() {

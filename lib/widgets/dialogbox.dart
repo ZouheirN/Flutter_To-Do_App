@@ -140,6 +140,11 @@ class _DialogBoxState extends State<DialogBox> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
+                      DialogButton(
+                        text: 'Cancel',
+                        onPressed: widget.onCancel,
+                        color: 0xFFFF0000,
+                      ),
                       if (widget.onEdit != null)
                         DialogButton(
                           text: 'Edit',
@@ -147,11 +152,6 @@ class _DialogBoxState extends State<DialogBox> {
                         )
                       else
                         DialogButton(text: 'Add', onPressed: widget.onAdd!),
-                      DialogButton(
-                        text: 'Cancel',
-                        onPressed: widget.onCancel,
-                        color: 0xFFFF0000,
-                      ),
                     ],
                   )
                 ],

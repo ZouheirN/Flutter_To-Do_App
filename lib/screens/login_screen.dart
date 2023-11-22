@@ -6,9 +6,9 @@ import 'package:string_validator/string_validator.dart';
 import 'package:todo_app/screens/otp_screen.dart';
 import 'package:todo_app/services/user_info_crud.dart';
 import 'package:todo_app/widgets/buttons.dart';
+import 'package:todo_app/widgets/dialogs.dart';
 
 import '../services/http_requests.dart';
-import 'change_password_screen.dart';
 import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -62,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
         return;
       }
 
-      print(response);
+      debugPrint(response.toString());
       final token = response['token'];
       final username = response['username'];
       final email = response['email'];
@@ -75,9 +75,6 @@ class _LoginScreenState extends State<LoginScreen> {
         _status = '';
       });
 
-      print('is verified: $isVerified');
-      print('is 2fa enabled: $is2FAEnabled');
-
       if (!isVerified) {
         // check if user is verified, if not then move to otp screen
         if (context.mounted) {
@@ -85,7 +82,6 @@ class _LoginScreenState extends State<LoginScreen> {
             MaterialPageRoute(
               builder: (context) => OTPScreen(
                 token: token,
-                // email: email,
                 isNotVerifiedFromLogin: true,
               ),
             ),
@@ -98,7 +94,6 @@ class _LoginScreenState extends State<LoginScreen> {
             MaterialPageRoute(
               builder: (context) => OTPScreen(
                 token: token,
-                // email: email,
                 isNotVerifiedFromLogin: false,
               ),
             ),
@@ -118,9 +113,10 @@ class _LoginScreenState extends State<LoginScreen> {
           Navigator.popUntil(context, (route) => route.isFirst);
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-                builder: (context) => const HomeScreen(
-                      isFirstTimeLoggingIn: true,
-                    )),
+              builder: (context) => const HomeScreen(
+                isFirstTimeLoggingIn: true,
+              ),
+            ),
           );
         }
       }
@@ -128,8 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _forgetPassword() {
-    // Navigator.of(context).push(
-    //     MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()));
+    showForgotPasswordDialog(context);
   }
 
   @override

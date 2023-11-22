@@ -7,12 +7,15 @@ class PrimaryTextField extends StatefulWidget {
   final String hintText;
   final bool enabled;
   final String? Function(String?)? validator;
+  final bool? obscureText;
 
   const PrimaryTextField({
     super.key,
     this.textController,
     required this.hintText,
-    this.enabled = true, this.validator,
+    this.enabled = true,
+    this.validator,
+    this.obscureText,
   });
 
   @override
@@ -29,6 +32,7 @@ class _PrimaryTextFieldState extends State<PrimaryTextField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      obscureText: widget.obscureText ?? false,
       controller: widget.textController,
       decoration: InputDecoration(
         contentPadding:
@@ -116,7 +120,9 @@ class _DateTextFieldState extends State<DateTextField> {
             const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
         filled: true,
         fillColor: const Color(0xFFF4F5F7),
-        hintText: widget.textController?.text == '' ? 'Estimated Date' : widget.textController?.text,
+        hintText: widget.textController?.text == ''
+            ? 'Estimated Date'
+            : widget.textController?.text,
         border: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(10)),
         ),
@@ -134,7 +140,8 @@ class _DateTextFieldState extends State<DateTextField> {
               onConfirm: (date) {
                 setState(() {
                   DateTime dateTime = DateTime.parse(date.toString());
-                  String formattedString = DateFormat('E MMM d, y - HH:mm').format(dateTime);
+                  String formattedString =
+                      DateFormat('E MMM d, y - HH:mm').format(dateTime);
                   widget.textController?.text = formattedString;
                 });
               },

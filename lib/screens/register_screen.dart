@@ -20,7 +20,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final _passController = TextEditingController();
   final FancyPasswordController _passwordValidatorController =
-      FancyPasswordController();
+  FancyPasswordController();
   final _confirmPassController = TextEditingController();
   final _emailController = TextEditingController();
   final _usernameController = TextEditingController();
@@ -37,8 +37,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       });
 
       // Hash the password
-      final String hashedPassword = BCrypt.hashpw(
-          _passController.text, BCrypt.gensalt(secureRandom: Random(_passController.text.length)));
+      final String hashedPassword = BCrypt.hashpw(_passController.text,
+          BCrypt.gensalt(secureRandom: Random(_passController.text.length)));
 
       final signUpStatus = await signUp(_usernameController.text.trim(),
           _emailController.text.trim(), hashedPassword);
@@ -65,11 +65,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (context.mounted) {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => OTPScreen(
-              token: signUpStatus['token'],
-              // email: _emailController.text.trim(),
-              isNotVerifiedFromLogin: false,
-            ),
+            builder: (context) =>
+                OTPScreen(
+                  token: signUpStatus['token'],
+                  // email: _emailController.text.trim(),
+                  isNotVerifiedFromLogin: false,
+                ),
           ),
         );
       }
@@ -107,7 +108,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     child: Text(
                       'Create Account',
                       style:
-                          TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                      TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                     ),
                   ),
                   const SizedBox(height: 40),
@@ -135,11 +136,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 hintText: 'Enter your username',
                                 border: OutlineInputBorder(
                                   borderRadius:
-                                      BorderRadius.all(Radius.circular(10)),
+                                  BorderRadius.all(Radius.circular(10)),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius:
-                                      BorderRadius.all(Radius.circular(10)),
+                                  BorderRadius.all(Radius.circular(10)),
                                   borderSide: BorderSide(
                                       color: Color(0xFFDEE3EB), width: 2),
                                 ),
@@ -178,11 +179,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 hintText: 'Enter your email',
                                 border: OutlineInputBorder(
                                   borderRadius:
-                                      BorderRadius.all(Radius.circular(10)),
+                                  BorderRadius.all(Radius.circular(10)),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius:
-                                      BorderRadius.all(Radius.circular(10)),
+                                  BorderRadius.all(Radius.circular(10)),
                                   borderSide: BorderSide(
                                       color: Color(0xFFDEE3EB), width: 2),
                                 ),
@@ -212,6 +213,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             const SizedBox(height: 10),
                             FancyPasswordField(
+                              hidePasswordIcon: const Icon(
+                                Icons.visibility_off_outlined,
+                                color: Colors.grey,
+                              ),
+                              showPasswordIcon: const Icon(
+                                Icons.visibility_outlined,
+                                color: Colors.grey,
+                              ),
                               controller: _passController,
                               passwordController: _passwordValidatorController,
                               validationRules: {
@@ -227,7 +236,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 }
 
                                 return _passwordValidatorController
-                                        .areAllRulesValidated
+                                    .areAllRulesValidated
                                     ? null
                                     : 'Please validate all rules';
                               },
@@ -236,12 +245,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   height: 120,
                                   child: ListView(
                                     physics:
-                                        const NeverScrollableScrollPhysics(),
+                                    const NeverScrollableScrollPhysics(),
                                     shrinkWrap: true,
                                     children: rules.map(
-                                      (rule) {
+                                          (rule) {
                                         final ruleValidated =
-                                            rule.validate(value);
+                                        rule.validate(value);
                                         return Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
@@ -277,11 +286,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 hintText: 'Enter your password',
                                 border: OutlineInputBorder(
                                   borderRadius:
-                                      BorderRadius.all(Radius.circular(10)),
+                                  BorderRadius.all(Radius.circular(10)),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius:
-                                      BorderRadius.all(Radius.circular(10)),
+                                  BorderRadius.all(Radius.circular(10)),
                                   borderSide: BorderSide(
                                       color: Color(0xFFDEE3EB), width: 2),
                                 ),
@@ -305,11 +314,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 hintText: 'Enter your password again',
                                 border: OutlineInputBorder(
                                   borderRadius:
-                                      BorderRadius.all(Radius.circular(10)),
+                                  BorderRadius.all(Radius.circular(10)),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius:
-                                      BorderRadius.all(Radius.circular(10)),
+                                  BorderRadius.all(Radius.circular(10)),
                                   borderSide: BorderSide(
                                       color: Color(0xFFDEE3EB), width: 2),
                                 ),

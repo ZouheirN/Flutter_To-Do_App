@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/screens/otp_screen.dart';
 import 'package:todo_app/services/http_requests.dart';
 import 'package:todo_app/services/user_info_crud.dart';
+import 'package:todo_app/services/user_token.dart';
 import 'package:todo_app/widgets/buttons.dart';
 import 'package:todo_app/widgets/dialogs.dart';
 import 'package:todo_app/widgets/textfields.dart';
@@ -22,10 +24,12 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   bool _is2FALoading = false;
   bool _isBioAuthLoading = false;
 
-  _changePassword() {
+  _changePassword() async {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => const ChangePasswordScreen(),
+        builder: (context) => const ChangePasswordScreen(
+          forgotPassword: false,
+        ),
       ),
     );
   }
@@ -67,7 +71,6 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                   ),
                 ],
               ),
-
             ],
           ),
         );

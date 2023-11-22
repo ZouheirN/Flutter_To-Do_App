@@ -4,16 +4,22 @@ import 'package:todo_app/services/user_info_crud.dart';
 import 'package:todo_app/widgets/global_snackbar.dart';
 
 import '../services/http_requests.dart';
+import 'change_password_screen.dart';
 import 'home_screen.dart';
 
 class OTPScreen extends StatefulWidget {
-  final String token;
+  final String? token;
   final bool isNotVerifiedFromLogin;
+  final bool isResettingPassword;
+  final String? email;
 
-  const OTPScreen(
-      {super.key,
-      required this.isNotVerifiedFromLogin,
-      required this.token});
+  const OTPScreen({
+    super.key,
+    this.isNotVerifiedFromLogin = false,
+    this.token,
+    this.isResettingPassword = false,
+    this.email,
+  });
 
   @override
   State<OTPScreen> createState() => _OTPScreenState();
@@ -21,17 +27,8 @@ class OTPScreen extends StatefulWidget {
 
 class _OTPScreenState extends State<OTPScreen> {
   String _status = '';
-  bool _isCountDownFinished = false;
   bool _isFieldDisabled = false;
-
-  // Future<void> _requestOTP() async {
-  //   // TODO logic for requesting OTP
-  //   await requestOTP(email);
-  //
-  //   setState(() {
-  //     _isCountDownFinished = false;
-  //   });
-  // }
+  String _emailMasked = 'Loading...';
 
   Future<void> _checkOTP(pin) async {
     setState(() {
@@ -39,53 +36,88 @@ class _OTPScreenState extends State<OTPScreen> {
       _isFieldDisabled = true;
     });
 
-    // logic for checking OTP
-    final otpStatus = await checkOTP(pin, widget.token);
+    if (!widget.isResettingPassword) {
+      // logic for checking OTP
+      final otpStatus = await checkOTP(pin, widget.token!);
 
-    // if OTP is correct, get all the other user info from DB
-    if (otpStatus == ReturnTypes.error) {
-      setState(() {
-        _status = '';
-        _isFieldDisabled = false;
-      });
-      showGlobalSnackBar('Something went wrong. Please try again later.');
-      return;
-    } else if (otpStatus == ReturnTypes.fail) {
-      setState(() {
-        _status = 'Wrong OTP. Try again';
-        _isFieldDisabled = false;
-      });
-      return;
-    } else if (otpStatus == ReturnTypes.invalidToken) {
+      // if OTP is correct, get all the other user info from DB
+      if (otpStatus == ReturnTypes.error) {
+        setState(() {
+          _status = '';
+          _isFieldDisabled = false;
+        });
+        showGlobalSnackBar('Something went wrong. Please try again later.');
+        return;
+      } else if (otpStatus == ReturnTypes.fail) {
+        setState(() {
+          _status = 'Wrong OTP. Try again';
+          _isFieldDisabled = false;
+        });
+        return;
+      } else if (otpStatus == ReturnTypes.invalidToken) {
+        if (!mounted) return;
+        invalidTokenResponse(context);
+        return;
+      }
+
+      UserInfoCRUD().setUserInfo(
+        username: otpStatus['username'],
+        email: otpStatus['email'],
+        is2FAEnabled: otpStatus['is2FAEnabled'],
+        isBiometricAuthEnabled: otpStatus['isBiometricAuthEnabled'],
+        token: otpStatus['token'],
+      );
+
       if (!mounted) return;
-      invalidTokenResponse(context);
-      return;
-    }
-
-    UserInfoCRUD().setUserInfo(
-      username: otpStatus['username'],
-      email: otpStatus['email'],
-      is2FAEnabled: otpStatus['is2FAEnabled'],
-      isBiometricAuthEnabled: otpStatus['isBiometricAuthEnabled'],
-      token: otpStatus['token'],
-    );
-
-    if (!mounted) return;
-    Navigator.popUntil(context, (route) => route.isFirst);
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => const HomeScreen(
-          isFirstTimeLoggingIn: true,
+      Navigator.popUntil(context, (route) => route.isFirst);
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const HomeScreen(
+            isFirstTimeLoggingIn: true,
+          ),
         ),
-      ),
-    );
+      );
+    } else {
+      // check otp and get token
+      final otpStatus = await checkResetPasswordOTP(pin, widget.email!);
+
+      if (otpStatus == ReturnTypes.error) {
+        setState(() {
+          _status = '';
+          _isFieldDisabled = false;
+        });
+        showGlobalSnackBar('Something went wrong. Please try again later.');
+        return;
+      } else if (otpStatus == ReturnTypes.fail) {
+        setState(() {
+          _status = 'Wrong OTP. Try again';
+          _isFieldDisabled = false;
+        });
+        return;
+      }
+
+      if (!mounted) return;
+      // Navigator.popUntil(context, (route) => route.isFirst);
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => ChangePasswordScreen(
+            token: otpStatus['token'],
+            forgotPassword: true,
+          ),
+        ),
+      );
+    }
   }
 
-  // @override
-  // void initState() {
-  //   _requestOTP();
-  //   super.initState();
-  // }
+  @override
+  void initState() {
+    if (widget.isResettingPassword) {
+      sendResetPasswordOTP(widget.email!).then((value) => setState(() {
+            _emailMasked = value["email"];
+          }));
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,17 +138,23 @@ class _OTPScreenState extends State<OTPScreen> {
                   style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 )
+              else if (widget.isResettingPassword)
+                const Text(
+                    'In order to reset your password, please enter the OTP sent to your email',
+                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center)
               else
                 const Text(
                   'Enter the OTP sent to your email',
                   style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
-              // const SizedBox(height: 20),
-              // const Text(
-              //   'You email starts with: ',
-              //   style: TextStyle(fontSize: 16),
-              // ),
+              const SizedBox(height: 20),
+              if (widget.isResettingPassword)
+                Text(
+                  'Your email: $_emailMasked',
+                  style: const TextStyle(fontSize: 16),
+                ),
               const SizedBox(height: 100),
               Pinput(
                 enabled: !_isFieldDisabled,
@@ -158,30 +196,6 @@ class _OTPScreenState extends State<OTPScreen> {
                       ),
                     )),
               ),
-              // OTPTextField(
-              //   length: 5,
-              //   otpFieldStyle: OtpFieldStyle(
-              //     backgroundColor: const Color(0xFFF4F5F7),
-              //     borderColor: const Color(0xFFDEE3EB),
-              //     focusBorderColor: const Color(0xFF24A09B),
-              //   ),
-              //   width: MediaQuery.of(context).size.width,
-              //   fieldWidth: 40,
-              //   style: const TextStyle(
-              //     fontSize: 18,
-              //     fontWeight: FontWeight.w700,
-              //   ),
-              //   textFieldAlignment: MainAxisAlignment.spaceAround,
-              //   fieldStyle: FieldStyle.box,
-              //   onChanged: (s) {
-              //     if (s.length < 5) {
-              //       setState(() {
-              //         _status = '';
-              //       });
-              //     }
-              //   },
-              //   onCompleted: _checkOTP,
-              // ),
               const SizedBox(height: 50),
               Text(
                 _status,
@@ -193,41 +207,6 @@ class _OTPScreenState extends State<OTPScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              // const SizedBox(height: 100),
-              // if (_isCountDownFinished == false)
-              //   const Text(
-              //     'Didn\'t receive the OTP? You can request another one in',
-              //     textAlign: TextAlign.center,
-              //     style: TextStyle(
-              //       fontSize: 18,
-              //       // fontWeight: FontWeight.bold,
-              //     ),
-              //   )
-              // else
-              //   TextButton(
-              //     onPressed: _requestOTP,
-              //     child: Text(
-              //       'Request a new OTP',
-              //       textAlign: TextAlign.center,
-              //       style: TextStyle(
-              //           fontSize: 18,
-              //           fontWeight: FontWeight.bold,
-              //           color: Theme.of(context).primaryColor),
-              //     ),
-              //   ),
-              // if (_isCountDownFinished == false)
-              //   CountDownTime.minutes(
-              //     onTimeOut: () {
-              //       setState(() {
-              //         _isCountDownFinished = true;
-              //       });
-              //     },
-              //     timeStartInMinutes: 1,
-              //     textStyle: const TextStyle(
-              //       fontSize: 18,
-              //       fontWeight: FontWeight.bold,
-              //     ),
-              //   )
             ],
           ),
         ),

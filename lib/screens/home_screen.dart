@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_fgbg/flutter_fgbg.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -7,6 +8,7 @@ import 'package:todo_app/screens/profile_screen.dart';
 import 'package:todo_app/services/local_auth_api.dart';
 import 'package:todo_app/services/user_info_crud.dart';
 import 'package:todo_app/widgets/buttons.dart';
+
 import '../services/http_requests.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -52,9 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     _widgetOptions = [
-      IndividualTasksScreen(
-        isFirstTimeLoggingIn: widget.isFirstTimeLoggingIn,
-      ),
+      const IndividualTasksScreen(),
       ProfileScreen(),
     ];
 
@@ -129,10 +129,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icons.checklist_rounded,
                 text: 'Tasks',
               ),
-              // GButton(
-              //   icon: Icons.group,
-              //   text: 'Group Tasks',
-              // ),
               GButton(
                 icon: Icons.person_rounded,
                 text: 'Profile',
@@ -142,21 +138,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       body: _widgetOptions.elementAt(_selectedIndex),
-      // floatingActionButton: (_selectedIndex == 0 || _selectedIndex == 1)
-      //     ? FloatingActionButton(
-      //         onPressed: () {
-      //           if (_selectedIndex == 0) {
-      //             createNewTask();
-      //             // IndividualTasksCRUD().addIndividualTask('taskName', 'taskDetails');
-      //           } else if (_selectedIndex == 1) {}
-      //         },
-      //         tooltip: 'Add Todo',
-      //         hoverColor: const Color(0xFF096B67),
-      //         focusColor: const Color(0xFF24A09B),
-      //         splashColor: const Color(0xFF064E4B),
-      //         child: const Icon(Icons.add),
-      //       )
-      //     : null,
     );
   }
 }

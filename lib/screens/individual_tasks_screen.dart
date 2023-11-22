@@ -17,11 +17,8 @@ import '../widgets/global_snackbar.dart';
 import '../widgets/skeleton_shimmer.dart';
 
 class IndividualTasksScreen extends StatefulWidget {
-  final bool isFirstTimeLoggingIn;
-
   const IndividualTasksScreen({
     super.key,
-    required this.isFirstTimeLoggingIn,
   });
 
   @override
@@ -640,7 +637,7 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (widget.isFirstTimeLoggingIn) {
+    if (_individualTasksBox.get('IndividualTasksList').isEmpty) {
       getDataFromDB();
     } else {
       getData();

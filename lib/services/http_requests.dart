@@ -22,6 +22,7 @@ enum ReturnTypes {
   invalidToken,
   emailTaken,
   usernameTaken,
+  invalidPassword
 }
 
 final dio = Dio();
@@ -48,7 +49,7 @@ Future<dynamic> checkCredentialsAndGetToken(
     };
   } on DioException catch (e) {
     if (e.response == null) return ReturnTypes.error;
-
+    debugPrint(e.response?.data.toString());
     return ReturnTypes.fail;
   }
 }
@@ -70,6 +71,8 @@ Future<dynamic> signUp(String username, String email, String password) async {
     };
   } on DioException catch (e) {
     if (e.response == null) return ReturnTypes.error;
+
+    debugPrint(e.response!.data.toString());
 
     if (e.response!.data['error'] == 'Email already in-use.') {
       return ReturnTypes.emailTaken;
@@ -175,9 +178,8 @@ Future<dynamic> addTaskToDB(String title, String description, String priority,
 
     return [response.data["_id"], response.data["createdAt"]];
   } on DioException catch (e) {
-    print(e.response?.data);
     if (e.response == null) return ReturnTypes.error;
-
+    debugPrint(e.response?.data.toString());
     if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
       return ReturnTypes.invalidToken;
     }
@@ -302,7 +304,6 @@ Future<dynamic> toggle2FA() async {
   if (token == '') {
     return ReturnTypes.invalidToken;
   }
-
   try {
     Response response;
     response = await dio.get(
@@ -313,12 +314,14 @@ Future<dynamic> toggle2FA() async {
         },
       ),
     );
-    print(response.data);
+
     return response.data['is2FAEnabled'];
   } on DioException catch (e) {
     if (e.response == null) return ReturnTypes.error;
-
-    if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+    debugPrint(e.response?.data.toString());
+    if (e.response?.statusCode == 401 ||
+        e.response?.statusCode == 403 ||
+        e.response?.data['error'] == "Expired token") {
       return ReturnTypes.invalidToken;
     }
 
@@ -343,12 +346,13 @@ Future<dynamic> toggleBiometricAuth() async {
       ),
     );
 
-    print(response.data);
     return response.data['isBiometricAuthEnabled'];
   } on DioException catch (e) {
     if (e.response == null) return ReturnTypes.error;
 
-    if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+    if (e.response?.statusCode == 401 ||
+        e.response?.statusCode == 403 ||
+        e.response?.data['error'] == "Expired token") {
       return ReturnTypes.invalidToken;
     }
 
@@ -381,6 +385,109 @@ Future<dynamic> getUserOptions() async {
     if (e.response == null) return ReturnTypes.error;
 
     if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+      return ReturnTypes.invalidToken;
+    }
+
+    return ReturnTypes.fail;
+  }
+}
+
+Future<dynamic> sendResetPasswordOTP(String signature) async {
+  try {
+    Response response;
+    response = await dio.post(
+      'https://todobuddy.onrender.com/api/user/Request/ResetPassword',
+      data: {
+        "signature": signature,
+      },
+    );
+
+    return response.data;
+  } on DioException catch (e) {
+    if (e.response == null) return ReturnTypes.error;
+
+    return ReturnTypes.fail;
+  }
+}
+
+Future<dynamic> checkResetPasswordOTP(String pin, String email) async {
+  try {
+    Response response;
+    response = await dio.post(
+      'https://todobuddy.onrender.com/api/ResetPassword',
+      data: {
+        "pin": pin,
+        "email": email,
+      },
+    );
+
+    debugPrint(response.data.toString());
+    return response.data;
+  } on DioException catch (e) {
+    if (e.response == null) return ReturnTypes.error;
+    debugPrint(e.response?.data.toString());
+    return ReturnTypes.fail;
+  }
+}
+
+Future<dynamic> changePassword(String oldPassword, String newPassword) async {
+  final String token = await UserToken.getToken();
+  if (token == '') {
+    return ReturnTypes.invalidToken;
+  }
+
+  try {
+    Response response;
+    response = await dio.post(
+      'https://todobuddy.onrender.com/api/user/ChangePassword',
+      data: {
+        "oldPassword": oldPassword,
+        "newPassword": newPassword,
+      },
+      options: Options(
+        headers: {
+          "Authorization": "Bearer $token",
+        },
+      ),
+    );
+
+    debugPrint(response.data.toString());
+    return response.data;
+  } on DioException catch (e) {
+    if (e.response == null) return ReturnTypes.error;
+    debugPrint(e.response?.data.toString());
+
+    if (e.response!.data['error'] == 'Invalid Password!') {
+      return ReturnTypes.invalidPassword;
+    } else if (e.response!.data['error'] == 'Expired token') {
+      return ReturnTypes.invalidToken;
+    }
+
+    return ReturnTypes.fail;
+  }
+}
+
+Future<dynamic> resetPassword(String newPassword, String token) async {
+  try {
+    Response response;
+    response = await dio.post(
+      'https://todobuddy.onrender.com/api/user/ResetPassword',
+      data: {
+        "password": newPassword,
+      },
+      options: Options(
+        headers: {
+          "Authorization": "Bearer $token",
+        },
+      ),
+    );
+    debugPrint(response.data.toString());
+    return response.data;
+  } on DioException catch (e) {
+    if (e.response == null) return ReturnTypes.error;
+    debugPrint(e.response?.data.toString());
+
+    if (e.response!.data['error'] == 'Expired token') {
       return ReturnTypes.invalidToken;
     }
 

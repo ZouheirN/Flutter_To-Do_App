@@ -72,7 +72,7 @@ class ProfileScreen extends StatelessWidget {
         color: getStatusColor(status),
         value: count.toDouble(),
         title: '$count',
-        radius: 60,
+        radius: 100,
       );
     }).toList();
 
@@ -176,7 +176,7 @@ class ProfileScreen extends StatelessWidget {
                 PieChartData(
                   sections: pieChartData,
                   sectionsSpace: 0,
-                  centerSpaceRadius: 55,
+                  centerSpaceRadius: 0,
                   startDegreeOffset: -90,
                 ),
               ),

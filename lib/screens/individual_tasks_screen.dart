@@ -637,7 +637,7 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (_individualTasksBox.get('IndividualTasksList').isEmpty) {
+    if (_individualTasksBox.get('IndividualTasksList') == null || _individualTasksBox.get('IndividualTasksList').isEmpty) {
       getDataFromDB();
     } else {
       getData();

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/screens/otp_screen.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:todo_app/services/http_requests.dart';
 import 'package:todo_app/services/user_info_crud.dart';
-import 'package:todo_app/services/user_token.dart';
 import 'package:todo_app/widgets/buttons.dart';
 import 'package:todo_app/widgets/dialogs.dart';
 import 'package:todo_app/widgets/textfields.dart';
@@ -23,6 +22,8 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
 
   bool _is2FALoading = false;
   bool _isBioAuthLoading = false;
+
+  String _version = '';
 
   _changePassword() async {
     Navigator.of(context).push(
@@ -78,11 +79,20 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     );
   }
 
+  _getAppVersion() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    String version = packageInfo.version;
+    setState(() {
+      _version = version;
+    });
+  }
+
   @override
   void initState() {
-    super.initState();
     _is2FAEnabled = UserInfoCRUD().get2FAEnabled();
     _isAuthenticationEnabled = UserInfoCRUD().getAuthEnabled();
+    _getAppVersion();
+    super.initState();
   }
 
   @override
@@ -263,6 +273,14 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                 ),
               ),
               onTap: _deleteAccount,
+            ),
+            Text(
+              'To-Do Buddy v$_version',
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+              ),
             ),
             // ListTile(
             //   leading: const Icon(Icons.manage_accounts),

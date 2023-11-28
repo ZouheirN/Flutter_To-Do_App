@@ -143,9 +143,12 @@ Future<dynamic> getTasksFromDB() async {
   } on DioException catch (e) {
     if (e.response == null) return ReturnTypes.error;
 
-    if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+    if (e.response?.statusCode == 401 ||
+        e.response?.statusCode == 403 ||
+        e.response?.data['error'] == "Expired token") {
       return ReturnTypes.invalidToken;
     }
+
     return ReturnTypes.fail;
   }
 }
@@ -179,8 +182,10 @@ Future<dynamic> addTaskToDB(String title, String description, String priority,
     return [response.data["_id"], response.data["createdAt"]];
   } on DioException catch (e) {
     if (e.response == null) return ReturnTypes.error;
-    debugPrint(e.response?.data.toString());
-    if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+
+    if (e.response?.statusCode == 401 ||
+        e.response?.statusCode == 403 ||
+        e.response?.data['error'] == "Expired token") {
       return ReturnTypes.invalidToken;
     }
     return ReturnTypes.fail;
@@ -207,7 +212,9 @@ Future<dynamic> deleteTaskFromDB(String taskId) async {
   } on DioException catch (e) {
     if (e.response == null) return ReturnTypes.error;
 
-    if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+    if (e.response?.statusCode == 401 ||
+        e.response?.statusCode == 403 ||
+        e.response?.data['error'] == "Expired token") {
       return ReturnTypes.invalidToken;
     }
 
@@ -238,7 +245,9 @@ Future<dynamic> editTaskStatusFromDB(String taskId, String status) async {
   } on DioException catch (e) {
     if (e.response == null) return ReturnTypes.error;
 
-    if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+    if (e.response?.statusCode == 401 ||
+        e.response?.statusCode == 403 ||
+        e.response?.data['error'] == "Expired token") {
       return ReturnTypes.invalidToken;
     }
 
@@ -291,7 +300,9 @@ Future<dynamic> editTaskFromDB(
   } on DioException catch (e) {
     if (e.response == null) return ReturnTypes.error;
 
-    if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+    if (e.response?.statusCode == 401 ||
+        e.response?.statusCode == 403 ||
+        e.response?.data['error'] == "Expired token") {
       return ReturnTypes.invalidToken;
     }
 
@@ -384,7 +395,9 @@ Future<dynamic> getUserOptions() async {
   } on DioException catch (e) {
     if (e.response == null) return ReturnTypes.error;
 
-    if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+    if (e.response?.statusCode == 401 ||
+        e.response?.statusCode == 403 ||
+        e.response?.data['error'] == "Expired token") {
       return ReturnTypes.invalidToken;
     }
 
@@ -425,7 +438,7 @@ Future<dynamic> checkResetPasswordOTP(String pin, String email) async {
     return response.data;
   } on DioException catch (e) {
     if (e.response == null) return ReturnTypes.error;
-    debugPrint(e.response?.data.toString());
+
     return ReturnTypes.fail;
   }
 }
@@ -451,11 +464,9 @@ Future<dynamic> changePassword(String oldPassword, String newPassword) async {
       ),
     );
 
-    debugPrint(response.data.toString());
     return response.data;
   } on DioException catch (e) {
     if (e.response == null) return ReturnTypes.error;
-    debugPrint(e.response?.data.toString());
 
     if (e.response!.data['error'] == 'Invalid Password!') {
       return ReturnTypes.invalidPassword;
@@ -481,11 +492,10 @@ Future<dynamic> resetPassword(String newPassword, String token) async {
         },
       ),
     );
-    debugPrint(response.data.toString());
+
     return response.data;
   } on DioException catch (e) {
     if (e.response == null) return ReturnTypes.error;
-    debugPrint(e.response?.data.toString());
 
     if (e.response!.data['error'] == 'Expired token') {
       return ReturnTypes.invalidToken;

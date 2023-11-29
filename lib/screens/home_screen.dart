@@ -59,6 +59,12 @@ class _HomeScreenState extends State<HomeScreen> {
     ];
 
     getUserOptions().then((value) {
+      if (value == ReturnTypes.invalidToken) {
+        if (!mounted) return;
+        invalidTokenResponse(context);
+        return;
+      }
+
       UserInfoCRUD().set2FA(value['is2FAEnabled']);
       UserInfoCRUD().setAuth(value['isBiometricAuthEnabled']);
     }).then(

@@ -6,22 +6,61 @@ import 'package:todo_app/services/individual_tasks_crud.dart';
 import 'package:todo_app/services/notifications.dart';
 import 'package:todo_app/services/user_info_crud.dart';
 
+import '../widgets/buttons.dart';
+
 class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
 
   final IndividualTasksCRUD _individualTasksCRUD = IndividualTasksCRUD();
 
   void _logout(BuildContext context) {
-    UserInfoCRUD().deleteUserInfo();
-    IndividualTasksCRUD().deleteAllIndividualTasks();
+    // show confirmation dialog
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Logout'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Are you sure you want to logout?',
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  DialogButton(
+                    text: 'Cancel',
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  DialogButton(
+                    text: 'Logout',
+                    color: 0xFFFF0000,
+                    onPressed: () async {
+                      UserInfoCRUD().deleteUserInfo();
+                      IndividualTasksCRUD().deleteAllIndividualTasks();
 
-    //cancel all notifications
-    NotificationService.cancelAllNotifications();
+                      //cancel all notifications
+                      NotificationService.cancelAllNotifications();
 
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => const WelcomeScreen(),
-      ),
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => const WelcomeScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 

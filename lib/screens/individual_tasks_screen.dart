@@ -289,18 +289,34 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
   }
 
   void createNewTask() {
-    showDialog(
+    showGeneralDialog(
       context: context,
-      builder: (context) => DialogBox(
-        nameController: _nameController,
-        descriptionController: _descriptionController,
-        colorController: _colorController,
-        priorityController: _priorityController,
-        dateController: _dateController,
-        formKey: _formKey,
-        onAdd: () => addNewTask(context),
-        onCancel: () => onCancel(context),
-      ),
+      transitionBuilder: (context, a1, a2, widget) {
+        final curvedValue = Curves.easeInOutBack.transform(a1.value) - 1.0;
+
+        return Transform(
+          transform: Matrix4.translationValues(0.0, -curvedValue * 200, 0.0),
+          child: Opacity(
+            opacity: a1.value,
+            child: DialogBox(
+              nameController: _nameController,
+              descriptionController: _descriptionController,
+              colorController: _colorController,
+              priorityController: _priorityController,
+              dateController: _dateController,
+              formKey: _formKey,
+              onAdd: () => addNewTask(context),
+              onCancel: () => onCancel(context),
+            ),
+          ),
+        );
+      },
+      transitionDuration: const Duration(milliseconds: 200),
+      barrierDismissible: true,
+      barrierLabel: '',
+      pageBuilder: (context, animation1, animation2) {
+        return const Text('PAGE BUILDER');
+      },
     );
   }
 
@@ -637,7 +653,8 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (_individualTasksBox.get('IndividualTasksList') == null || _individualTasksBox.get('IndividualTasksList').isEmpty) {
+    if (_individualTasksBox.get('IndividualTasksList') == null ||
+        _individualTasksBox.get('IndividualTasksList').isEmpty) {
       getDataFromDB();
     } else {
       getData();
@@ -704,12 +721,12 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
                                     .compareTo(
                                         DateTime.parse(b['estimatedDate'])),
                               );
-                        
+
                               int colorInt = int.parse(
                                   _individualTasksCRUD.individualTasks[index]
                                       ['color'],
                                   radix: 16);
-                        
+
                               return AnimationConfiguration.staggeredList(
                                 position: index,
                                 duration: const Duration(milliseconds: 375),
@@ -720,7 +737,8 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
                                       taskName: _individualTasksCRUD
                                           .individualTasks[index]['title'],
                                       taskDetails: _individualTasksCRUD
-                                          .individualTasks[index]['description'],
+                                              .individualTasks[index]
+                                          ['description'],
                                       color: colorInt,
                                       taskStatus: _individualTasksCRUD
                                           .individualTasks[index]['status'],
@@ -729,12 +747,17 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
                                       taskId: _individualTasksCRUD
                                           .individualTasks[index]['id'],
                                       creationDate: _individualTasksCRUD
-                                          .individualTasks[index]['creationDate'],
+                                              .individualTasks[index]
+                                          ['creationDate'],
                                       estimatedDate: _individualTasksCRUD
-                                          .individualTasks[index]['estimatedDate'],
-                                      onChanged: (value) => statusChanged(value, index),
-                                      deleteFunction: (context) => deleteTask(index),
-                                      editFunction: (context) => editTask(index),
+                                              .individualTasks[index]
+                                          ['estimatedDate'],
+                                      onChanged: (value) =>
+                                          statusChanged(value, index),
+                                      deleteFunction: (context) =>
+                                          deleteTask(index),
+                                      editFunction: (context) =>
+                                          editTask(index),
                                     ),
                                   ),
                                 ),

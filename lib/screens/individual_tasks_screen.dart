@@ -315,7 +315,7 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
       barrierDismissible: true,
       barrierLabel: '',
       pageBuilder: (context, animation1, animation2) {
-        return const Text('PAGE BUILDER');
+        return Container();
       },
     );
   }

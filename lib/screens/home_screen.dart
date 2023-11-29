@@ -67,15 +67,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
       UserInfoCRUD().set2FA(value['is2FAEnabled']);
       UserInfoCRUD().setAuth(value['isBiometricAuthEnabled']);
-    }).then(
-      (value) => setState(
-        () {
-          if (UserInfoCRUD().getAuthEnabled() == false) {
-            _isAuthenticated = true;
-          }
-        },
-      ),
-    );
+
+      setState(() {
+        if (UserInfoCRUD().getAuthEnabled() == false) {
+          _isAuthenticated = true;
+        }
+      });
+    });
 
     if (UserInfoCRUD().getAuthEnabled() && !widget.isFirstTimeLoggingIn) {
       _authenticateOnStart();

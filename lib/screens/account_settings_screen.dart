@@ -37,63 +37,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   }
 
   _deleteAccount() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Delete Account'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'Are you sure you want to delete your account? Your tasks will be deleted as well.',
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  DialogButton(
-                    text: 'Cancel',
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  DialogButton(
-                    text: 'Delete',
-                    color: 0xFFFF0000,
-                    onPressed: () async {
-                      final deleteAccountOTPResponse =
-                          await sendDeleteAccountOTP();
-
-                      if (deleteAccountOTPResponse == ReturnTypes.fail ||
-                          deleteAccountOTPResponse == ReturnTypes.error) {
-                        showGlobalSnackBar('Failed to send OTP.');
-                        return;
-                      } else if (deleteAccountOTPResponse ==
-                          ReturnTypes.invalidToken) {
-                        if (!mounted) return;
-                        invalidTokenResponse(context);
-                        return;
-                      }
-
-                      if (!mounted) return;
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (context) => const OTPScreen(
-                            isDeletingAccount: true,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-    );
+    showDeleteAccountDialog(context);
   }
 
   _getAppVersion() async {

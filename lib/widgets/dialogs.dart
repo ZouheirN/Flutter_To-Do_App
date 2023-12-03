@@ -5,6 +5,8 @@ import 'package:todo_app/widgets/buttons.dart';
 import 'package:todo_app/widgets/textfields.dart';
 
 import '../screens/otp_screen.dart';
+import '../services/http_requests.dart';
+import 'global_snackbar.dart';
 
 void showLoadingDialog(String text, BuildContext context) => showDialog(
       context: context,
@@ -107,5 +109,87 @@ void showForgotPasswordDialog(BuildContext context) {
         ),
       ),
     ),
+  );
+}
+
+void showDeleteAccountDialog(BuildContext context) {
+  bool _isLoading = false;
+
+  showDialog(
+    context: context,
+    builder: (context) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: const Text('Delete Account'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Are you sure you want to delete your account? Your tasks will be deleted as well.',
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    DialogButton(
+                      text: 'Cancel',
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    DialogButton(
+                      isLoading: _isLoading,
+                      text: 'Delete',
+                      color: 0xFFFF0000,
+                      onPressed: () async {
+                        if (_isLoading) return;
+
+                        setState(() {
+                          _isLoading = true;
+                        });
+
+                        final deleteAccountOTPResponse =
+                            await sendDeleteAccountOTP();
+
+                        if (deleteAccountOTPResponse == ReturnTypes.fail ||
+                            deleteAccountOTPResponse == ReturnTypes.error) {
+                          setState(() {
+                            _isLoading = false;
+                          });
+                          showGlobalSnackBar('Failed to send OTP.');
+                          return;
+                        } else if (deleteAccountOTPResponse ==
+                            ReturnTypes.invalidToken) {
+                          setState(() {
+                            _isLoading = false;
+                          });
+                          if (!context.mounted) return;
+                          invalidTokenResponse(context);
+                          return;
+                        }
+
+                        setState(() {
+                          _isLoading = false;
+                        });
+                        if (!context.mounted) return;
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => const OTPScreen(
+                              isDeletingAccount: true,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    },
   );
 }

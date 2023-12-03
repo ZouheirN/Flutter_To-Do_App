@@ -70,12 +70,14 @@ class DialogButton extends StatelessWidget {
   final String text;
   final int? color;
   final VoidCallback onPressed;
+  final bool isLoading;
 
   const DialogButton({
     super.key,
     required this.text,
     required this.onPressed,
     this.color,
+    this.isLoading = false,
   });
 
   @override
@@ -90,7 +92,15 @@ class DialogButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
         ),
       ),
-      child: Text(text, style: const TextStyle(color: Colors.white)),
+      child: isLoading
+          ? const SizedBox(
+              height: 25,
+              width: 25,
+              child: CircularProgressIndicator(
+                color: Colors.white,
+              ),
+            )
+          : Text(text, style: const TextStyle(color: Colors.white)),
     );
   }
 }

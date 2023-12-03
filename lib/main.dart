@@ -13,9 +13,9 @@ import 'package:todo_app/services/notifications.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  bool isJailBroken = await SafeDevice.isJailBroken;
+  bool isSafeDevice = await SafeDevice.isSafeDevice;
 
-  if (isJailBroken) {
+  if (isSafeDevice) {
     runApp(const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: DrmScreen(),

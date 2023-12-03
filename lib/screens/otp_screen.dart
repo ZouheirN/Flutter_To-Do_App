@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
+import 'package:todo_app/screens/welcome_screen.dart';
 import 'package:todo_app/services/user_info_crud.dart';
 import 'package:todo_app/widgets/global_snackbar.dart';
 
@@ -12,6 +13,7 @@ class OTPScreen extends StatefulWidget {
   final bool isNotVerifiedFromLogin;
   final bool isResettingPassword;
   final String? email;
+  final bool isDeletingAccount;
 
   const OTPScreen({
     super.key,
@@ -19,6 +21,7 @@ class OTPScreen extends StatefulWidget {
     this.token,
     this.isResettingPassword = false,
     this.email,
+    this.isDeletingAccount = false,
   });
 
   @override
@@ -36,7 +39,38 @@ class _OTPScreenState extends State<OTPScreen> {
       _isFieldDisabled = true;
     });
 
-    if (!widget.isResettingPassword) {
+    if (widget.isDeletingAccount) {
+      // check otp and delete account
+      final otpStatus = await checkDeleteAccountOTP(pin);
+
+      if (otpStatus == ReturnTypes.error) {
+        setState(() {
+          _status = '';
+          _isFieldDisabled = false;
+        });
+        showGlobalSnackBar('Something went wrong. Please try again later.');
+        return;
+      } else if (otpStatus == ReturnTypes.fail) {
+        setState(() {
+          _status = 'Wrong OTP. Try again';
+          _isFieldDisabled = false;
+        });
+        return;
+      } else if (otpStatus == ReturnTypes.invalidToken) {
+        if (!mounted) return;
+        invalidTokenResponse(context);
+        return;
+      }
+
+      if (!mounted) return;
+      showGlobalSnackBar(otpStatus['message']);
+      Navigator.popUntil(context, (route) => route.isFirst);
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const WelcomeScreen(),
+        ),
+      );
+    } else if (!widget.isResettingPassword) {
       // logic for checking OTP
       final otpStatus = await checkOTP(pin, widget.token!);
 
@@ -143,6 +177,12 @@ class _OTPScreenState extends State<OTPScreen> {
                     'In order to reset your password, please enter the OTP sent to your email',
                     style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center)
+              else if (widget.isDeletingAccount)
+                const Text(
+                  'In order to delete your account, please enter the OTP sent to your email',
+                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                )
               else
                 const Text(
                   'Enter the OTP sent to your email',

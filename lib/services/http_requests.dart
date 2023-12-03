@@ -423,6 +423,36 @@ Future<dynamic> sendResetPasswordOTP(String signature) async {
   }
 }
 
+Future<dynamic> sendDeleteAccountOTP() async {
+  final String token = await UserToken.getToken();
+  if (token == '') {
+    return ReturnTypes.invalidToken;
+  }
+
+  try {
+    await dio.get(
+      'https://todobuddy.onrender.com/api/user/Request/DeleteAccount',
+      options: Options(
+        headers: {
+          "Authorization": "Bearer $token",
+        },
+      ),
+    );
+
+    return ReturnTypes.success;
+  } on DioException catch (e) {
+    if (e.response == null) return ReturnTypes.error;
+
+    if (e.response?.statusCode == 401 ||
+        e.response?.statusCode == 403 ||
+        e.response?.data['error'] == "Expired token") {
+      return ReturnTypes.invalidToken;
+    }
+
+    return ReturnTypes.fail;
+  }
+}
+
 Future<dynamic> checkResetPasswordOTP(String pin, String email) async {
   try {
     Response response;
@@ -438,6 +468,48 @@ Future<dynamic> checkResetPasswordOTP(String pin, String email) async {
     return response.data;
   } on DioException catch (e) {
     if (e.response == null) return ReturnTypes.error;
+
+    if (e.response!.data['error'] == 'UnAuthorized Access!') {
+      return ReturnTypes.fail;
+    }
+
+    return ReturnTypes.fail;
+  }
+}
+
+Future<dynamic> checkDeleteAccountOTP(String pin) async {
+  final String token = await UserToken.getToken();
+  if (token == '') {
+    return ReturnTypes.invalidToken;
+  }
+
+  try {
+    Response response;
+    response = await dio.delete(
+      'https://todobuddy.onrender.com/api/user/DeleteAccount',
+      options: Options(
+        headers: {
+          "Authorization": "Bearer $token",
+        },
+      ),
+      data: {
+        "pin": pin,
+      },
+    );
+
+    return response.data;
+  } on DioException catch (e) {
+    if (e.response == null) return ReturnTypes.error;
+
+    if (e.response!.data['error'] == 'UnAuthorized Access!') {
+      return ReturnTypes.fail;
+    }
+
+    if (e.response?.statusCode == 401 ||
+        e.response?.statusCode == 403 ||
+        e.response?.data['error'] == "Expired token") {
+      return ReturnTypes.invalidToken;
+    }
 
     return ReturnTypes.fail;
   }

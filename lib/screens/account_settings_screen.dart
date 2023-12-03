@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:todo_app/screens/otp_screen.dart';
 import 'package:todo_app/services/http_requests.dart';
 import 'package:todo_app/services/user_info_crud.dart';
 import 'package:todo_app/widgets/buttons.dart';
@@ -62,12 +63,28 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                     text: 'Delete',
                     color: 0xFFFF0000,
                     onPressed: () async {
-                      Navigator.of(context).pop();
-                      showLoadingDialog('Deleting Account...', context);
+                      final deleteAccountOTPResponse =
+                          await sendDeleteAccountOTP();
 
-                      // final response = await deleteAccount();
+                      if (deleteAccountOTPResponse == ReturnTypes.fail ||
+                          deleteAccountOTPResponse == ReturnTypes.error) {
+                        showGlobalSnackBar('Failed to send OTP.');
+                        return;
+                      } else if (deleteAccountOTPResponse ==
+                          ReturnTypes.invalidToken) {
+                        if (!mounted) return;
+                        invalidTokenResponse(context);
+                        return;
+                      }
 
-                      Navigator.of(context).pop();
+                      if (!mounted) return;
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => const OTPScreen(
+                            isDeletingAccount: true,
+                          ),
+                        ),
+                      );
                     },
                   ),
                 ],

@@ -114,7 +114,9 @@ Future<dynamic> checkOTP(String pin, String token) async {
       return ReturnTypes.fail;
     }
 
-    if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+    if (e.response?.statusCode == 401 ||
+        e.response?.statusCode == 403 ||
+        e.response?.data['error'] == "Expired token") {
       return ReturnTypes.invalidToken;
     }
 

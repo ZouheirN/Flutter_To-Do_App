@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
@@ -8,7 +7,6 @@ import 'package:intl/intl.dart';
 import 'package:pull_to_refresh_plus/pull_to_refresh_plus.dart';
 import 'package:todo_app/services/individual_tasks_crud.dart';
 import 'package:todo_app/widgets/dialogs.dart';
-
 import '../services/http_requests.dart';
 import '../services/notifications.dart';
 import '../widgets/card.dart';
@@ -659,6 +657,17 @@ class _IndividualTasksScreenState extends State<IndividualTasksScreen> {
     } else {
       getData();
     }
+  }
+
+  @override
+  void dispose() {
+    _refreshController.dispose();
+    _dateController.dispose();
+    _priorityController.dispose();
+    _nameController.dispose();
+    _colorController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
   }
 
   @override

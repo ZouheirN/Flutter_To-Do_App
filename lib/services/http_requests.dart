@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:todo_app/services/constants.dart';
 import 'package:todo_app/services/user_info_crud.dart';
 import 'package:todo_app/services/user_token.dart';
 import 'package:todo_app/widgets/global_snackbar.dart';
@@ -32,7 +33,7 @@ Future<dynamic> checkCredentialsAndGetToken(
   try {
     Response response;
     response = await dio.post(
-      'https://todobuddy.onrender.com/api/user/login',
+      '${Constants.address}/user/login',
       data: {
         "signature": usernameOrEmail,
         "password": password,
@@ -58,7 +59,7 @@ Future<dynamic> signUp(String username, String email, String password) async {
   try {
     Response response;
     response = await dio.post(
-      'https://todobuddy.onrender.com/api/user/signup',
+      '${Constants.address}/user/signup',
       data: {
         "username": username,
         "password": password,
@@ -88,7 +89,7 @@ Future<dynamic> checkOTP(String pin, String token) async {
   try {
     Response response;
     response = await dio.post(
-      'https://todobuddy.onrender.com/api/verifyEmail',
+      '${Constants.address}/verifyEmail',
       data: {
         "pin": pin,
         // "email": email,
@@ -133,7 +134,7 @@ Future<dynamic> getTasksFromDB() async {
   try {
     Response response;
     response = await dio.get(
-      'https://todobuddy.onrender.com/api/task',
+      '${Constants.address}/task',
       options: Options(
         headers: {
           "Authorization": "Bearer $token",
@@ -165,7 +166,7 @@ Future<dynamic> addTaskToDB(String title, String description, String priority,
   try {
     Response response;
     response = await dio.post(
-      'https://todobuddy.onrender.com/api/task',
+      '${Constants.address}/task',
       data: {
         "title": title,
         "description": description,
@@ -202,7 +203,7 @@ Future<dynamic> deleteTaskFromDB(String taskId) async {
 
   try {
     await dio.delete(
-      'https://todobuddy.onrender.com/api/task/$taskId',
+      '${Constants.address}/task/$taskId',
       options: Options(
         headers: {
           "Authorization": "Bearer $token",
@@ -232,7 +233,7 @@ Future<dynamic> editTaskStatusFromDB(String taskId, String status) async {
 
   try {
     await dio.patch(
-      'https://todobuddy.onrender.com/api/task/$taskId',
+      '${Constants.address}/task/$taskId',
       data: {
         'status': status,
       },
@@ -289,7 +290,7 @@ Future<dynamic> editTaskFromDB(
 
   try {
     await dio.patch(
-      'https://todobuddy.onrender.com/api/task/$taskId',
+      '${Constants.address}/task/$taskId',
       data: data,
       options: Options(
         headers: {
@@ -320,7 +321,7 @@ Future<dynamic> toggle2FA() async {
   try {
     Response response;
     response = await dio.get(
-      'https://todobuddy.onrender.com/api/user/2FactorAuth',
+      '${Constants.address}/user/2FactorAuth',
       options: Options(
         headers: {
           "Authorization": "Bearer $token",
@@ -351,7 +352,7 @@ Future<dynamic> toggleBiometricAuth() async {
   try {
     Response response;
     response = await dio.get(
-      'https://todobuddy.onrender.com/api/user/BiometricAuth',
+      '${Constants.address}/user/BiometricAuth',
       options: Options(
         headers: {
           "Authorization": "Bearer $token",
@@ -382,7 +383,7 @@ Future<dynamic> getUserOptions() async {
   try {
     Response response;
     response = await dio.get(
-      'https://todobuddy.onrender.com/api/user/info',
+      '${Constants.address}/user/info',
       options: Options(
         headers: {
           "Authorization": "Bearer $token",
@@ -411,7 +412,7 @@ Future<dynamic> sendResetPasswordOTP(String signature) async {
   try {
     Response response;
     response = await dio.post(
-      'https://todobuddy.onrender.com/api/user/Request/ResetPassword',
+      '${Constants.address}/user/Request/ResetPassword',
       data: {
         "signature": signature,
       },
@@ -433,7 +434,7 @@ Future<dynamic> sendDeleteAccountOTP() async {
 
   try {
     await dio.get(
-      'https://todobuddy.onrender.com/api/user/Request/DeleteAccount',
+      '${Constants.address}/user/Request/DeleteAccount',
       options: Options(
         headers: {
           "Authorization": "Bearer $token",
@@ -459,7 +460,7 @@ Future<dynamic> checkResetPasswordOTP(String pin, String email) async {
   try {
     Response response;
     response = await dio.post(
-      'https://todobuddy.onrender.com/api/ResetPassword',
+      '${Constants.address}/ResetPassword',
       data: {
         "pin": pin,
         "email": email,
@@ -488,7 +489,7 @@ Future<dynamic> checkDeleteAccountOTP(String pin) async {
   try {
     Response response;
     response = await dio.delete(
-      'https://todobuddy.onrender.com/api/user/DeleteAccount',
+      '${Constants.address}/user/DeleteAccount',
       options: Options(
         headers: {
           "Authorization": "Bearer $token",
@@ -526,7 +527,7 @@ Future<dynamic> changePassword(String oldPassword, String newPassword) async {
   try {
     Response response;
     response = await dio.post(
-      'https://todobuddy.onrender.com/api/user/ChangePassword',
+      '${Constants.address}/user/ChangePassword',
       data: {
         "oldPassword": oldPassword,
         "newPassword": newPassword,
@@ -556,7 +557,7 @@ Future<dynamic> resetPassword(String newPassword, String token) async {
   try {
     Response response;
     response = await dio.post(
-      'https://todobuddy.onrender.com/api/user/ResetPassword',
+      '${Constants.address}/user/ResetPassword',
       data: {
         "password": newPassword,
       },

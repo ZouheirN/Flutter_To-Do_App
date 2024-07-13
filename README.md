@@ -27,8 +27,10 @@ flutter run --dart-define=API_URL=(put url here, ending with /api)
 
 ## Some Screenshots
 
-<img src="https://github.com/user-attachments/assets/0dff3d2f-d558-4eb4-8d61-bc356b8bf70d" width="200" />
-<img src="https://github.com/user-attachments/assets/e963357f-46a5-4bd8-8950-1101d56ecf1a" width="200" />
-<img src="https://github.com/user-attachments/assets/4946396b-b15f-4609-87b7-24e313dbd77d" width="200" />
-<img src="https://github.com/user-attachments/assets/bd5e68b2-9bc6-4a3f-9237-800fea22dec6" width="200" />
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/0dff3d2f-d558-4eb4-8d61-bc356b8bf70d" width="200" alt="Screenshot 1" />
+  <img src="https://github.com/user-attachments/assets/e963357f-46a5-4bd8-8950-1101d56ecf1a" width="200" alt="Screenshot 2" />
+  <img src="https://github.com/user-attachments/assets/4946396b-b15f-4609-87b7-24e313dbd77d" width="200" alt="Screenshot 3" />
+  <img src="https://github.com/user-attachments/assets/bd5e68b2-9bc6-4a3f-9237-800fea22dec6" width="200" alt="Screenshot 4" />
+</div>
 
